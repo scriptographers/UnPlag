@@ -2,12 +2,14 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 // Specifies the route-component mapping
 const routes: Routes = [
-  { path: 'signup', component: RegisterComponent },
+  { path: 'profile', component: DashboardComponent},
+  { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '/signup', },
+  { path: '**', redirectTo: '', },
 ];
 
 @NgModule({

@@ -11,14 +11,16 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.contrib.auth.models import User
 
-from plagsample.models import PlagSamp 
+from plagsample.models import PlagSamp
 from plagsample.api.serializers import PlagSampSerializer, RegistrationSerializer
 
-## Registration view for signup
-@api_view(['POST',])
+# Registration view for signup
+
+
+@api_view(['POST', ])
 @permission_classes([])
 @authentication_classes([])
-def registration_view(request): # For signup
+def registration_view(request):  # For signup
     if request.method == 'POST':
         serializer = RegistrationSerializer(data=request.data)
         data = {}
@@ -30,12 +32,12 @@ def registration_view(request): # For signup
             data['refresh'] = str(refresh)
             data['access'] = str(refresh.access_token)
         else:
-            data = serializer.errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data)
 ###################################################################
 
 
-## Extending TokenObtainPairSerializer to get userid and username !
+# Extending TokenObtainPairSerializer to get userid and username !
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -47,6 +49,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = self.user.username
         data['id'] = self.user.id
         return data
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -66,7 +69,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 # ###################################################################
 
 
-#Login method
+# Login method
 # from rest_framework import parsers, renderers
 # from rest_framework.authtoken.serializers import AuthTokenSerializer
 # from rest_framework.compat import coreapi, coreschema
@@ -137,7 +140,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 # Preliminary Work left :
 #
-# Uploading files 
+# Uploading files
 # Downloading dummy csv
 # Downloading dummy surface plot
 # Getting user details
