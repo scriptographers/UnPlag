@@ -23,4 +23,5 @@ Papers on Plagiarism Checking:
 References:  
 1. [Medium Article](https://medium.com/@heerambavi/simple-plagiarism-detection-using-nlp-1ee60c4f1d48)
 2. [Bag of Words](https://machinelearningmastery.com/gentle-introduction-bag-words-model/)
+3. [TF-IDF](https://stackoverflow.com/questions/8897593/how-to-compute-the-similarity-between-two-text-documents)
 
