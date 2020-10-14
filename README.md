@@ -15,6 +15,11 @@ Countering false positives by taking care of language specific features, syntax 
 ---
 
 Papers on Plagiarism Checking:  
-  
+1. [MOSS](http://theory.stanford.edu/~aiken/publications/papers/sigmod03.pdf)
+
+---
+
 References:  
+1. [Medium Article](https://medium.com/@heerambavi/simple-plagiarism-detection-using-nlp-1ee60c4f1d48)
+2. [Bag of Words](https://machinelearningmastery.com/gentle-introduction-bag-words-model/)
 
