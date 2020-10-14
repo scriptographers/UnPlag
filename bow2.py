@@ -1,14 +1,28 @@
 import os
 import glob
+import argparse
 import numpy as np
 from string import punctuation
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer 
 from nltk.tokenize import word_tokenize, sent_tokenize # word tokenizer and sentence tokenizer
 
+# Arguments parsing
+parser = argparse.ArgumentParser()
+parser.add_argument("--data", "-d", type=str, required=True)
+parser.add_argument("--regex", "-r", type=str, required=True)
+parser.add_argument("--output", "-out", type=str, required=True)
+args = parser.parse_args()
+
+BASE_PATH = args.data
+FILE_RE   = args.regex
+OUT_PATH  = args.output
+
 # Global variables
 SW = stopwords.words("english") # Common english stop-words
 ps = PorterStemmer() # TODO: Try more stemming algorithms
+
+# FUNCTIONS
 
 # Preprocessing:
 def preprocess(F):
@@ -40,8 +54,7 @@ def cosineSimilarity(F1, F2, vocab):
     # For n files, we need to implement featurewise normalization
     return (np.dot(V1, V2)/(np.linalg.norm(V1)*np.linalg.norm(V2)))
 
-BASE_PATH = "data/"
-FILE_RE   = "*.txt"
+# MAIN:
 
 preprocessed_files = []
 
@@ -57,16 +70,24 @@ N_DOCS = len(preprocessed_files)
 similarity_matrix = np.zeros((N_DOCS, N_DOCS), dtype=float)
 
 for i in range(N_DOCS):
-    for j in range(N_DOCS):
-        if (j > i) :
-            F1 = preprocessed_files[i]
-            F2 = preprocessed_files[j]
-            # Create the vocabulary
-            vocab = F1 + F2;
-            # Remove all duplicates
-            vocab = list(set(vocab))
-            # Sort lexicographically, doesnt actually matter, done for reproducible order inside the vocab
-            vocab.sort()
-            similarity_matrix[i, j] = cosineSimilarity(F1, F2, vocab)
+    for j in range(i+1, N_DOCS):
+        F1 = preprocessed_files[i]
+        F2 = preprocessed_files[j]
+        # Create the vocabulary
+        vocab = F1 + F2;
+        # Remove all duplicates
+        vocab = list(set(vocab))
+        # Sort lexicographically, doesnt actually matter, done for reproducible order inside the vocab
+        # vocab.sort()
+        similarity_matrix[i, j] = cosineSimilarity(F1, F2, vocab)
 
-print(similarity_matrix)
+# Utilize the symmetric nature of the matrix
+for i in range(N_DOCS):
+    for j in range(i):
+        similarity_matrix[i][j] = similarity_matrix[j][i]
+
+# Not needed, added for consistency
+np.fill_diagonal(similarity_matrix, 1)
+
+# Dump into a CSV file
+np.savetxt(OUT_PATH, similarity_matrix, fmt="%.4f", delimiter=',')

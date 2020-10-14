@@ -2,6 +2,10 @@
 
 This branch contains all the models for `Part 1: The Core Logic`.  
   
+1. Bag of Words Model:
+- File : `bow2.py`
+- Usage: `python bow2.py -d data/ -r *.txt -o results.csv`
+ 
 ---
 
 Input: Compressed folder of files  
