@@ -21,6 +21,9 @@ Countering false positives by taking care of language specific features, syntax 
 Papers on Plagiarism Checking:  
 1. [MOSS](http://theory.stanford.edu/~aiken/publications/papers/sigmod03.pdf)
 2. [Vector Space Models](https://arxiv.org/ftp/arxiv/papers/1412/1412.7782.pdf)
+    
+Testing Datasets:  
+1. [Created by Paul Clough (Information Studies) and Mark Stevenson (Computer Science), University of Sheffield](https://ir.shef.ac.uk/cloughie/resources/plagiarism_corpus.html)
 
 ---
 

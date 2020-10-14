@@ -61,7 +61,7 @@ preprocessed_files = []
 # TODO: A more efficient way to extend to n files
 
 for filepath in glob.glob(os.path.join(BASE_PATH, FILE_RE)):
-    with open(filepath, encoding="utf-8") as f:
+    with open(filepath, 'r', encoding="utf-8", errors="ignore") as f:
         F = f.read()
         preprocessed_files.append(preprocess(F))
 
