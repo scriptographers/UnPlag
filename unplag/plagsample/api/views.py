@@ -12,36 +12,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.models import User
 
 from plagsample.models import PlagSamp 
-from plagsample.api.serializers import PlagSampSerializer, RegistrationSerializer
-
-## Registration view for signup
-@api_view(['POST',])
-@permission_classes([])
-@authentication_classes([])
-def registration_view(request): # For signup
-    if request.method == 'POST':
-        serializer = RegistrationSerializer(data=request.data)
-        data = {}
-        if serializer.is_valid():
-            user = serializer.save()
-            refresh = RefreshToken.for_user(user)
-            data['response'] = "Successfully Signed Up"
-            data['username'] = user.username
-            data['refresh'] = str(refresh)
-            data['access'] = str(refresh.access_token)
-        else:
-            data = serializer.errors
-        return Response(data)
-###################################################################
+from plagsample.api.serializers import PlagSampSerializer
 
 
 ## Extending TokenObtainPairSerializer to get userid and username !
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
-        # refresh = self.get_token(self.user)
-        # data['refresh'] = str(refresh)
-        # data['access'] = str(refresh.access_token)
 
         # Add extra responses here
         data['username'] = self.user.username
