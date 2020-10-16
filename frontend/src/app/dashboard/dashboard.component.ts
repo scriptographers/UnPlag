@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../server.service';
+import { User } from '../user';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,17 +8,10 @@ import { ServerService } from '../server.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  name: string;
-  email: string;
+  user: User;
 
   constructor(private server: ServerService) { }
 
   ngOnInit() {
-    this.server.request('GET', '/profile').subscribe((user: any) => {
-      if (user) {
-        this.name = user.name;
-        this.email = user.email;
-      }
-    });
   }
 }

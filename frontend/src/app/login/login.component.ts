@@ -9,30 +9,22 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent implements OnInit {
   form: FormGroup;
-  public loginInvalid: boolean;
-  private formSubmitAttempt: boolean;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
   }
 
   ngOnInit() {
     this.form = this.fb.group({
-      email: ['', Validators.email],
+      username: [''],
       password: ['', Validators.required]
     });
   }
 
-  async onSubmit() {
-    this.loginInvalid = false;
-    this.formSubmitAttempt = false;
+  onSubmit() {
     if (this.form.valid) {
-      try {
-        await this.authService.login(this.form.value);
-      } catch (err) {
-        this.loginInvalid = true;
-      }
+      this.authService.login(this.form.value);
     } else {
-      this.formSubmitAttempt = true;
+      console.log("form invalid");
     }
   }
 }
