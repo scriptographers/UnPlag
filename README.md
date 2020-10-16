@@ -7,10 +7,11 @@ This branch contains all the models for ***Part 1: The Core Logic***.
  ### Models:
 1. **(Unigram) Bag of Words Model**:
    - File : `bow2.py`
-   - Usage: `python3 bow2.py -d <folder> -r <RegEx> -o <output>` or `python3 bow2.py --data <folder> --regex <RegEx> --output <output>`
+   - Usage: `python3 bow2.py -d <folder> -r <RegEx> -o <output>` or `python3 bow2.py --data <folder> --regex <RegEx> --output <output> --time`
       - `<folder>` - The folder containing the files to be checked
       - `<RegEx>` - Any RegEx applied to the file names (Eg. `*.txt`)
       - `<output>` - The path where the results (A `.csv` file) will be saved
+      - `--time` - Optional, displays the time taken for the "core logic" to execute 
       
 ---
    
