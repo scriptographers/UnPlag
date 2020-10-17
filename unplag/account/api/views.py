@@ -40,6 +40,20 @@ def registration_view(request): # For signup
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ###################################################################
 
+## Extending TokenObtainPairSerializer to get userid and username !
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Add extra responses here
+        data['username'] = self.user.username
+        data['id'] = self.user.id
+        return data
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+###################################################################
+
 ## Get Profile Details view
 @api_view(['GET',])
 def get_profile(request):
@@ -49,5 +63,19 @@ def get_profile(request):
         data = pr_serializer.data
         data['username'] = profile.user.username
         return Response(data)
+###################################################################
+
+## Update Profile details view
+@api_view(['PUT',])
+def update_profile(request):
+    if request.method == "PUT":
+        profile = get_object_or_404(Profile, user=request.user)
+        serializer = ProfileSerializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = serializer.data
+            data['username'] = request.user.username
+            return Response(data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ###################################################################
 

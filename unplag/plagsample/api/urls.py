@@ -1,12 +1,10 @@
 from django.urls import path
 
-# from plagsample.api.views import (
-# 	# registration_view,
-# 	# custom_obtain_auth_token,
-# 	)
+from plagsample.api.views import (
+	upload_sample,
+	)
 
 app_name = 'plagsample'
 urlpatterns = [
-	# path('login/', custom_obtain_auth_token, name='api-login'),
-    # path('signup/', registration_view, name='api-signup'),
+	path('upload/', upload_sample, name='plagsample-api-upload'),
 ]
