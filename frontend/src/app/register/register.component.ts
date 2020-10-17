@@ -34,14 +34,16 @@ export class RegisterComponent implements OnInit {
 
     console.log('Form valid');
 
-    this.server.request('POST', '/api/plagsample/signup/', {
+    this.server.post('/api/account/signup/', {
       username: this.form.get('username').value,
       password: this.form.get('password').value,
       password2: this.form.get('password2').value
-    }).subscribe(
+    }, true).subscribe(
       response => {
         console.log(response);
-        this.router.navigate(['/login']);
+        localStorage.setItem('access', response.access);
+        localStorage.setItem('refresh', response.refresh);
+        this.router.navigateByUrl('/profile');
       },
       error => {
         console.log("errors")

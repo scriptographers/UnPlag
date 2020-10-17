@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 const baseUrl = 'http://127.0.0.1:8000';
@@ -8,19 +8,9 @@ const baseUrl = 'http://127.0.0.1:8000';
   providedIn: 'root'
 })
 export class ServerService {
-  private loggedIn = false;
-  private token: string;
-
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
 
   constructor(private http: HttpClient) { }
 
-  setLoggedIn(loggedIn: boolean, token?: string) {
-    this.loggedIn = loggedIn;
-    this.token = token;
-  }
 
   request(method: string, route: string, data?: any) {
     if (method === 'GET') {
@@ -31,19 +21,19 @@ export class ServerService {
       return this.post(route, data);
     }
 
-    const header = (this.loggedIn) ? { Authorization: `Bearer ${this.token}` } : undefined;
+    else if (method === 'PUT') {
+      return this.put(route, data);
+    }
+
 
     return this.http.request(method, baseUrl + route, {
       body: data,
       responseType: 'json',
       observe: 'body',
-      headers: header
     });
   }
 
   get(route: string, data?: any): Observable<any> {
-    const header = (this.loggedIn) ? { Authorization: `Bearer ${this.token}` } : undefined;
-
     let params = new HttpParams();
     if (data !== undefined) {
       Object.getOwnPropertyNames(data).forEach(key => {
@@ -53,17 +43,19 @@ export class ServerService {
 
     return this.http.get(baseUrl + route, {
       responseType: 'json',
-      headers: header,
       params
     });
     // var obj = JSON.parse(txt);
   }
 
-  post(route: string, data?: any): Observable<any> {
-    if (this.loggedIn) {
-      this.httpOptions.headers = this.httpOptions.headers.set('Authorization', this.token);
+  post(route: string, data?: any, skip: boolean = false): Observable<any> {
+    if (skip) {
+      return this.http.post(baseUrl + route, data, { headers: { skip: "true" } });
     }
+    return this.http.post(baseUrl + route, data);
+  }
 
-    return this.http.post(baseUrl + route, data, this.httpOptions);
+  put(route: string, data?: any): Observable<any> {
+    return this.http.put(baseUrl + route, data);
   }
 }

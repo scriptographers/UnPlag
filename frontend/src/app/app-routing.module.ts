@@ -6,7 +6,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 // Specifies the route-component mapping
 const routes: Routes = [
-  { path: 'profile', component: DashboardComponent},
+  { path: 'profile', component: DashboardComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '', },
