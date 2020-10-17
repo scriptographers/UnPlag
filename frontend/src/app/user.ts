@@ -1,7 +1,6 @@
 export interface User {
-  access: string;
-  access_exp: number;
-  refresh: string;
-  userid: string;
+  userid: number;
   username: string;
+  profileid: number;
+  nickname: string;
 }
