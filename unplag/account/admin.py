@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import PlagSamp
+from .models import Profile
 
 # Register your models here.
 
-admin.site.register(PlagSamp)
+admin.site.register(Profile)

@@ -11,6 +11,7 @@ urlpatterns = [
 
     #REST_FRAMEWORK_URLS
     path('api/plagsample/', include('plagsample.api.urls', 'plagsample-api')),
+    path('api/account/', include('account.api.urls', 'account-api')),
 
     #JWT_TOKEN_VIEWS
     # Send username and password to get new access and refresh tokens
