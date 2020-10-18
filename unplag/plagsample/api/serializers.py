@@ -7,6 +7,6 @@ from django.contrib.auth.models import User
 class PlagSampSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = PlagSamp
-		fields = ['id', 'plagfile', 'userperson',
+		fields = ['id', 'plagfile1', 'plagfile2', 'user',
 			'date_posted', 'outfile']
 			

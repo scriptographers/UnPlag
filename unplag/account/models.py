@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 
 class Profile(models.Model):
 	# User
-	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile')
+	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile', editable = False)
 	nick = models.CharField(max_length=255, default='', null=True, blank=True)
 
 	def save(self, *args, **kwargs):
