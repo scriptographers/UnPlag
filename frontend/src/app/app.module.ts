@@ -10,7 +10,12 @@ import { AuthInterceptor } from './auth.interceptor';
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
+import { EditPasswordComponent } from './edit-password/edit-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProfileComponent } from './profile/profile.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { UploadComponent } from './upload/upload.component';
+import { DisplayComponent } from './display/display.component';
 
 // Material Modules
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -21,7 +26,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     AppComponent,
     RegisterComponent,
     LoginComponent,
+    EditPasswordComponent,
     DashboardComponent,
+    ProfileComponent,
+    EditProfileComponent,
+    UploadComponent,
+    DisplayComponent,
   ],
   imports: [
     BrowserModule,

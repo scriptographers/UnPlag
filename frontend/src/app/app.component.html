@@ -1,8 +1,12 @@
 <div class="top-bar" *ngIf="auth.isLoggedIn | async as isLoggedIn">
   <div class="top-bar-right show-for-medium">
     <ul class="menu">
+      <li><a routerLink="/dashboard">Dashboard</a></li>
       <li><a routerLink="/profile">Profile</a></li>
+      <li><a routerLink="/profile/edit">Edit Profile</a></li>
+      <li><a routerLink="/upload">Upload</a></li>
       <li><a (click)="onLogout()">Logout</a></li>
+      <li><a routerLink="/changepwd">Change Password</a></li>
     </ul>
   </div>
 </div>
