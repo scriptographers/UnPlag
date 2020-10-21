@@ -1,7 +1,4 @@
-<div class="top-bar" *ngIf="authService.isLoggedIn | async as isLoggedIn">
-  <div class="top-bar-left">
-    <a class="logo" routerLink="/">MyApp</a>
-  </div>
+<div class="top-bar" *ngIf="auth.isLoggedIn | async as isLoggedIn">
   <div class="top-bar-right show-for-medium">
     <ul class="menu">
       <li><a routerLink="/profile">Profile</a></li>

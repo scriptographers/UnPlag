@@ -21,10 +21,7 @@ export class AuthService {
 
   login(user: { username: string, password: string }) {
     if (user.username !== '' && user.password !== '') {
-      return this.server.post('/api/token/', {
-        username: user.username,
-        password: user.password
-      }, true).subscribe(
+      return this.server.post('/api/token/', user, true).subscribe(
         response => {
           console.log(response);
           localStorage.setItem('access', response.access);
@@ -37,6 +34,26 @@ export class AuthService {
         }
       );
     }
+  }
+
+  register(user: { username: string, password: string, password2: string }) {
+    this.server.post('/api/account/signup/', user, true).subscribe(
+      response => {
+        console.log(response);
+        localStorage.setItem('access', response.access);
+        localStorage.setItem('refresh', response.refresh);
+        this.loggedIn.next(true);
+        this.router.navigateByUrl('/profile');
+      },
+      error => {
+        if (error.error.password != null) {
+          console.log(error.error.password)
+        }
+        else if (error.error.username != null) {
+          console.log(error.error.username)
+        }
+      }
+    );
   }
 
   logout() {

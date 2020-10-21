@@ -41,16 +41,16 @@ export class AuthInterceptor implements HttpInterceptor {
       () => { },
       (error: any) => {
         if (error instanceof HttpErrorResponse) {
-          if (error.status !== 401) {
+          if (error.status === 401) {
             if (error.error.detail === 'Given token not valid for any token type') {
               console.log('Authorization Failed with access token, trying refresh token');
               this.auth.refresh();
             } else {
               this.auth.logout();
             }
-            return;
+            this.router.navigateByUrl('login');
           }
-          this.router.navigateByUrl('login');
+          return;
         }
       }));
   }

@@ -7,9 +7,9 @@ import { AuthService } from './auth.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(public authService: AuthService) { }
+  constructor(public auth: AuthService) { }
 
   onLogout() {
-    this.authService.logout();
+    this.auth.logout();
   }
 }

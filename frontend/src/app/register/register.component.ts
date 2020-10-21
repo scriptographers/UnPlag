@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private server: ServerService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService,
   ) { }
 
   ngOnInit() {
@@ -34,27 +36,10 @@ export class RegisterComponent implements OnInit {
 
     console.log('Form valid');
 
-    this.server.post('/api/account/signup/', {
+    this.auth.register({
       username: this.form.get('username').value,
       password: this.form.get('password').value,
       password2: this.form.get('password2').value
-    }, true).subscribe(
-      response => {
-        console.log(response);
-        localStorage.setItem('access', response.access);
-        localStorage.setItem('refresh', response.refresh);
-        this.router.navigateByUrl('/profile');
-      },
-      error => {
-        console.log("errors")
-        console.log(error.error);
-        if (error.error.password != null) {
-          console.log(error.error.password)
-        }
-        else if (error.error.username != null) {
-          console.log(error.error.username)
-        }
-      }
-    );
+    });
   }
 }
