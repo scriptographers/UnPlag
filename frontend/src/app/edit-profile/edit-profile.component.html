@@ -1,1 +1,14 @@
-<p>edit-profile works!</p>
+<div class="grid-container">
+  <div class="grid-x">
+    <div class="small-12 medium-10 medium-offset-1 large-8 large-offset-2 cell">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <h2>Update Profile</h2>
+        <label class="full-width-input">
+          Nickname
+          <input type="text" placeholder="Nickname" formControlName="nickname" required>
+        </label>
+        <button class="button">Update</button>
+      </form>
+    </div>
+  </div>
+</div>
