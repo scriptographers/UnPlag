@@ -19,7 +19,7 @@ export class AuthService {
     }
   }
 
-  login(user: { username: string, password: string }) {
+  login(user: { username: string, password: string }, ret: string) {
     if (user.username !== '' && user.password !== '') {
       return this.server.post('/api/token/', user, true).subscribe(
         response => {
@@ -27,7 +27,7 @@ export class AuthService {
           localStorage.setItem('access', response.access);
           localStorage.setItem('refresh', response.refresh);
           this.loggedIn.next(true);
-          this.router.navigateByUrl('/dashboard');
+          this.router.navigateByUrl(ret);
         },
         error => {
           console.log(error.error.detail);

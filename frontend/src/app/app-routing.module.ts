@@ -8,17 +8,18 @@ import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { UploadComponent } from './upload/upload.component';
 import { DisplayComponent } from './display/display.component';
+import { AuthGuard } from './auth.guard';
 
 // Specifies the route-component mapping
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'changepwd', component: EditPasswordComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'profile/edit', component: EditProfileComponent },
-  { path: 'upload', component: UploadComponent },
-  { path: 'display', component: DisplayComponent },
+  { path: 'changepwd', component: EditPasswordComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'profile/edit', component: EditProfileComponent, canActivate: [AuthGuard] },
+  { path: 'upload', component: UploadComponent, canActivate: [AuthGuard] },
+  { path: 'display', component: DisplayComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'dashboard', },
 ];
 

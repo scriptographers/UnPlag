@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 
@@ -9,8 +10,12 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent implements OnInit {
   form: FormGroup;
+  ret: string = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private route: ActivatedRoute) {
   }
 
   ngOnInit() {
@@ -18,11 +23,16 @@ export class LoginComponent implements OnInit {
       username: [''],
       password: ['', Validators.required]
     });
+    // Get the query params
+    this.route.queryParams
+      .subscribe(params => {
+        this.ret = params['return'] || '/dashboard';
+      });
   }
 
   onSubmit() {
     if (this.form.valid) {
-      this.authService.login(this.form.value);
+      this.auth.login(this.form.value, this.ret);
     } else {
       console.log("form invalid");
     }
