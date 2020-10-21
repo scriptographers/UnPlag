@@ -6,9 +6,16 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.core.files import File
+from django.conf import settings
 
 from plagsample.models import PlagSamp 
 from plagsample.api.serializers import PlagSampSerializer
+
+import os
+
+MEDIA_ROOT = settings.MEDIA_ROOT
 
 ## Upload Plag Sample
 @api_view(['POST',])
@@ -18,20 +25,46 @@ def upload_sample(request):
         serializer = PlagSampSerializer(plag_post, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
-            ## Process stuff here
+            
+            ## Dummy csv for testing
+            csv_path = os.path.join(MEDIA_ROOT, "outputcsvfiles/jaccard.csv")
+            csv_f = File(open(csv_path, 'r'))
+            plag_post.outfile.save("csv_" + os.path.splitext(os.path.basename(plag_post.plagzip.name))[0] + ".csv", csv_f)
+            
+            serializer = PlagSampSerializer(plag_post)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ###################################################################
 
-## Get Past User Plag samples
-# @api_view(['GET',])
-# def get_samples(request):
-# 	if request.method == "GET":
-		
+## Download CSV Sample
+@api_view(['GET',])
+def download_csv(request, pk):
+    if request.method == 'GET':
+        user = request.user
+        data = {}
+        try:
+            plagsample = PlagSamp.objects.filter(user=user).get(pk=pk)
+        except PlagSamp.DoesNotExist:
+            data['response'] = "Forbidden or Wrong Primary Key"
+            return Response(data, status=status.HTTP_403_FORBIDDEN)
+
+        file = plagsample.outfile
+        file_name = file.name
+        if not file_name:
+            data['response'] = "Output CSV not processed yet !"
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        file_read = file.open(mode='r') 
+        f = file_read.readlines()
+        file_read.close()
+
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Length'] = file.size
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        return response
+###################################################################		
 
 # Preliminary Work left :
 #
-# Downloading dummy csv
 # Downloading dummy surface plot
 # Getting individual plagsample details
