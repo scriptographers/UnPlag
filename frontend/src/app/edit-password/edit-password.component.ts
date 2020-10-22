@@ -21,7 +21,7 @@ export class EditPasswordComponent implements OnInit {
     this.form = this.fb.group({
       old_password: ['', Validators.required],
       new_password: ['', Validators.required],
-      password2: ['', Validators.required]
+      new_password2: ['', Validators.required]
     });
   }
 
@@ -37,10 +37,10 @@ export class EditPasswordComponent implements OnInit {
     let user = {
       old_password: this.form.get('old_password').value,
       new_password: this.form.get('new_password').value,
-      // password2: this.form.get('password2').value
+      new_password2: this.form.get('new_password2').value
     };
 
-    if (user.old_password !== '' && user.new_password !== '') {
+    if (user.old_password !== '' && user.new_password !== '' && user.new_password2 !== '') {
       return this.server.put('/api/account/upassword/', user).subscribe(
         response => {
           console.log(response);

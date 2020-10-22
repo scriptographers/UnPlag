@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../server.service';
-import { User } from '../user';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,7 +7,7 @@ import { User } from '../user';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  user: User;
+  user: any;
 
   constructor(private server: ServerService) {
     this.user = {
