@@ -35,13 +35,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
 		return user
 
 class ChangePasswordSerializer(serializers.Serializer):
-    model = User
+	model = User
 
-    """
-    Serializer for password change endpoint.
-    """
-    old_password = serializers.CharField(style={'input_type' : 'password'}, 
+	"""
+	Serializer for password change endpoint.
+	"""
+	old_password = serializers.CharField(style={'input_type' : 'password'}, 
 										required=True)
-    new_password = serializers.CharField(style={'input_type' : 'password'}, 
+	new_password = serializers.CharField(style={'input_type' : 'password'}, 
+										required=True)
+	new_password2 = serializers.CharField(style={'input_type' : 'password'}, 
 										required=True)
 
