@@ -1,4 +1,4 @@
-from rest_framework import status, generics
+from rest_framework import status, generics, serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authtoken.models import Token
@@ -99,6 +99,8 @@ class ChangePasswordView(generics.UpdateAPIView):
                 # Check old password
                 if not self.object.check_password(serializer.data.get("old_password")):
                     return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+                if serializer.data.get("new_password") != serializer.data.get("new_password2"):
+                    raise serializers.ValidationError({'password': 'Passwords Must Match'}) 
                 # set_password also hashes the password that the user will get
                 self.object.set_password(serializer.data.get("new_password"))
                 self.object.save()
