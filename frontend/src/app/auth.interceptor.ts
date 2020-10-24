@@ -29,12 +29,24 @@ export class AuthInterceptor implements HttpInterceptor {
     console.log('Interceptor called')
     const access = localStorage.getItem('access');
     if (access) {
-      request = request.clone({
-        setHeaders: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${access}`
-        }
-      });
+      if (request.headers.has("file")) {
+        request = request.clone({
+          headers: request.headers.delete('file')
+        });
+        request = request.clone({
+          setHeaders: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${access}`
+          }
+        });
+      } else {
+        request = request.clone({
+          setHeaders: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${access}`
+          }
+        });
+      }
     }
 
     return next.handle(request).pipe(tap(

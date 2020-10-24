@@ -48,11 +48,16 @@ export class ServerService {
     // var obj = JSON.parse(txt);
   }
 
-  post(route: string, data?: any, skip: boolean = false): Observable<any> {
+  post(route: string, data?: any, skip: boolean = false, file: boolean = false): Observable<any> {
+    let head = {};
     if (skip) {
-      return this.http.post(baseUrl + route, data, { headers: { skip: "true" } });
+      head["skip"] = "true";
     }
-    return this.http.post(baseUrl + route, data);
+    if (file) {
+      head["file"] = "true";
+    }
+    console.log(head);
+    return this.http.post(baseUrl + route, data, {headers: head});
   }
 
   put(route: string, data?: any): Observable<any> {

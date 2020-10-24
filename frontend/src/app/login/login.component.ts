@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 
@@ -15,10 +15,16 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
+    private router: Router,
     private route: ActivatedRoute) {
   }
 
   ngOnInit() {
+    this.auth.isLoggedIn.subscribe(t => {
+      if (t == true) {
+        this.router.navigateByUrl('/dashboard');
+      }
+    });
     this.form = this.fb.group({
       username: [''],
       password: ['', Validators.required]

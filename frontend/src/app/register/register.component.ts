@@ -20,6 +20,11 @@ export class RegisterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.auth.isLoggedIn.subscribe(t => {
+      if (t == true) {
+        this.router.navigateByUrl('/dashboard');
+      }
+    });
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],

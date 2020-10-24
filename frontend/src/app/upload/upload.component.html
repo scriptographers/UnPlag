@@ -1,1 +1,15 @@
 <p>upload works!</p>
+<div class="grid-container">
+  <div class="grid-x">
+    <div class="small-12 medium-10 medium-offset-1 large-8 large-offset-2 cell">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <h2>Upload zip</h2>
+        <label class="full-width-input">
+          Compressed Folder
+          <input type="file" class="form-control" (change)="onFileChange($event)">
+        </label>
+        <button class="button">Upload</button>
+      </form>
+    </div>
+  </div>
+</div>
