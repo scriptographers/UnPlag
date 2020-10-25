@@ -15,6 +15,10 @@ from django.shortcuts import get_object_or_404
 from account.models import Profile 
 from account.api.serializers import ProfileSerializer, RegistrationSerializer, ChangePasswordSerializer
 
+from plagsample.models import PlagSamp
+
+import os
+
 ## Registration view for signup
 @api_view(['POST',])
 @permission_classes([])
@@ -111,4 +115,16 @@ class ChangePasswordView(generics.UpdateAPIView):
                 }
                 return Response(response, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+###################################################################
+
+## Get Past Plag Checks
+@api_view(['GET',])
+def get_pastchecks(request):
+    if request.method == 'GET':
+        logged_user = request.user
+        past_plagchecks = logged_user.plagsamp_set.all().order_by("-date_posted")
+        data = {}
+        data['pastchecks'] = [{"filename" : os.path.basename(plagsample.plagzip.name),
+             "id" : plagsample.id, "date-posted" : plagsample.date_posted} for plagsample in past_plagchecks]
+        return Response(data, status=status.HTTP_200_OK)
 ###################################################################
