@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'profile/edit', component: EditProfileComponent, canActivate: [AuthGuard] },
   { path: 'upload', component: UploadComponent, canActivate: [AuthGuard] },
-  { path: 'display', component: DisplayComponent, canActivate: [AuthGuard] },
+  { path: 'display/:id', component: DisplayComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'dashboard', },
 ];
 

@@ -12,16 +12,21 @@ export class DataService {
   }
 
   upload(data: File) {
-    const formData: FormData = new FormData();
+    let formData: FormData = new FormData();
     formData.append('plagzip', data, data.name);
-    console.log(data)
-    return this.server.post('/api/plagsample/upload/', formData, false, true).subscribe(
+    console.log(formData)
+    return this.server.post('/api/plagsample/upload/', formData).subscribe(
       response => {
-        console.log(response);
+        console.log(response.id);
+        this.router.navigateByUrl('display/'+response.id)
       },
       error => {
         console.log(error.error);
       }
     );
+  }
+
+  download(id:string) {
+    return this.server.get(`/api/plagsample/download/${id}/`, undefined, true);
   }
 }

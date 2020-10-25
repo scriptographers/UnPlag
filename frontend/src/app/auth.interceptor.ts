@@ -29,24 +29,11 @@ export class AuthInterceptor implements HttpInterceptor {
     console.log('Interceptor called')
     const access = localStorage.getItem('access');
     if (access) {
-      if (request.headers.has("file")) {
-        request = request.clone({
-          headers: request.headers.delete('file')
-        });
-        request = request.clone({
-          setHeaders: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${access}`
-          }
-        });
-      } else {
-        request = request.clone({
-          setHeaders: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${access}`
-          }
-        });
-      }
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${access}`
+        }
+      });
     }
 
     return next.handle(request).pipe(tap(
@@ -61,6 +48,10 @@ export class AuthInterceptor implements HttpInterceptor {
               this.auth.logout();
             }
             this.router.navigateByUrl('login');
+          }
+          else if (error.status === 403) {
+            console.log('Access Denied')
+            this.router.navigateByUrl('dashboard');
           }
           return;
         }

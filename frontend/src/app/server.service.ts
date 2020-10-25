@@ -33,14 +33,19 @@ export class ServerService {
     });
   }
 
-  get(route: string, data?: any): Observable<any> {
+  get(route: string, data?: any, blob: boolean = false): Observable<any> {
     let params = new HttpParams();
     if (data !== undefined) {
       Object.getOwnPropertyNames(data).forEach(key => {
         params = params.set(key, data[key]);
       });
     }
-
+    if (blob) {
+      return this.http.get(baseUrl + route, {
+        observe: 'response',
+        responseType: 'blob' as 'json'
+      });
+    }
     return this.http.get(baseUrl + route, {
       responseType: 'json',
       params
@@ -48,16 +53,11 @@ export class ServerService {
     // var obj = JSON.parse(txt);
   }
 
-  post(route: string, data?: any, skip: boolean = false, file: boolean = false): Observable<any> {
-    let head = {};
+  post(route: string, data?: any, skip: boolean = false): Observable<any> {
     if (skip) {
-      head["skip"] = "true";
+      return this.http.post(baseUrl + route, data, { headers: { skip: "true" } });
     }
-    if (file) {
-      head["file"] = "true";
-    }
-    console.log(head);
-    return this.http.post(baseUrl + route, data, {headers: head});
+    return this.http.post(baseUrl + route, data);
   }
 
   put(route: string, data?: any): Observable<any> {
