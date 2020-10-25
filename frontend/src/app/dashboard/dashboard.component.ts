@@ -7,32 +7,23 @@ import { ServerService } from '../server.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  user: any;
+  history: Array<any>;
 
-  constructor(private server: ServerService) {
-    this.user = {
-      userid: 0,
-      username: '',
-      profileid: 0,
-      nickname: ''
-    }
+  constructor(
+    private server: ServerService
+  ) {
+    this.history = new Array();
   }
 
   ngOnInit(): void {
-    this.server.get('/api/account/profile/').subscribe(
+    this.server.get('/api/account/pastchecks/').subscribe(
       response => {
         console.log(response);
-        this.user = {
-          userid: response.user,
-          username: response.username,
-          profileid: response.id,
-          nickname: response.nick
-        }
-        console.log(this.user);
+        this.history = response.pastchecks;
       },
       error => {
         console.log(error);
       }
-    );
+    )
   }
 }

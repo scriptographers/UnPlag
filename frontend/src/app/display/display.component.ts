@@ -10,7 +10,7 @@ import { DataService } from '../data.service';
 })
 export class DisplayComponent implements OnInit {
   id: string;
-  content: Array<number>;
+  content: Array<any>;
 
   constructor(
     private router: Router,
