@@ -30,6 +30,7 @@ Submissions of Text Based Assignments](https://arxiv.org/ftp/arxiv/papers/1403/1
      
 ### Testing Datasets:  
 1. [A Corpus of (100) Plagiarised Short Answers](https://ir.shef.ac.uk/cloughie/resources/plagiarism_corpus.html)
+2. [PAN Plagiarism Corpus 2011 (PAN-PC-11)](https://zenodo.org/record/3250095#.X5b8EIgzZPY) *(Not yet tried this dataset, it has many files, can be used for efficiency check atleast)*
    
 ---
    
