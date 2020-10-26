@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, EMPTY } from 'rxjs';
 import { ServerService } from './server.service';
+import { catchError, tap } from "rxjs/operators";
 
 @Injectable()
 export class AuthService {
@@ -68,15 +69,16 @@ export class AuthService {
     const refresh = localStorage.getItem('refresh');
     return this.server.post('/api/token/refresh/', {
       refresh: refresh
-    }, true).subscribe(
-      response => {
+    }, true).pipe(
+      tap(response => {
         console.log(response);
         localStorage.setItem('access', response.access);
-      },
-      error => {
+      }),
+      catchError(error => {
         console.log(error.error.detail);
         this.logout();
-      }
-    );
-  }
+        return EMPTY;
+      })
+    )
+  };
 }
