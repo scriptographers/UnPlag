@@ -1,6 +1,5 @@
-import { ArrayType } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../data.service';
 
 @Component({
@@ -13,7 +12,6 @@ export class DisplayComponent implements OnInit {
   content: Array<any>;
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private data: DataService
   ) {

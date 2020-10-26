@@ -9,22 +9,20 @@ const baseUrl = 'http://127.0.0.1:8000';
 })
 export class ServerService {
 
-  constructor(private http: HttpClient) { }
-
+  constructor(
+    private http: HttpClient
+  ) { }
 
   request(method: string, route: string, data?: any) {
     if (method === 'GET') {
       return this.get(route, data);
     }
-
     else if (method === 'POST') {
       return this.post(route, data);
     }
-
     else if (method === 'PUT') {
       return this.put(route, data);
     }
-
 
     return this.http.request(method, baseUrl + route, {
       body: data,
@@ -50,7 +48,6 @@ export class ServerService {
       responseType: 'json',
       params
     });
-    // var obj = JSON.parse(txt);
   }
 
   post(route: string, data?: any, skip: boolean = false): Observable<any> {

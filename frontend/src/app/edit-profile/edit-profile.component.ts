@@ -9,14 +9,14 @@ import { ServerService } from '../server.service';
   styleUrls: ['./edit-profile.component.scss']
 })
 export class EditProfileComponent implements OnInit {
-  user: any;
+  profile: any;
 
   constructor(
     private fb: FormBuilder,
     private server: ServerService,
     private router: Router,
   ) {
-    this.user = {
+    this.profile = {
       userid: 0,
       username: '',
       profileid: 0,
@@ -32,14 +32,14 @@ export class EditProfileComponent implements OnInit {
     this.server.get('/api/account/profile/').subscribe(
       response => {
         console.log(response);
-        this.user = {
+        this.profile = {
           userid: response.user,
           username: response.username,
           profileid: response.id,
           nickname: response.nick
         }
-        this.form.setValue({nickname: this.user.nickname});
-        console.log(this.user);
+        this.form.setValue({ nickname: this.profile.nickname });
+        console.log(this.profile);
       },
       error => {
         console.log(error);

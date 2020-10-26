@@ -9,13 +9,21 @@ import { ServerService } from '../server.service';
   styleUrls: ['./edit-password.component.scss']
 })
 export class EditPasswordComponent implements OnInit {
+  profile: any;
   form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private server: ServerService,
     private router: Router,
-  ) { }
+  ) {
+    this.profile = {
+      userid: 0,
+      username: '',
+      profileid: 0,
+      nickname: ''
+    }
+  }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -23,6 +31,21 @@ export class EditPasswordComponent implements OnInit {
       new_password: ['', Validators.required],
       new_password2: ['', Validators.required]
     });
+    this.server.get('/api/account/profile/').subscribe(
+      response => {
+        console.log(response);
+        this.profile = {
+          userid: response.user,
+          username: response.username,
+          profileid: response.id,
+          nickname: response.nick
+        }
+        console.log(this.profile);
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   onSubmit() {

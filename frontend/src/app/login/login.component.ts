@@ -30,10 +30,11 @@ export class LoginComponent implements OnInit {
       password: ['', Validators.required]
     });
     // Get the query params
-    this.route.queryParams
-      .subscribe(params => {
+    this.route.queryParams.subscribe(
+      params => {
         this.ret = params['return'] || '/dashboard';
-      });
+      }
+    );
   }
 
   onSubmit() {

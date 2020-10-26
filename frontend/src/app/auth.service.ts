@@ -7,17 +7,21 @@ import { catchError, tap } from "rxjs/operators";
 @Injectable()
 export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
-  get isLoggedIn() {
-    return this.loggedIn.asObservable();
-  }
 
-  constructor(private router: Router, private server: ServerService) {
+  constructor(
+    private router: Router,
+    private server: ServerService
+  ) {
     console.log('Auth Service');
     const access = localStorage.getItem('access');
     if (access) {
       console.log('Logged in from memory');
       this.loggedIn.next(true);
     }
+  }
+
+  get isLoggedIn() {
+    return this.loggedIn.asObservable();
   }
 
   login(user: { username: string, password: string }, ret: string) {

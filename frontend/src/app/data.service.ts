@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { ServerService } from './server.service';
 
 @Injectable({
@@ -8,8 +7,10 @@ import { ServerService } from './server.service';
 })
 export class DataService {
 
-  constructor(private router: Router, private server: ServerService) {
-  }
+  constructor(
+    private router: Router,
+    private server: ServerService
+  ) { }
 
   upload(data: File) {
     let formData: FormData = new FormData();
@@ -18,7 +19,7 @@ export class DataService {
     return this.server.post('/api/plagsample/upload/', formData).subscribe(
       response => {
         console.log(response.id);
-        this.router.navigateByUrl('display/'+response.id)
+        this.router.navigateByUrl('display/' + response.id)
       },
       error => {
         console.log(error.error);
@@ -26,7 +27,7 @@ export class DataService {
     );
   }
 
-  download(id:string) {
+  download(id: string) {
     return this.server.get(`/api/plagsample/download/${id}/`, undefined, true);
   }
 }

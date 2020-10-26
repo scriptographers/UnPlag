@@ -7,10 +7,12 @@ import { ServerService } from '../server.service';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  user: any;
+  profile: any;
 
-  constructor(private server: ServerService) {
-    this.user = {
+  constructor(
+    private server: ServerService
+  ) {
+    this.profile = {
       userid: 0,
       username: '',
       profileid: 0,
@@ -22,13 +24,13 @@ export class ProfileComponent implements OnInit {
     this.server.get('/api/account/profile/').subscribe(
       response => {
         console.log(response);
-        this.user = {
+        this.profile = {
           userid: response.user,
           username: response.username,
           profileid: response.id,
           nickname: response.nick
         }
-        console.log(this.user);
+        console.log(this.profile);
       },
       error => {
         console.log(error);
