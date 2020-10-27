@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../data.service';
 
 @Component({
@@ -10,8 +10,10 @@ import { DataService } from '../data.service';
 export class DisplayComponent implements OnInit {
   id: string;
   content: Array<any>;
+  buffer: any;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private data: DataService
   ) {
@@ -26,8 +28,9 @@ export class DisplayComponent implements OnInit {
       response => {
         console.log(response);
         console.log(response.body);
+        this.buffer = response.body;
         response.body.text().then(
-          buffer => {
+          (buffer: string) => {
             console.log(buffer);
             console.log(typeof buffer);
             let arr = buffer.split('\n');
@@ -43,8 +46,12 @@ export class DisplayComponent implements OnInit {
       },
       error => {
         console.log(error);
+        this.router.navigateByUrl('/dashboard');
       }
     );
   }
 
+  download() {
+    this.data.downloadCSV(this.buffer, "demo.csv");
+  }
 }

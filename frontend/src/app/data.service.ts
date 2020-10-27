@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ServerService } from './server.service';
+import { saveAs } from 'file-saver';
 
 @Injectable({
   providedIn: 'root'
@@ -29,5 +30,12 @@ export class DataService {
 
   download(id: string) {
     return this.server.get(`/api/plagsample/download/${id}/`, undefined, true);
+  }
+
+  downloadCSV(data: any, name: string) {
+    const blobData = new Blob([data], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blobData);
+    console.log(blobData)
+    saveAs(blobData, name);
   }
 }
