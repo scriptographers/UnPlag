@@ -12,6 +12,7 @@ This branch contains all the models for ***Part 1: The Core Logic***.
      - **`sklearn`**: Used the `TfidfVectorizer`
      - **`collections`**: Used `Counter` while computing the Jaccard similarity
      - **`numpy`**: Used for basic vector operations and for computing the cosine similarities
+     - **`seaborn`**: Used for creating heatmaps
      - **`argparse`**: Used for parsing the command line arguments
      - **`glob`** : Used for iterating through the given folder of files based on the given RegEx
    - **File**: `detect.py`
@@ -26,7 +27,9 @@ This branch contains all the models for ***Part 1: The Core Logic***.
       - `<output>` - The path where the results (A `.csv` file) will be saved
       - `--time` - Optional, displays the time taken for the "core logic" to execute   
    Example usage: `python3 detect.py -d ./datasets/data/ -r "*.txt" -o results.csv --time`   
-   - **Output**: 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)
+   - **Output**: 
+      - 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)
+      - 2 heatmaps corresponding to each similarity metric and one heatmap for TF-IDF 
    
 ---
    

@@ -3,10 +3,12 @@ import glob
 import time
 import argparse
 import numpy as np
+import seaborn as sns
 from string import punctuation
 from collections import Counter
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer 
+from matplotlib import pyplot as plt
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer as tfidfv 
 
@@ -125,6 +127,26 @@ toc = time.time()
 
 if showTime:
     print("Time: {:.4f}".format(toc-tic))
+
+# Heatmaps
+
+## Cosine Heatmap
+chm = sns.heatmap(cosine_matrix)
+fig1 = chm.get_figure()
+fig1.savefig("plots/cosine_heatmap.png", dpi=150)   
+plt.figure() 
+
+## Jaccard Heatmap
+jhm = sns.heatmap(jaccard_matrix)
+fig2 = jhm.get_figure()    
+fig2.savefig("plots/jaccard_heatmap.png", dpi=150)
+plt.figure()
+
+## TF-IDF Heatmap
+thm = sns.heatmap(tfidf_matrix)
+fig3 = thm.get_figure()    
+fig3.savefig("plots/tfidf_heatmap.png", dpi=150)
+plt.figure()
 
 # Dump results into a CSV file
 np.savetxt("cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
