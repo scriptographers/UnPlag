@@ -18,6 +18,7 @@ from account.api.serializers import ProfileSerializer, RegistrationSerializer, C
 from plagsample.models import PlagSamp
 
 import os
+from pytz import timezone
 
 ## Registration view for signup
 @api_view(['POST',])
@@ -125,6 +126,6 @@ def get_pastchecks(request):
         past_plagchecks = logged_user.plagsamp_set.all().order_by("-date_posted")
         data = {}
         data['pastchecks'] = [{"filename" : os.path.basename(plagsample.plagzip.name),
-             "id" : plagsample.id, "date-posted" : plagsample.date_posted} for plagsample in past_plagchecks]
+             "id" : plagsample.id, "timestamp" : plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")} for plagsample in past_plagchecks]
         return Response(data, status=status.HTTP_200_OK)
 ###################################################################
