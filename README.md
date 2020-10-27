@@ -2,7 +2,7 @@
 
 Course project for **CS 251: Software Systems Lab**
 
-## **How to run** :
+## **How to run**
 
 ### Backend
 
@@ -26,26 +26,28 @@ ng serve
 
 ---
 
+---
+
 ## **Backend**
 
-### Completed in Phase-I
+### Implemented so far
 
-- Implemented a **Django 3.1** and **Django REST Framework** based backend for the Plag Checker API.
-- Used **JWT** for secure User Authentication.
+- Implemented a **Django 3.1** and **Django REST Framework** based backend for the Plag Checker API
+- Used **JWT** for secure User Authentication
 - Created serializers for _Login, Sign-Up and Change Password_
-- Created a **User Profile** Model for storing personal data (later to be linked to Organisation models).
-- Used DRF's **function based views** for creating and updating profiles.
-- Integrated a **PlagSample** Model to store the data from the plagiarism checks in the backend database.
-- Implemented a combination of class and function based **authenticated endpoints** to serve and upload files.
+- Created a **User Profile** Model for storing personal data (later to be linked to Organisation models)
+- Used DRF's **function based views** for creating and updating profiles
+- Integrated a **PlagSample** Model to store the data from the plagiarism checks in the backend database
+- Implemented a combination of class and function based **authenticated endpoints** to serve and upload files
 
 ---
 
 ### Plans for Phase-2:
 
-- Introduce more fields in user profile.
-- Use an actual production server like **nginx** for serving media files.
-- Introduce **tarfile** and **zipfile** checks to ensure the integrity of the uploaded compressed file.
-- Devise a methodology to run the backend computation parallely, to **reduce overall django overhead**.
+- Introduce more fields in user profile
+- Use an actual production server like **nginx** for serving media files
+- Introduce **tarfile** and **zipfile** checks to ensure the integrity of the uploaded compressed file
+- Devise a methodology to run the backend computation parallely, to **reduce overall django overhead**
 
 ---
 
@@ -75,7 +77,7 @@ ng serve
 
 `ENDPOINT : '/api/token/' | REQUEST TYPE : POST`
 
-Returns an 'access' and a 'refresh' **JWT token** for a given valid 'username' and 'password'.
+Returns an 'access' and a 'refresh' **JWT token** for a given valid 'username' and 'password'
 
 ```
 Format :
@@ -88,7 +90,7 @@ Format :
 
 `ENDPOINT : '/api/token/refresh/' | REQUEST TYPE : POST`
 
-Returns an 'access' token for a given valid 'refresh' token.
+Returns an 'access' token for a given valid 'refresh' token
 
 ```
 Format:
@@ -114,7 +116,7 @@ Format:
 
 `ENDPOINT : 'api/account/profile/' | REQUEST TYPE : GET (Authenticated Endpoint)`
 
-Returns profile details of the current authenticated user.
+Returns profile details of the current authenticated user
 
 ```
 Format:
@@ -127,7 +129,7 @@ Format:
 
 `ENDPOINT : 'api/account/update/' | REQUEST TYPE : PUT (Authenticated Endpoint)`
 
-Updates the profile with the given input data.
+Updates the profile with the given input data
 
 ```
 Format:
@@ -141,7 +143,7 @@ Format:
 
 `ENDPOINT : 'api/account/upassword/' | REQUEST TYPE : PUT (Authenticated Endpoint)`
 
-Updates the user password.
+Updates the user password
 
 ```
 Format:
@@ -155,7 +157,7 @@ Format:
 
 `ENDPOINT : 'api/account/pastchecks/' | REQUEST TYPE : GET (Authenticated Endpoint)`
 
-Returns a list of past plagiarism check IDs by the user along with the uploaded filename.
+Returns a list of past plagiarism check IDs by the user along with the uploaded filename
 
 ```
 Format:
@@ -180,7 +182,7 @@ Format:
 
 `ENDPOINT : 'api/plagsample/upload/' | REQUEST TYPE : POST (Authenticated Endpoint)`
 
-Returns a plagiarism check id for the uploaded compressed file.
+Returns a plagiarism check id for the uploaded compressed file
 
 ```
 Format:
@@ -194,7 +196,7 @@ Format:
 
 `ENDPOINT : 'api/plagsample/download/<id>' | REQUEST TYPE : GET (Authenticated Endpoint)`
 
-Returns the processed CSV file as a JSON file attachment response blob(If the authentication details match correctly).
+Returns the processed CSV file as a JSON file attachment response blob(If the authentication details match correctly)
 
 ```
 Format:
@@ -206,22 +208,30 @@ Format:
 
 ---
 
+---
+
 ## **Frontend**
 
-### Completed in Phase-I
+### Implemented so far
 
-- Implemented Frontend with **AngularTS 9.0**
+- Developed User interface with **AngularTS 9.0**
 - Created components for Register, Login, Change Password, Dashboard, Profile, Edit Profile, Upload and Download
 - Added **JWT support** in **Auth Service** which takes care of Login, Register as well as Refreshing of Tokens
-- Added **HTTP Interceptor** which added the token if present to the header whenever required.
-- Added **HTTP Guard** to prevent unauthorized user to visit urls which are meant for only certain users.
-- Added **DataService** to upload zip files and download the csv file and display it (for now as a table).
+- Added **HTTP Interceptor** which added the token if present to the header whenever required
+- Added **HTTP Guard** to prevent unauthorized user to visit urls which are meant for only certain users
+- Added **DataService** to upload zip files and download the csv file and display it (for now as a table)
 
 ---
 
 ### Plans for Phase-2:
 
-- Design and styling using SCSS/CSS
+- Designing the header and footer using Bootstrap or Angular Materials
+- Adding stylings using **SCSS**
+- Testing visualization approaches like **Surface plots**, **Heat maps** (or **Grayscale image**), **Graph** representation
+- Make UX better by adding features like user interactive tools
+- Implementing and integrating **multiple model** system
+
+---
 
 ---
 
@@ -293,3 +303,27 @@ Format:
 2. [A Gentle Introduction to the Bag-of-Words Model](https://machinelearningmastery.com/gentle-introduction-bag-words-model/)
 3. [(TF-IDF) How to compute the similarity between two text documents?
    (StackOverflow)](https://stackoverflow.com/questions/8897593/how-to-compute-the-similarity-between-two-text-documents)
+
+---
+
+---
+
+## **Bonus plan: Terminal Client**
+
+### Thoughts and references
+
+There are two options to develop a CLI - NodeJS or Python.  
+Links referred to:
+
+1. [Build a Terminal Chat Application With Node.js](https://getstream.io/blog/build-a-terminal-chat-application-with-node-js/)
+2. [Making a simple Web based SSH client using Node.js and Socket.io](https://hub.packtpub.com/making-simple-web-based-ssh-client-using-nodejs-and-socketio/)
+3. [SSH web console](https://medium.com/codingtown/ssh-web-console-21e87b611674)
+4. [xterm.js Docs](https://xtermjs.org/)
+5. [How to build a CLI with Node.js](https://www.twilio.com/blog/how-to-build-a-cli-with-node-js)
+6. [How to write a login script in python via an interactive CLI](https://stackoverflow.com/questions/57194845/how-to-write-a-login-script-in-python-via-an-interactive-cli)
+7. [Creating A Real-World CLI App With Node](https://timber.io/blog/creating-a-real-world-cli-app-with-node/)
+8. [How To Build A Command-Line Tool With NodeJS - A step-by-step guide](https://dev.to/dendekky/how-to-build-a-command-line-tool-with-nodejs-a-step-by-step-guide-386k)
+9. [Build a Password Field for the Terminal using Nodejs](https://blog.bitsrc.io/build-a-password-field-for-the-terminal-using-nodejs-31cd6cfa235)
+10. [How do I prompt users for input from a command-line script?](https://nodejs.org/en/knowledge/command-line/how-to-prompt-for-command-line-input/)
+
+---
