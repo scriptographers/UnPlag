@@ -4,13 +4,14 @@ Course project for **CS 251: Software Systems Lab**
 # Plan of Action
 ## Completed :
 ### Backend
-1. Implemented Backend with **Django 3** and **Django REST Framework**
-2. Used **JWT based User Authentication**
-3. Created serializers for Login, Register, Change Password
-4. Created a User Profile Model
-5. Created serializers for View Profile and update Profile
-6. Created PlagSample Model which stores the zip file uploaded by the user and the corresponding processed csv file.
-7. Created serializers for uploading zip files, dowloading csv files and history of uploads
+1. Implemented a **Django 3.1** and **Django REST Framework** based backend for the Plag Checker API.
+2. Used **JWT** for secure User Authentication.
+3. Created serializers for *Login, Sign-Up and Change Password*
+4. Created a **User Profile** Model for storing personal data (later to be linked to Organisation models).
+5. Used DRF's **function based views** for creating and updating profiles.
+6. Integrated a **PlagSample** Model to store the data from the plagiarism checks in the backend database.
+7. Implemented a combination of class and function based **authenticated endpoints** to serve and upload files.
+
 ### Frontend
 1. Implemented Frontend with **AngularTS 9.0**
 2. Created components for Register, Login, Change Password, Dashboard, Profile, Edit Profile, Upload and Download
@@ -23,14 +24,28 @@ Course project for **CS 251: Software Systems Lab**
 2. Fill
 
 ## How to run :
+
 ### Backend
-1. Fill
+```
+cd to the backend dir
+pipenv install
+pipenv shell
+cd unplag
+python manage.py runserver
+```
+
 ### Frontend
 1. Fill
 
 ## Tasks ahead :
+
 ### Backend
-1. Fill
+
+1. Introduce more fields in user profile.
+2. Use an actual production server like **nginx** for serving media files.
+3. Introduce **tarfile** and **zipfile** checks to ensure the integrity of the uploaded compressed file.
+4. Devise a methodology to run the backend computation parallely, to **reduce overall django overhead**.
+
 ### Frontend :
 1. Design and styling using SCSS/CSS
 ### Models :
@@ -147,7 +162,7 @@ Format:
        {
            "filename": "filename1.xip",
            "id": 10,
-           "date-posted": "2020-10-25T16:29:12.954791Z"
+           "timestamp": "2020-10-25T16:29:12.954791Z"
        },
        ...,
        ...
