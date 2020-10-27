@@ -185,7 +185,7 @@ Format:
 ---
   
 ## *Part 1: The Core Logic* 
-   
+    
 ### Models implemented so far:
 **(Unigram) Bag of Words Model and TF-IDF**:
    - Language used: `Python 3.8.2`
@@ -194,6 +194,7 @@ Format:
      - **`sklearn`**: Used the `TfidfVectorizer`
      - **`collections`**: Used `Counter` while computing the Jaccard similarity
      - **`numpy`**: Used for basic vector operations and for computing the cosine similarities
+     - **`seaborn`**: Used for creating heatmaps
      - **`argparse`**: Used for parsing the command line arguments
      - **`glob`** : Used for iterating through the given folder of files based on the given RegEx
    - **File**: `detect.py`
@@ -208,7 +209,9 @@ Format:
       - `<output>` - The path where the results (A `.csv` file) will be saved
       - `--time` - Optional, displays the time taken for the "core logic" to execute   
    Example usage: `python3 detect.py -d ./datasets/data/ -r "*.txt" -o results.csv --time`   
-   - **Output**: 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)
+   - **Output**: 
+      - 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)
+      - 2 heatmaps corresponding to each similarity metric and one heatmap for TF-IDF 
    
 ---
    
@@ -243,6 +246,5 @@ Submissions of Text Based Assignments](https://arxiv.org/ftp/arxiv/papers/1403/1
 2. [A Gentle Introduction to the Bag-of-Words Model](https://machinelearningmastery.com/gentle-introduction-bag-words-model/)
 3. [(TF-IDF) How to compute the similarity between two text documents?
  (StackOverflow)](https://stackoverflow.com/questions/8897593/how-to-compute-the-similarity-between-two-text-documents)
-
 
 
