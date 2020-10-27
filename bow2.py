@@ -7,7 +7,7 @@ from string import punctuation
 from collections import Counter
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer 
-from nltk.tokenize import word_tokenize, sent_tokenize # word tokenizer and sentence tokenizer
+from nltk.tokenize import word_tokenize # word tokenizer and sentence tokenizer
 
 # Arguments parsing
 parser = argparse.ArgumentParser()
