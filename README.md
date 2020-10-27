@@ -25,6 +25,8 @@ This branch contains all the models for ***Part 1: The Core Logic***.
 Assignments using Vector Space Model](https://arxiv.org/ftp/arxiv/papers/1412/1412.7782.pdf)
 3. [AntiPlag: Plagiarism Detection on Electronic
 Submissions of Text Based Assignments](https://arxiv.org/ftp/arxiv/papers/1403/1403.1310.pdf)
+4. [Universal Sentence Encoder](https://arxiv.org/abs/1803.11175) (Pre-trained model by Google Research)
+5. [BERTScore: Evaluating Text Generation with BERT](https://arxiv.org/abs/1904.09675)
      
 ---
      
