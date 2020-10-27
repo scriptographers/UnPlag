@@ -5,18 +5,21 @@ This branch contains all the models for ***Part 1: The Core Logic***.
  ---  
    
  ### Models:
-1. **(Unigram) Bag of Words Model**:
-   - File : `bow2.py`
-   - Usage: `python3 bow2.py -d <folder> -r <RegEx> -o <output>` or `python3 bow2.py --data <folder> --regex <RegEx> --output <output> --time`
+1. **(Unigram) Bag of Words Model and TF-IDF**:
+   - **File**: `detect.py`
+   - **Usage**: `python3 detect.py -d <folder> -r "<RegEx>" -o <output>` or `python3 detect.py --data <folder> --regex <RegEx> --output <output> --time`
       - `<folder>` - The folder containing the files to be checked
       - `<RegEx>` - Any RegEx applied to the file names (Eg. `*.txt`)
       - `<output>` - The path where the results (A `.csv` file) will be saved
       - `--time` - Optional, displays the time taken for the "core logic" to execute 
-      
+   - **Output**: 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)  
+
 ---
    
-<!-- ### Bonus:  
-1. Language specific checking: Countering false positives by taking care of language specific features, syntax and stub code  -->
+<!-- 
+### Bonus:  
+1. Language specific checking: Countering false positives by taking care of language specific features, syntax and stub code (alt method: Select some statistic of the data as the threshold instead?)  
+-->
     
 ### Papers on Plagiarism Checking:  
 1. [Winnowing: Local Algorithms for Document Fingerprinting
