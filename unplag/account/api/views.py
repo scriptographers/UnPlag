@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from account.models import Profile 
 from account.api.serializers import ProfileSerializer, RegistrationSerializer, ChangePasswordSerializer
@@ -18,7 +19,7 @@ from account.api.serializers import ProfileSerializer, RegistrationSerializer, C
 from plagsample.models import PlagSamp
 
 import os
-from pytz import timezone
+# from pytz import timezone
 
 ## Registration view for signup
 @api_view(['POST',])
@@ -126,6 +127,6 @@ def get_pastchecks(request):
         past_plagchecks = logged_user.plagsamp_set.all().order_by("-date_posted")
         data = {}
         data['pastchecks'] = [{"filename" : os.path.basename(plagsample.plagzip.name),
-             "id" : plagsample.id, "timestamp" : plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")} for plagsample in past_plagchecks]
+             "id" : plagsample.id, "timestamp" : timezone.localtime(plagsample.date_posted).strftime("%Y-%m-%d %H:%M:%S")} for plagsample in past_plagchecks]
         return Response(data, status=status.HTTP_200_OK)
 ###################################################################
