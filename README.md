@@ -20,7 +20,7 @@ python manage.py runserver
 ```
 cd to the base of the repository
 cd frontend
-npm -i
+npm install
 ng serve
 ```
 
@@ -230,6 +230,58 @@ Format:
 - Testing visualization approaches like **Surface plots**, **Heat maps** (or **Grayscale image**), **Graph** representation
 - Make UX better by adding features like user interactive tools
 - Implementing and integrating **multiple model** system
+
+---
+
+### Routes
+
+#### **/register**
+
+- Register the user
+- Only accessible if the user is not logged in
+- Redirects to login if successful
+
+#### **/login**
+
+- Login the user
+- Only accessible if the user is not logged in
+- Redirects to dashboard if successful
+
+#### **/changepwd**
+
+- User can change/update password
+- Only if the user is logged in or not, just checks if a token is present or not
+- If token is expired, throws a 401 error -> tries refreshing, if failed -> logout and back to login page
+- Redirects to dashboard if successful
+
+#### **/dashboard**
+
+- Landing page after login
+- Displays list of uploads and their results
+- Only if the user is logged in and if the token has not expired.
+
+#### **/profile**
+
+- Contains the profile details (for now only nickname)
+- Only if the user is logged in and if the token has not expired
+
+#### **profile/edit**
+
+- User can update the profile
+- Only if the user is logged in and if the token has not expired
+- Redirects to the profile page if the edit was successful.
+
+#### **/upload**
+
+- User uploads files here (for now only zip, tar, gz, rar are allowed)
+- Only if the user is logged in and if the token has not expired
+- Redirects to the display of the result if the upload is successful.
+
+#### **display/:id**
+
+- User could view the result here. For now prints only the csv data
+- Only if the user is logged in and if the token has not expired.
+- Throws 403 error if the user is not allowed to view this or it doesn’t exist -> back to dashboard
 
 ---
 
