@@ -59,7 +59,6 @@ def sigvec(F, vocab):
 def cosineSimilarity(F1, F2, vocab):
     V1 = sigvec(F1, vocab)
     V2 = sigvec(F2, vocab)
-    # For n files, we need to implement featurewise normalization
     return (np.dot(V1, V2)/(np.linalg.norm(V1)*np.linalg.norm(V2)))
 
 # Computes the Jaccard similarity between 2 preprocessed_files
@@ -116,7 +115,6 @@ for i in range(N_DOCS):
         cosine_matrix[i][j]  = cosine_matrix[j][i]
         jaccard_matrix[i][j] = jaccard_matrix[j][i]
 
-# Not needed, added for consistency
 np.fill_diagonal(cosine_matrix, 1)
 np.fill_diagonal(jaccard_matrix, 1)
 
