@@ -73,7 +73,13 @@ def jaccardSimilarity(F1, F2):
 
 # TF-IDF Approach
 def TfIdfSimilarity(files):
-    S = tfidfv().fit_transform(files)
+    S = tfidfv(
+        decode_error="ignore", # Ignore encoding errors
+        stop_words = "english",
+        strip_accents="ascii", # Removes characters like: á
+        norm="l2"
+    ).fit_transform(files) # Converts list of files to TF-IDF features
+    # S is already normalized, ||S|| = 1, thus cosine similarity: S*S.T
     similarity = S*S.T # Of the type: scipy.sparse.csr.csr_matrix
     similarity = similarity.toarray() # Converting into a standard numpy array
     return similarity
