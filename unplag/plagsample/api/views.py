@@ -23,6 +23,10 @@ def upload_sample(request):
     if request.method == "POST":
         plag_post = PlagSamp(user=request.user)
         serializer = PlagSampSerializer(plag_post, data=request.data)
+        print(dir(request))
+        print(request.data)
+        print(plag_post)
+
         if serializer.is_valid():
             serializer.save()
             

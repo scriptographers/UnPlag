@@ -5,6 +5,8 @@ require = require('esm')(module /*, options*/);
 
 const http = require('http');
 const inquirer = require('inquirer');
+const fs = require('fs');
+const FormData = require('form-data');
 
 async function auth() {
   const questions = [
@@ -54,7 +56,8 @@ auth().then((res) => {
     console.log(`statusCode: ${res.statusCode}`)
 
     res.on('data', response => {
-      console.log(JSON.parse(response))
+      console.log(JSON.parse(response).access);
+      upload2(JSON.parse(response).access);
     })
   });
 
@@ -64,5 +67,72 @@ auth().then((res) => {
 
   req.write(data);
   req.end();
-
 })
+
+function upload(access) {
+  const form = new FormData();
+
+  const read_stream = fs.createReadStream('zz.zip')
+  form.append('plagzip', read_stream);
+  form.append('name', 'asd');
+
+  console.log(form);
+
+  const options = {
+    hostname: '127.0.0.1',
+    port: 8000,
+    path: '/api/plagsample/upload/',
+    method: 'POST',
+    headers: form.getHeaders(),
+  };
+
+  const req = http.request(options, res => {
+    console.log(`statusCode: ${res.statusCode}`)
+
+    res.on('data', response => {
+      console.log(JSON.parse(response))
+    })
+  });
+
+  req.on('error', error => {
+    console.error(error);
+    console.log('xx');
+  });
+
+  req.setHeader('Authorization', `Bearer ${access}`)
+  console.log(req.getHeaders())
+
+  // form.pipe(req);
+}
+
+function upload2(access) {
+  const data = JSON.stringify({
+    plagzip: 'as',
+    name: 'asd'
+  });
+  const options = {
+    hostname: '127.0.0.1',
+    port: 8000,
+    path: '/api/plagsample/upload/',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access}`
+    }
+  };
+
+  const req = http.request(options, res => {
+    console.log(`statusCode: ${res.statusCode}`)
+
+    res.on('data', response => {
+      console.log(JSON.parse(response));
+    })
+  });
+
+  req.on('error', error => {
+    console.error(error);
+  });
+
+  req.write(data);
+  req.end();
+}

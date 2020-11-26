@@ -16,6 +16,7 @@ export class DataService {
   upload(data: File, name: string) {
     let formData: FormData = new FormData();
     formData.append('plagzip', data, data.name);
+    console.log(data)
     formData.append('name', name);
     console.log(formData);
     return this.server.post('/api/plagsample/upload/', formData).subscribe(
