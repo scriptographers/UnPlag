@@ -6,8 +6,11 @@
         <h2>Upload zip</h2>
         <label class="full-width-input">
           Compressed Folder
-          <input type="file" class="form-control" (change)="onFileChange($event)">
-        </label>
+    <input type="file" class="form-control" (change)="onFileChange($event)" required>
+  </label>
+  <label class="full-width-input">
+    Sample Name
+    <input type="text" placeholder="Sample Name" formControlName="sample_name" required>
         <button class="button">Upload</button>
       </form>
     </div>

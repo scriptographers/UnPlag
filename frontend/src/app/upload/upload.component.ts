@@ -10,6 +10,7 @@ import { DataService } from '../data.service';
 export class UploadComponent implements OnInit {
   file: File = null;
   form: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     private data: DataService
@@ -17,7 +18,8 @@ export class UploadComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      fileSource: ['', [Validators.required]]
+      file_source: ['', [Validators.required]],
+      sample_name: ['', [Validators.required]],
     });
 
   }
@@ -26,7 +28,7 @@ export class UploadComponent implements OnInit {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
       this.form.patchValue({
-        fileSource: file
+        file_source: file
       });
     }
   }
@@ -40,6 +42,6 @@ export class UploadComponent implements OnInit {
 
     console.log('Form valid');
 
-    this.data.upload(this.form.get('fileSource').value);
+    this.data.upload(this.form.get('file_source').value, this.form.get('sample_name').value);
   }
 }
