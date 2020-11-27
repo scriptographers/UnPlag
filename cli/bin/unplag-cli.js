@@ -56,8 +56,8 @@ auth().then((res) => {
     console.log(`statusCode: ${res.statusCode}`)
 
     res.on('data', response => {
-      console.log(JSON.parse(response).access);
-      upload2(JSON.parse(response).access);
+      console.log(JSON.parse(response));
+      upload(JSON.parse(response).access);
     })
   });
 
@@ -75,8 +75,6 @@ function upload(access) {
   const read_stream = fs.createReadStream('zz.zip')
   form.append('plagzip', read_stream);
   form.append('name', 'asd');
-
-  console.log(form);
 
   const options = {
     hostname: '127.0.0.1',
@@ -96,44 +94,17 @@ function upload(access) {
 
   req.on('error', error => {
     console.error(error);
-    console.log('xx');
   });
 
   req.setHeader('Authorization', `Bearer ${access}`)
-  console.log(req.getHeaders())
 
-  // form.pipe(req);
-}
-
-function upload2(access) {
-  const data = JSON.stringify({
-    plagzip: 'as',
-    name: 'asd'
-  });
-  const options = {
-    hostname: '127.0.0.1',
-    port: 8000,
-    path: '/api/plagsample/upload/',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length,
-      'Authorization': `Bearer ${access}`
+  form.getLength(function (err, length) {
+    if (err) {
+      this._error(err);
+      return;
     }
-  };
-
-  const req = http.request(options, res => {
-    console.log(`statusCode: ${res.statusCode}`)
-
-    res.on('data', response => {
-      console.log(JSON.parse(response));
-    })
-  });
-
-  req.on('error', error => {
-    console.error(error);
-  });
-
-  req.write(data);
-  req.end();
+    // add content length
+    req.setHeader('Content-Length', length);
+    form.pipe(req);
+  }.bind(form));
 }
