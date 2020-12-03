@@ -62,7 +62,13 @@ class CTokenizer:
             return "char"
         elif kind == ck.CXX_BOOL_LITERAL_EXPR:
             return "bool"
+        elif kind == ck.COMPOUND_STMT:
+            return "cmpd"
+        elif kind == ck.IF_STMT:
+            return "if"
         else:
+            print("Error in file: ", self.path)
+            print("Token: ", ltr.spelling, kind)
             raise NameError("Unknown literal encountered")
 
     # To optimize
