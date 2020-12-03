@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'organization.apps.OrganizationConfig',
     'account.apps.AccountConfig',
     'plagsample.apps.PlagsampleConfig',
     'django.contrib.admin',
@@ -46,8 +47,8 @@ INSTALLED_APPS = [
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
 REST_FRAMEWORK = {
