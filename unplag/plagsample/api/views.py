@@ -54,8 +54,9 @@ def download_csv(request, pk):
         user = request.user
         data = {}
         try:
-            plagsample = PlagSamp.objects.filter(user=user).get(pk=pk)
-        except PlagSamp.DoesNotExist:
+            plagsample = PlagSamp.objects.get(pk=pk)
+            num_count = plagsample.organization.profile_set.get(user=request.user)
+        except (PlagSamp.DoesNotExist, Organization.DoesNotExist):
             data['response'] = "Forbidden or Wrong Primary Key"
             return Response(data, status=status.HTTP_403_FORBIDDEN)
 

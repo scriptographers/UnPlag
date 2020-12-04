@@ -7,6 +7,5 @@ from django.contrib.auth.models import User
 class OrganizationSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Organization
-		fields = ['id', 'name', 'title', 'creator',
-			'date_created']
+		fields = ['id', 'name', 'title', 'date_created']
 			

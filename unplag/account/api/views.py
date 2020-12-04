@@ -18,6 +18,8 @@ from account.api.serializers import ProfileSerializer, RegistrationSerializer, C
 
 from plagsample.models import PlagSamp
 
+from organization.models import Organization
+
 import os
 # from pytz import timezone
 
@@ -35,8 +37,11 @@ def registration_view(request):  # For signup
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
 
-            profile = Profile(user=user)
-            profile.save()
+            profile = get_object_or_404(Profile ,user=user)
+            org = Organization(name=user.username)
+            org.save()
+
+            profile.organizations.add(org)
 
             data['response'] = "Successfully Signed Up"
             data['username'] = user.username

@@ -32,7 +32,7 @@ def registration_view(request):
 
             data['response'] = "Successfully Signed Up"
             data['id'] = temp_org.id
-            data['creator'] = temp_org.creator.username
+            # data['creator'] = temp_org.creator.username
             data['name'] = temp_org.name
             data['title'] = temp_org.title
             data['date_created'] = temp_org.date_created.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
@@ -53,7 +53,7 @@ def get_profile(request, pk):
             data = {}
             data['id'] = org.id
             data['name'] = org.name
-            data['creator'] = org.creator.username
+            # data['creator'] = org.creator.username
             data['title'] = org.title
             data['unique_code'] = org.unique_code
             data['date_created'] = org.date_created.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
@@ -72,14 +72,12 @@ def update_profile(request, pk):
         num_count = org.profile_set.filter(user=request.user).count()
         
         if(num_count == 1):
-            if(org.creator.id == request.user.id):
-                serializer = OrganizationSerializer(org, data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
-                    data = serializer.data
-                    data['creator'] = org.creator.username
-                    return Response(data)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = OrganizationSerializer(org, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                data = serializer.data
+                return Response(data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({"response": "Access Denied"}, status=status.HTTP_403_FORBIDDEN)
 ###################################################################
 
@@ -88,13 +86,17 @@ def update_profile(request, pk):
 def join_org(request):
     if request.method == 'POST':
         find_org = get_object_or_404(Organization, unique_code=request.data.get('unique_code', "ffffff"))
+        
+        find_user = User.objects.filter(name=find_org.name).count()
+        if find_user != 0:
+            return Response({"response": "Access Denied"}, status=status.HTTP_403_FORBIDDEN)
+
         profile = get_object_or_404(Profile, user=request.user)
         profile.organizations.add(find_org)
-
+        
         data = {}
         data['response'] = "Successfully Signed Up"
         data['id'] = find_org.id
-        data['creator'] = find_org.creator.username
         data['name'] = find_org.name
         data['title'] = find_org.title
         data['date_created'] = find_org.date_created.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
