@@ -1,0 +1,22 @@
+The following files have some problem:
+../datasets/cpp_repo/0011.cpp
+../datasets/cpp_repo/0042.cpp
+../datasets/cpp_repo/0047.cpp
+../datasets/cpp_repo/0050.cpp
+../datasets/cpp_repo/0113.cpp
+../datasets/cpp_repo/0125.cpp
+../datasets/cpp_repo/0128.cpp
+../datasets/cpp_repo/0136.cpp
+../datasets/cpp_repo/0156.cpp
+../datasets/cpp_repo/0165.cpp
+../datasets/cpp_repo/0186.cpp
+../datasets/cpp_repo/0237.cpp
+../datasets/cpp_repo/0292.cpp
+../datasets/cpp_repo/0297.cpp
+../datasets/cpp_repo/0305.cpp
+../datasets/cpp_repo/0318.cpp
+../datasets/cpp_repo/0326.cpp
+../datasets/cpp_repo/0343.cpp
+../datasets/cpp_repo/0372.cpp
+../datasets/cpp_repo/0376.cpp
+../datasets/cpp_repo/0382.cpp

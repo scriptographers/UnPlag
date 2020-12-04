@@ -4,6 +4,7 @@ import time
 import argparse
 import numpy as np
 import seaborn as sns
+from tqdm import tqdm
 from collections import Counter
 from ctokenizer import CTokenizer
 from matplotlib import pyplot as plt
@@ -45,6 +46,9 @@ def jaccardSimilarity(F1, F2):
     D = D1 & D2 # Intersection
     ni = sum(D.values())
     nu = n1 + n2 - ni # Union
+    if nu == 0:
+        print("n1: ", n1, " n2:", n2)
+        raise ValueError("nu is set to 0")
     niou = ni/nu # Jaccard Similarity: Intersection over Union
     return niou
 
@@ -53,10 +57,21 @@ tic = time.time()
 
 # TODO: A more efficient way to extend to n files
 files = []
-for filepath in glob.glob(os.path.join(BASE_PATH, FILE_RE)):
+problematic_files = []
+for filepath in tqdm(glob.glob(os.path.join(BASE_PATH, FILE_RE))):
     t = CTokenizer(filepath)
     tokens = t.rawTokenization()
-    files.append(tokens)
+    if len(tokens) > 0:
+        files.append(tokens)
+    else:
+        # Files which result in empty tokens
+        problematic_files.append(filepath)
+
+# Show problematic files
+if len(problematic_files) > 0:
+    print("The following files have some problem: ")
+    for pf in problematic_files:
+        print(pf)
 
 N_DOCS = len(files)
 
@@ -103,5 +118,5 @@ fig2.savefig("plots/jaccard_heatmap.png", dpi=150)
 plt.figure()
 
 # Dump results into a CSV file
-np.savetxt("cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
-np.savetxt("jaccard_" + OUT_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
+np.savetxt("results/cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
+np.savetxt("results/jaccard_" + OUT_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')

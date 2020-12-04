@@ -66,6 +66,12 @@ class CTokenizer:
             return "cmpd"
         elif kind == ck.IF_STMT:
             return "if"
+        elif kind == ck.FOR_STMT:
+            return "for"
+        elif kind == ck.DECL_STMT:
+            return "dec"
+        elif kind == ck.CXX_METHOD or kind == ck.FUNCTION_DECL:
+            return "fun"
         else:
             print("Error in file: ", self.path)
             print("Token: ", ltr.spelling, kind)
