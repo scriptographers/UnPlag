@@ -75,6 +75,9 @@ def get_profile(request):
         pr_serializer = ProfileSerializer(profile)
         data = pr_serializer.data
         data['username'] = profile.user.username
+
+        orgs = profile.organizations.all().order_by("id")
+        data['orgs'] = [{"org_id" : org.id, "org_name" : org.name} for org in orgs]
         return Response(data)
 ###################################################################
 
@@ -137,9 +140,15 @@ class ChangePasswordView(generics.UpdateAPIView):
 def get_pastchecks(request):
     if request.method == 'GET':
         logged_user = request.user
-        past_plagchecks = logged_user.plagsamp_set.all().order_by("-date_posted")
+        past_plagchecks = logged_user.plagsamp_set.all().order_by("organization__id", "-date_posted")
+        
         data = {}
-        data['pastchecks'] = [{"filename": os.path.basename(plagsample.plagzip.name), "name": plagsample.name,
-                               "id": plagsample.id, "timestamp": timezone.localtime(plagsample.date_posted).strftime("%Y-%m-%d %H:%M:%S")} for plagsample in past_plagchecks]
+        data['pastchecks'] = [{"filename" : os.path.basename(plagsample.plagzip.name),
+                                "id" : plagsample.id, 
+                                "timestamp" : plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
+                                "org_id" : plagsample.organization.id,
+                                "org_name" : plagsample.organization.name,
+                                } for plagsample in past_plagchecks]
+
         return Response(data, status=status.HTTP_200_OK)
 ###################################################################

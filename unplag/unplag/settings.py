@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'account',
     'plagsample',
+    'organization',
 
     'corsheaders',
     'rest_framework',
