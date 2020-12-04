@@ -32,23 +32,26 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'organization.apps.OrganizationConfig',
-    'account.apps.AccountConfig',
-    'plagsample.apps.PlagsampleConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'account',
+    'plagsample',
+
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(seconds=30),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(seconds=30),
 }
 
 REST_FRAMEWORK = {
