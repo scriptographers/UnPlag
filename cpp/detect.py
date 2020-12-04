@@ -120,3 +120,13 @@ plt.figure()
 # Dump results into a CSV file
 np.savetxt("results/cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
 np.savetxt("results/jaccard_" + OUT_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
+
+# Thresholded results:
+# thresh = 0.8
+# csm_t = (cosine_matrix > thresh)
+# csm_t = csm_t.astype(float)
+# ## Cosine Heatmap
+# chmt = sns.heatmap(csm_t)
+# fig3 = chmt.get_figure()
+# fig3.savefig("plots/cosine_heatmap_thresholded.png", dpi=150)   
+# plt.figure()
