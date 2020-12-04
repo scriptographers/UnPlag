@@ -21,7 +21,15 @@ from pytz import timezone
 @api_view(['POST',])
 def registration_view(request):
     if request.method == 'POST':
-        new_org = Organization(creator=request.user)
+        if request.data.get('name', "") == "":
+            return Response({"name":"Can't be empty"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        num_count = Organization.objects.filter(name=request.data.get('name', "")).count()
+
+        if num_count != 0 :
+            return Response({"name":"Already Exists"}, status=status.HTTP_400_BAD_REQUEST)    
+
+        new_org = Organization(name=request.data.get('name', ""))
         serializer = OrganizationSerializer(new_org, data=request.data)
         data = {}
         if serializer.is_valid():
