@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'org/view/:id', component: OrgViewComponent, canActivate: [AuthGuard] },
   { path: 'org/edit/:id', component: OrgEditComponent, canActivate: [AuthGuard] },
   { path: 'upload', component: UploadComponent, canActivate: [AuthGuard] },
-  { path: 'report/:id/', component: ReportComponent, canActivate: [AuthGuard] },
+  { path: 'report/:id', component: ReportComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'dashboard', },
 ];
 
