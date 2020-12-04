@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ServerService } from '../server.service';
 
 @Component({
   selector: 'app-org-view',
@@ -7,9 +9,47 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrgViewComponent implements OnInit {
 
-  constructor() { }
+  org: any;
+  id: string;
 
-  ngOnInit(): void {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private server: ServerService
+  ) {
+    this.route.paramMap.subscribe(params => {
+      this.id = params.get('id');
+    });
+
+    this.org = {
+      id: 0,
+      name: '',
+      description: '',
+      members: [],
+      passcode: '',
+      date_created: '',
+      history: []
+    }
   }
 
+  ngOnInit(): void {
+    this.server.get(`/api/organization/get/${this.id}/`).subscribe(
+      response => {
+        console.log(response);
+        this.org = {
+          id: response.id,
+          name: response.name,
+          description: response.title,
+          members: response.members,
+          passcode: response.unique_code,
+          date_created: response.date_created,
+          history: response.pastchecks
+        }
+        console.log(this.org);
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
 }

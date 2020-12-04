@@ -1,1 +1,14 @@
-<p>org-create works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Create New Organization</h2>
+  <label class="full-width-input">
+    Name
+    <input type="text" placeholder="Name" formControlName="name" required>
+  </label>
+  <br>
+  <label class="full-width-input">
+    Description
+    <input type="text" placeholder="Description" formControlName="description">
+  </label>
+  <br>
+  <button class="button">Create</button>
+</form>

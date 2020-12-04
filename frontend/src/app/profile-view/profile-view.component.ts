@@ -17,7 +17,8 @@ export class ProfileViewComponent implements OnInit {
       userid: 0,
       username: '',
       profileid: 0,
-      nickname: ''
+      nickname: '',
+      orgs: []
     }
   }
 
@@ -29,7 +30,8 @@ export class ProfileViewComponent implements OnInit {
           userid: response.user,
           username: response.username,
           profileid: response.id,
-          nickname: response.nick
+          nickname: response.nick,
+          orgs: response.orgs
         }
         console.log(this.profile);
       },

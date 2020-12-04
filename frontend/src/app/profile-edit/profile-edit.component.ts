@@ -9,7 +9,9 @@ import { ServerService } from '../server.service';
   styleUrls: ['./profile-edit.component.scss']
 })
 export class ProfileEditComponent implements OnInit {
+
   profile: any;
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +48,6 @@ export class ProfileEditComponent implements OnInit {
       }
     );
   }
-  form: FormGroup;
 
   onSubmit() {
     console.log('Submitting');
@@ -57,12 +58,12 @@ export class ProfileEditComponent implements OnInit {
 
     console.log('Form valid');
 
-    let profile = {
+    let data = {
       nick: this.form.get('nickname').value,
     };
 
-    if (profile.nick !== '') {
-      return this.server.put('/api/account/update/', profile).subscribe(
+    if (data.nick !== '') {
+      return this.server.put('/api/account/update/', data).subscribe(
         response => {
           console.log(response);
           this.router.navigateByUrl('/profile');

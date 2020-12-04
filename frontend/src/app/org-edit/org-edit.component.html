@@ -1,1 +1,9 @@
-<p>org-edit works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Update Description</h2>
+  <label class="full-width-input">
+    Description
+    <input type="text" placeholder="Description" formControlName="description">
+  </label>
+  <br>
+  <button class="button">Update</button>
+</form>

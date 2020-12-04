@@ -20,6 +20,7 @@ export class UploadComponent implements OnInit {
     this.form = this.fb.group({
       file_source: ['', [Validators.required]],
       sample_name: ['', [Validators.required]],
+      org_id: ['0', [Validators.required]]
     });
 
   }
@@ -42,6 +43,6 @@ export class UploadComponent implements OnInit {
 
     console.log('Form valid');
 
-    this.data.upload(this.form.get('file_source').value, this.form.get('sample_name').value);
+    this.data.upload(this.form.get('file_source').value, this.form.get('sample_name').value, this.form.get('org_id').value);
   }
 }

@@ -1,1 +1,25 @@
 <p>org-view works!</p>
+
+Org id : {{ org.id }} <br>
+Name : {{ org.name }} <br>
+Description : {{ org.description }} <br>
+Passcode: {{ org.passcode }} <br>
+Date Created: {{ org.date_created }} <br>
+
+Members:
+<div *ngFor="let member of org.members">
+  <li>{{ member.username }}</li>
+</div>
+
+<div>Past uploads</div>
+<ul>
+  <li *ngFor="let sample of org.history">
+    <a routerLink="/display/{{sample.id}}">
+      {{sample.name}}
+    </a>
+    <br>
+    File name: {{sample.filename}}
+    <br>
+    Upload time: {{sample.timestamp}}
+  </li>
+</ul>

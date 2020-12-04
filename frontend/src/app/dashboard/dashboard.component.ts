@@ -12,7 +12,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private server: ServerService
   ) {
-    this.history = new Array();
+    this.history = [];
   }
 
   ngOnInit(): void {
