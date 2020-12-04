@@ -16,6 +16,8 @@ from plagsample.api.serializers import PlagSampSerializer
 
 from organization.models import Organization
 
+from account.models import Profile
+
 import os
 from pytz import timezone
 
@@ -44,7 +46,8 @@ def upload_sample(request):
                 
                 serializer = PlagSampSerializer(plag_post)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response" : "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 ###################################################################
 
 ## Download CSV Sample
@@ -56,7 +59,7 @@ def download_csv(request, pk):
         try:
             plagsample = PlagSamp.objects.get(pk=pk)
             num_count = plagsample.organization.profile_set.get(user=request.user)
-        except (PlagSamp.DoesNotExist, Organization.DoesNotExist):
+        except (PlagSamp.DoesNotExist, Profile.DoesNotExist):
             data['response'] = "Forbidden or Wrong Primary Key"
             return Response(data, status=status.HTTP_403_FORBIDDEN)
 

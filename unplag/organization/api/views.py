@@ -21,7 +21,15 @@ from pytz import timezone
 @api_view(['POST',])
 def registration_view(request):
     if request.method == 'POST':
-        new_org = Organization(creator=request.user)
+        if request.data.get('name', "") == "":
+            return Response({"name":"Can't be empty"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        num_count = Organization.objects.filter(name=request.data.get('name', "")).count()
+
+        if num_count != 0 :
+            return Response({"name":"Already Exists"}, status=status.HTTP_400_BAD_REQUEST)    
+
+        new_org = Organization(name=request.data.get('name', ""))
         serializer = OrganizationSerializer(new_org, data=request.data)
         data = {}
         if serializer.is_valid():
@@ -32,7 +40,6 @@ def registration_view(request):
 
             data['response'] = "Successfully Signed Up"
             data['id'] = temp_org.id
-            # data['creator'] = temp_org.creator.username
             data['name'] = temp_org.name
             data['title'] = temp_org.title
             data['date_created'] = temp_org.date_created.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
@@ -53,7 +60,6 @@ def get_profile(request, pk):
             data = {}
             data['id'] = org.id
             data['name'] = org.name
-            # data['creator'] = org.creator.username
             data['title'] = org.title
             data['unique_code'] = org.unique_code
             data['date_created'] = org.date_created.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
@@ -87,7 +93,7 @@ def join_org(request):
     if request.method == 'POST':
         find_org = get_object_or_404(Organization, unique_code=request.data.get('unique_code', "ffffff"))
         
-        find_user = User.objects.filter(name=find_org.name).count()
+        find_user = User.objects.filter(username=find_org.name).count()
         if find_user != 0:
             return Response({"response": "Access Denied"}, status=status.HTTP_403_FORBIDDEN)
 
