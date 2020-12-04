@@ -66,6 +66,12 @@ def get_profile(request, pk):
             
             members = org.profile_set.all().order_by("user__id")
             data['members'] = [{"id" : member.user.id, "username" : member.user.username} for member in members]
+            
+            pastchecks = org.plagsamp_set.all().order_by("-date_posted")
+            data['pastchecks'] = [{"filename" : os.path.basename(plagsample.plagzip.name),
+                                "id" : plagsample.id, 
+                                "timestamp" : plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
+                                } for plagsample in pastchecks]
             return Response(data)
         return Response({"response": "Access Denied"}, status=status.HTTP_403_FORBIDDEN)        
 ###################################################################
