@@ -4,13 +4,12 @@ import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
 
 @Component({
-  selector: 'app-edit-password',
-  templateUrl: './edit-password.component.html',
-  styleUrls: ['./edit-password.component.scss']
+  selector: 'app-profile-edit',
+  templateUrl: './profile-edit.component.html',
+  styleUrls: ['./profile-edit.component.scss']
 })
-export class EditPasswordComponent implements OnInit {
+export class ProfileEditComponent implements OnInit {
   profile: any;
-  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -25,12 +24,11 @@ export class EditPasswordComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.form = this.fb.group({
-      old_password: ['', Validators.required],
-      new_password: ['', Validators.required],
-      new_password2: ['', Validators.required]
+      nickname: ['', Validators.required],
     });
+
     this.server.get('/api/account/profile/').subscribe(
       response => {
         console.log(response);
@@ -40,6 +38,7 @@ export class EditPasswordComponent implements OnInit {
           profileid: response.id,
           nickname: response.nick
         }
+        this.form.setValue({ nickname: this.profile.nickname });
         console.log(this.profile);
       },
       error => {
@@ -47,6 +46,7 @@ export class EditPasswordComponent implements OnInit {
       }
     );
   }
+  form: FormGroup;
 
   onSubmit() {
     console.log('Submitting');
@@ -57,17 +57,15 @@ export class EditPasswordComponent implements OnInit {
 
     console.log('Form valid');
 
-    let user = {
-      old_password: this.form.get('old_password').value,
-      new_password: this.form.get('new_password').value,
-      new_password2: this.form.get('new_password2').value
+    let profile = {
+      nick: this.form.get('nickname').value,
     };
 
-    if (user.old_password !== '' && user.new_password !== '' && user.new_password2 !== '') {
-      return this.server.put('/api/account/upassword/', user).subscribe(
+    if (profile.nick !== '') {
+      return this.server.put('/api/account/update/', profile).subscribe(
         response => {
           console.log(response);
-          this.router.navigateByUrl('/dashboard');
+          this.router.navigateByUrl('/profile');
         },
         error => {
           console.log(error);

@@ -11,12 +11,16 @@ import { AuthGuard } from './auth.guard';
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-import { EditPasswordComponent } from './edit-password/edit-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProfileComponent } from './profile/profile.component';
-import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { ProfileViewComponent } from './profile-view/profile-view.component';
+import { ProfileEditComponent } from './profile-edit/profile-edit.component';
+import { ProfileChangepwdComponent } from './profile-changepwd/profile-changepwd.component';
+import { OrgCreateComponent } from './org-create/org-create.component';
+import { OrgJoinComponent } from './org-join/org-join.component';
+import { OrgViewComponent } from './org-view/org-view.component';
+import { OrgEditComponent } from './org-edit/org-edit.component';
 import { UploadComponent } from './upload/upload.component';
-import { DisplayComponent } from './display/display.component';
+import { ReportComponent } from './report/report.component';
 
 // Material Modules
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -27,12 +31,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    EditPasswordComponent,
     DashboardComponent,
-    ProfileComponent,
-    EditProfileComponent,
+    ProfileViewComponent,
+    ProfileEditComponent,
+    ProfileChangepwdComponent,
+    OrgCreateComponent,
+    OrgJoinComponent,
+    OrgViewComponent,
+    OrgEditComponent,
     UploadComponent,
-    DisplayComponent,
+    ReportComponent,
   ],
   imports: [
     BrowserModule,

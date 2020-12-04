@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
 
 @Component({
-  selector: 'app-edit-profile',
-  templateUrl: './edit-profile.component.html',
-  styleUrls: ['./edit-profile.component.scss']
+  selector: 'app-profile-changepwd',
+  templateUrl: './profile-changepwd.component.html',
+  styleUrls: ['./profile-changepwd.component.scss']
 })
-export class EditProfileComponent implements OnInit {
+export class ProfileChangepwdComponent implements OnInit {
   profile: any;
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -24,11 +25,12 @@ export class EditProfileComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.form = this.fb.group({
-      nickname: ['', Validators.required],
+      old_password: ['', Validators.required],
+      new_password: ['', Validators.required],
+      new_password2: ['', Validators.required]
     });
-
     this.server.get('/api/account/profile/').subscribe(
       response => {
         console.log(response);
@@ -38,7 +40,6 @@ export class EditProfileComponent implements OnInit {
           profileid: response.id,
           nickname: response.nick
         }
-        this.form.setValue({ nickname: this.profile.nickname });
         console.log(this.profile);
       },
       error => {
@@ -46,7 +47,6 @@ export class EditProfileComponent implements OnInit {
       }
     );
   }
-  form: FormGroup;
 
   onSubmit() {
     console.log('Submitting');
@@ -57,15 +57,17 @@ export class EditProfileComponent implements OnInit {
 
     console.log('Form valid');
 
-    let profile = {
-      nick: this.form.get('nickname').value,
+    let user = {
+      old_password: this.form.get('old_password').value,
+      new_password: this.form.get('new_password').value,
+      new_password2: this.form.get('new_password2').value
     };
 
-    if (profile.nick !== '') {
-      return this.server.put('/api/account/update/', profile).subscribe(
+    if (user.old_password !== '' && user.new_password !== '' && user.new_password2 !== '') {
+      return this.server.put('/api/account/upassword/', user).subscribe(
         response => {
           console.log(response);
-          this.router.navigateByUrl('/profile');
+          this.router.navigateByUrl('/dashboard');
         },
         error => {
           console.log(error);
