@@ -168,6 +168,6 @@ class TxtPlagChecker(threading.Thread):
         np.savetxt(SAVE_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
         
         csv_f = File(open(SAVE_PATH, 'r'))
-        time.sleep(20)
+        # time.sleep(20) # Uncomment to check
         self.PLAG_POST.outfile.save(SAVE_PATH, csv_f)
         self.LOCK.release()

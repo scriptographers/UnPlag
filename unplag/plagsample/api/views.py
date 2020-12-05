@@ -35,6 +35,9 @@ LIST_THREADS = {}
 @api_view(['POST', ])
 def upload_sample(request):
     if request.method == "POST":
+        if request.data.get('file_type', None) is None :
+            return Response({'file_type': "This field is needed!"}, status=status.HTTP_400_BAD_REQUEST)
+
         org = get_object_or_404(Organization, pk=request.data.get('org_id', -1))
         num_count = org.profile_set.filter(user=request.user).count()
 
@@ -54,7 +57,7 @@ def upload_sample(request):
                     OUTFILE = FILE_NAME[:FILE_NAME.index(".")]
                     OUT_PATH = os.path.join(MEDIA_ROOT, "outputcsvfiles")
                     BASE_PATH = os.path.join(MEDIA_ROOT, "plagfiles", OUTFILE)
-                    FILE_RE = "*.txt" # Will this from the choice field
+                    FILE_RE = "*.{}".format(plag_post.file_type) # Will this from the choice field
                     FILE_PATH = os.path.join(MEDIA_ROOT, plag_post.plagzip.name)
 
                     # Call plag checker on a separate thread
