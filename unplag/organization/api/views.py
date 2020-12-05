@@ -71,6 +71,7 @@ def get_profile(request, pk):
             pastchecks = org.plagsamp_set.all().order_by("-date_posted")
             data['pastchecks'] = [{"name": plagsample.name,
                                    "filename": os.path.basename(plagsample.plagzip.name),
+                                   "file_type": plagsample.file_type,
                                    "id": plagsample.id,
                                    "timestamp": plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
                                    } for plagsample in pastchecks]

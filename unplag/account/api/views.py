@@ -144,6 +144,7 @@ def get_pastchecks(request):
         data = {}
         data['pastchecks'] = [{"name": plagsample.name,
                                "filename": os.path.basename(plagsample.plagzip.name),
+                               "file_type": plagsample.file_type,
                                "id": plagsample.id,
                                "timestamp": plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
                                "org_id": plagsample.organization.id,
