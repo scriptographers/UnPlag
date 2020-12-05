@@ -18,14 +18,18 @@ from organization.models import Organization
 
 from account.models import Profile
 
-from models.extractutil import unzip, untar, unrar
 from models.txt import TxtPlagChecker
 
 import os
+import queue
+import threading
+import time
 from pytz import timezone
 
-MEDIA_ROOT = settings.MEDIA_ROOT
 
+MEDIA_ROOT = settings.MEDIA_ROOT
+# THREAD_QUEUE = queue.Queue()
+LIST_THREADS = {}
 
 # Upload Plag Sample
 @api_view(['POST', ])
@@ -50,8 +54,10 @@ def upload_sample(request):
                     OUTFILE = FILE_NAME[:FILE_NAME.index(".")]
                     OUT_PATH = os.path.join(MEDIA_ROOT, "outputcsvfiles")
                     BASE_PATH = os.path.join(MEDIA_ROOT, "plagfiles", OUTFILE)
-                    FILE_RE = "*.txt"
+                    FILE_RE = "*.txt" # Will this from the choice field
                     FILE_PATH = os.path.join(MEDIA_ROOT, plag_post.plagzip.name)
+
+                    # Call plag checker on a separate thread
                     
                     # print(FILE_NAME)
                     # print(EXT)
@@ -59,21 +65,14 @@ def upload_sample(request):
                     # print(OUT_PATH)
                     # print(BASE_PATH)
                     # print(FILE_RE)
-                    # print(FILE_PATH)
-
-                    if EXT == "gz":
-                        untar(FILE_PATH, BASE_PATH)
-                    elif EXT == "zip":
-                        unzip(FILE_PATH, BASE_PATH)
-                    elif EXT == "rar":
-                        unrar(FILE_PATH, BASE_PATH)
-
-                    txtobj = TxtPlagChecker(BASE_PATH, FILE_RE, OUT_PATH, OUTFILE)
-                    csv_name = txtobj.run() # Saves the csv inside the plagfiles directory
-                    
-                    csv_path = os.path.join(MEDIA_ROOT, "outputcsvfiles", csv_name)
-                    csv_f = File(open(csv_path, 'r'))
-                    plag_post.outfile.save("csv_" + OUTFILE + ".csv", csv_f)
+                    # print(FILE_PATH)                  
+                    lock = threading.Lock()
+                    txtobj = TxtPlagChecker(BASE_PATH, FILE_PATH, FILE_RE, 
+                                            OUT_PATH, OUTFILE, EXT, plag_post, lock)
+                    txtobj.daemon = False
+                    txtobj.name = plag_post.id # Name of the thread
+                    LIST_THREADS[plag_post.id] = txtobj
+                    txtobj.start() # Saves the csv inside the plagfiles directory
                 except:
                     # Won't interrupt the flow of execution, 
                     # but will generate a null outfile
@@ -99,11 +98,26 @@ def download_csv(request, pk):
         except (PlagSamp.DoesNotExist, Profile.DoesNotExist):
             data['response'] = "Forbidden or Wrong Primary Key"
             return Response(data, status=status.HTTP_403_FORBIDDEN)
-
+        
         file = plagsample.outfile
-        file_name = file.name
-        if not file_name:
-            data['response'] = "Output CSV not processed yet !"
+        ## Wait till thread has done its job
+        if not file.name:
+            if pk in LIST_THREADS:
+                LIST_THREADS[pk].join()
+                LIST_THREADS.pop(pk)
+            else:
+                data['response'] = "Some unknown error happened while processing the csv"
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+            plagsample = PlagSamp.objects.get(pk=pk)
+            file = plagsample.outfile
+        else:
+            if pk in LIST_THREADS:
+                LIST_THREADS.pop(pk)
+        ####################################
+        
+        if not file.name:
+            data['response'] = "Some unknown error happened while processing the csv"
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         file_read = file.open(mode='r')
@@ -112,6 +126,6 @@ def download_csv(request, pk):
 
         response = HttpResponse(f, content_type='text/csv')
         response['Content-Length'] = file.size
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.name)
         return response
 ###################################################################

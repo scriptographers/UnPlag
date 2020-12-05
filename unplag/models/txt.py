@@ -3,6 +3,7 @@ import glob
 import time
 import numpy as np
 import seaborn as sns
+import threading
 from string import punctuation
 from collections import Counter
 from nltk.corpus import stopwords
@@ -10,13 +11,20 @@ from nltk.stem import PorterStemmer
 from matplotlib import pyplot as plt
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer as tfidfv 
+from models.extractutil import *
+from django.core.files import File
 
-class TxtPlagChecker():
-    def __init__(self, BASE_PATH, FILE_RE, OUT_PATH, OUTFILE):
+class TxtPlagChecker(threading.Thread):
+    def __init__(self, BASE_PATH, FILE_PATH, FILE_RE, OUT_PATH, OUTFILE, EXT, PLAG_POST, LOCK):
+        super(TxtPlagChecker, self).__init__()
         self.BASE_PATH = BASE_PATH
         self.FILE_RE = FILE_RE
         self.OUT_PATH = OUT_PATH
         self.OUTFILE = OUTFILE
+        self.EXT = EXT
+        self.FILE_PATH = FILE_PATH
+        self.PLAG_POST = PLAG_POST
+        self.LOCK = LOCK
 
         # Global variables
         self.SW = stopwords.words("english") # Common english stop-words
@@ -80,6 +88,15 @@ class TxtPlagChecker():
     # MAIN:
     def run(self):
         # tic = time.time()
+        self.LOCK.acquire()
+        if self.EXT == "gz":
+            untar(self.FILE_PATH, self.BASE_PATH)
+        elif self.EXT == "zip":
+            unzip(self.FILE_PATH, self.BASE_PATH)
+        elif self.EXT == "rar":
+            unrar(self.FILE_PATH, self.BASE_PATH)
+
+        print("extarct doen")
 
         preprocessed_files = []
         unpreprocessed_files = []
@@ -147,6 +164,10 @@ class TxtPlagChecker():
 
         # Dump results into a CSV file
         # np.savetxt("cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
-        np.savetxt(os.path.join(self.OUT_PATH, "jaccard_" + self.OUTFILE + ".csv"), jaccard_matrix, fmt="%.4f", delimiter=',')
-        return "jaccard_" + self.OUTFILE + ".csv"
-        # np.savetxt("tfidf_" + OUT_PATH, tfidf_matrix, fmt="%.4f", delimiter=',')
+        SAVE_PATH = os.path.join(self.OUT_PATH, "jaccard_" + self.OUTFILE + ".csv")
+        np.savetxt(SAVE_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
+        
+        csv_f = File(open(SAVE_PATH, 'r'))
+        time.sleep(20)
+        self.PLAG_POST.outfile.save(SAVE_PATH, csv_f)
+        self.LOCK.release()
