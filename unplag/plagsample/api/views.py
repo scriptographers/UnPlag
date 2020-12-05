@@ -18,6 +18,9 @@ from organization.models import Organization
 
 from account.models import Profile
 
+from models.extractutil import unzip, untar, unrar
+from models.txt import TxtPlagChecker
+
 import os
 from pytz import timezone
 
@@ -35,16 +38,48 @@ def upload_sample(request):
             plag_post = PlagSamp(user=request.user, organization=org)
             serializer = PlagSampSerializer(plag_post, data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save() # To prevent accidental saves
 
                 data = serializer.data
                 data['date_posted'] = plag_post.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
+                
+                ## We wish to run this stuff in a separate thread
+                try:
+                    FILE_NAME = os.path.basename(plag_post.plagzip.name)
+                    EXT = FILE_NAME[FILE_NAME.rindex(".")+1:]   
+                    OUTFILE = FILE_NAME[:FILE_NAME.index(".")]
+                    OUT_PATH = os.path.join(MEDIA_ROOT, "outputcsvfiles")
+                    BASE_PATH = os.path.join(MEDIA_ROOT, "plagfiles", OUTFILE)
+                    FILE_RE = "*.txt"
+                    FILE_PATH = os.path.join(MEDIA_ROOT, plag_post.plagzip.name)
+                    
+                    # print(FILE_NAME)
+                    # print(EXT)
+                    # print(OUTFILE)
+                    # print(OUT_PATH)
+                    # print(BASE_PATH)
+                    # print(FILE_RE)
+                    # print(FILE_PATH)
 
-                # Dummy csv for testing
-                csv_path = os.path.join(MEDIA_ROOT, "outputcsvfiles/jaccard.csv")
-                csv_f = File(open(csv_path, 'r'))
-                plag_post.outfile.save("csv_" + os.path.splitext(os.path.basename(plag_post.plagzip.name))[0] + ".csv", csv_f)
+                    if EXT == "gz":
+                        untar(FILE_PATH, BASE_PATH)
+                    elif EXT == "zip":
+                        unzip(FILE_PATH, BASE_PATH)
+                    elif EXT == "rar":
+                        unrar(FILE_PATH, BASE_PATH)
 
+                    txtobj = TxtPlagChecker(BASE_PATH, FILE_RE, OUT_PATH, OUTFILE)
+                    csv_name = txtobj.run() # Saves the csv inside the plagfiles directory
+                    
+                    csv_path = os.path.join(MEDIA_ROOT, "outputcsvfiles", csv_name)
+                    csv_f = File(open(csv_path, 'r'))
+                    plag_post.outfile.save("csv_" + OUTFILE + ".csv", csv_f)
+                except:
+                    # Won't interrupt the flow of execution, 
+                    # but will generate a null outfile
+                    # TODO: Make this Fail-safe
+                    pass
+                
                 serializer = PlagSampSerializer(plag_post)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -80,8 +115,3 @@ def download_csv(request, pk):
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
         return response
 ###################################################################
-
-# Preliminary Work left :
-#
-# Downloading dummy surface plot
-# Getting individual plagsample details

@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 
 from organization.models import Organization
 from organization.api.serializers import OrganizationSerializer
