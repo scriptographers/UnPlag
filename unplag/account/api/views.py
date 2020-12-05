@@ -11,19 +11,20 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+# from django.utils import timezone
 
 from account.models import Profile
 from account.api.serializers import ProfileSerializer, RegistrationSerializer, ChangePasswordSerializer
 
 from plagsample.models import PlagSamp
 
+from organization.models import Organization
+
 import os
-# from pytz import timezone
+from pytz import timezone
+
 
 # Registration view for signup
-
-
 @api_view(['POST', ])
 @permission_classes([])
 @authentication_classes([])
@@ -35,8 +36,11 @@ def registration_view(request):  # For signup
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
 
-            profile = Profile(user=user)
-            profile.save()
+            profile = get_object_or_404(Profile, user=user)
+            org = Organization(name=user.username)
+            org.save()
+
+            profile.organizations.add(org)
 
             data['response'] = "Successfully Signed Up"
             data['username'] = user.username
@@ -48,9 +52,8 @@ def registration_view(request):  # For signup
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ###################################################################
 
+
 # Extending TokenObtainPairSerializer to get userid and username !
-
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -65,9 +68,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 ###################################################################
 
+
 # Get Profile Details view
-
-
 @api_view(['GET', ])
 def get_profile(request):
     if request.method == "GET":
@@ -77,13 +79,12 @@ def get_profile(request):
         data['username'] = profile.user.username
 
         orgs = profile.organizations.all().order_by("id")
-        data['orgs'] = [{"org_id" : org.id, "org_name" : org.name} for org in orgs]
+        data['orgs'] = [{"org_id": org.id, "org_name": org.name} for org in orgs]
         return Response(data)
 ###################################################################
 
+
 # Update Profile details view
-
-
 @api_view(['PUT', ])
 def update_profile(request):
     if request.method == "PUT":
@@ -97,9 +98,8 @@ def update_profile(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ###################################################################
 
+
 # Update Password view
-
-
 class ChangePasswordView(generics.UpdateAPIView):
     """
     An endpoint for changing password.
@@ -133,22 +133,22 @@ class ChangePasswordView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ###################################################################
 
+
 # Get Past Plag Checks
-
-
 @api_view(['GET', ])
 def get_pastchecks(request):
     if request.method == 'GET':
         logged_user = request.user
         past_plagchecks = logged_user.plagsamp_set.all().order_by("organization__id", "-date_posted")
-        
+
         data = {}
-        data['pastchecks'] = [{"filename" : os.path.basename(plagsample.plagzip.name),
-                                "id" : plagsample.id, 
-                                "timestamp" : plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
-                                "org_id" : plagsample.organization.id,
-                                "org_name" : plagsample.organization.name,
-                                } for plagsample in past_plagchecks]
+        data['pastchecks'] = [{"name": plagsample.name,
+                               "filename": os.path.basename(plagsample.plagzip.name),
+                               "id": plagsample.id,
+                               "timestamp": plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
+                               "org_id": plagsample.organization.id,
+                               "org_name": plagsample.organization.name,
+                               } for plagsample in past_plagchecks]
 
         return Response(data, status=status.HTTP_200_OK)
 ###################################################################

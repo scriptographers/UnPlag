@@ -4,3 +4,8 @@ User id : {{ profile.userid }} <br>
 Username : {{ profile.username }} <br>
 Profile id : {{ profile.profileid }} <br>
 Nickname : {{ profile.nickname }} <br>
+
+Orgs:
+<div *ngFor="let org of profile.orgs">
+  <li><a routerLink="/org/view/{{ org.org_id }}">{{ org.org_name }}</a></li>
+</div>

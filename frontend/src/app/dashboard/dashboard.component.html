@@ -1,12 +1,18 @@
 <div>Past uploads</div>
 <ul>
   <li *ngFor="let sample of history">
-    <a routerLink="/display/{{sample.id}}">
+    <a routerLink="/report/{{sample.id}}">
       {{sample.name}}
     </a>
     <br>
     File name: {{sample.filename}}
     <br>
     Upload time: {{sample.timestamp}}
+    <br>
+    Org:
+    <a routerLink="/org/view/{{sample.org_id}}">
+      {{ sample.org_name }}
+    </a>
+    <br>
   </li>
 </ul>

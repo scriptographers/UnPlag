@@ -16,6 +16,8 @@ from plagsample.api.serializers import PlagSampSerializer
 
 from organization.models import Organization
 
+from account.models import Profile
+
 import os
 from pytz import timezone
 
@@ -28,24 +30,25 @@ def upload_sample(request):
     if request.method == "POST":
         org = get_object_or_404(Organization, pk=request.data.get('org_id', -1))
         num_count = org.profile_set.filter(user=request.user).count()
-        
+
         if(num_count == 1):
             plag_post = PlagSamp(user=request.user, organization=org)
             serializer = PlagSampSerializer(plag_post, data=request.data)
             if serializer.is_valid():
-                serializer.save()                
+                serializer.save()
 
                 data = serializer.data
                 data['date_posted'] = plag_post.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
-                
-                ## Dummy csv for testing
+
+                # Dummy csv for testing
                 csv_path = os.path.join(MEDIA_ROOT, "outputcsvfiles/jaccard.csv")
                 csv_f = File(open(csv_path, 'r'))
                 plag_post.outfile.save("csv_" + os.path.splitext(os.path.basename(plag_post.plagzip.name))[0] + ".csv", csv_f)
-                
+
                 serializer = PlagSampSerializer(plag_post)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 ###################################################################
 
 
@@ -56,8 +59,9 @@ def download_csv(request, pk):
         user = request.user
         data = {}
         try:
-            plagsample = PlagSamp.objects.filter(user=user).get(pk=pk)
-        except PlagSamp.DoesNotExist:
+            plagsample = PlagSamp.objects.get(pk=pk)
+            num_count = plagsample.organization.profile_set.get(user=request.user)
+        except (PlagSamp.DoesNotExist, Profile.DoesNotExist):
             data['response'] = "Forbidden or Wrong Primary Key"
             return Response(data, status=status.HTTP_403_FORBIDDEN)
 

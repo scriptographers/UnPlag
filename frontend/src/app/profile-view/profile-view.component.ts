@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../server.service';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  selector: 'app-profile-view',
+  templateUrl: './profile-view.component.html',
+  styleUrls: ['./profile-view.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileViewComponent implements OnInit {
+
   profile: any;
 
   constructor(
@@ -16,7 +17,8 @@ export class ProfileComponent implements OnInit {
       userid: 0,
       username: '',
       profileid: 0,
-      nickname: ''
+      nickname: '',
+      orgs: []
     }
   }
 
@@ -28,7 +30,8 @@ export class ProfileComponent implements OnInit {
           userid: response.user,
           username: response.username,
           profileid: response.id,
-          nickname: response.nick
+          nickname: response.nick,
+          orgs: response.orgs
         }
         console.log(this.profile);
       },

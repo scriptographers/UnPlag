@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from account.models import Profile
 
+from organization.models import Organization
+
 from django.contrib.auth.models import User
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -20,6 +22,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
 		}
 
 	def save(self):
+		org_exists = Organization.objects.filter(name=self.validated_data['username']).count()
+		if(org_exists != 0):
+			raise serializers.ValidationError({'username': 'Already exists!'})
+
 		user = User(
 			username=self.validated_data['username'],
 			)

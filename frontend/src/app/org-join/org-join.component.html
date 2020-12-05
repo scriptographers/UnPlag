@@ -1,0 +1,11 @@
+<p>org-join works!</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Enter Passcode</h2>
+  <label class="full-width-input">
+    Passcode
+    <input type="text" placeholder="Passcode" formControlName="passcode" required>
+  </label>
+  <br>
+  <button class="button">Join</button>
+</form>

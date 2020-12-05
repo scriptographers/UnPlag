@@ -3,11 +3,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../data.service';
 
 @Component({
-  selector: 'app-display',
-  templateUrl: './display.component.html',
-  styleUrls: ['./display.component.scss']
+  selector: 'app-report',
+  templateUrl: './report.component.html',
+  styleUrls: ['./report.component.scss']
 })
-export class DisplayComponent implements OnInit {
+export class ReportComponent implements OnInit {
   id: string;
   content: Array<any>;
   buffer: any;
