@@ -22,7 +22,7 @@ export class DataService {
     return this.server.post('/api/plagsample/upload/', formData).subscribe(
       response => {
         console.log(response.id);
-        this.router.navigateByUrl('display/' + response.id)
+        this.router.navigateByUrl('report/' + response.id)
       },
       error => {
         console.log(error.error);
