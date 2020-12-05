@@ -67,11 +67,6 @@ export class AuthInterceptor implements HttpInterceptor {
               })
             );
           }
-          else if (error.status === 403) {
-            console.log('Access Denied');
-            this.router.navigateByUrl('dashboard');
-            return EMPTY;
-          }
           else {
             return throwError(error);
           }

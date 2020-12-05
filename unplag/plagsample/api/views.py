@@ -31,6 +31,7 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 # THREAD_QUEUE = queue.Queue()
 LIST_THREADS = {}
 
+
 # Upload Plag Sample
 @api_view(['POST', ])
 def upload_sample(request):
@@ -42,43 +43,43 @@ def upload_sample(request):
             plag_post = PlagSamp(user=request.user, organization=org)
             serializer = PlagSampSerializer(plag_post, data=request.data)
             if serializer.is_valid():
-                serializer.save() # To prevent accidental saves
+                serializer.save()  # To prevent accidental saves
 
                 data = serializer.data
                 data['date_posted'] = plag_post.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
-                
-                ## We wish to run this stuff in a separate thread
+
+                # We wish to run this stuff in a separate thread
                 try:
                     FILE_NAME = os.path.basename(plag_post.plagzip.name)
-                    EXT = FILE_NAME[FILE_NAME.rindex(".")+1:]   
+                    EXT = FILE_NAME[FILE_NAME.rindex(".") + 1:]
                     OUTFILE = FILE_NAME[:FILE_NAME.index(".")]
                     OUT_PATH = os.path.join(MEDIA_ROOT, "outputcsvfiles")
                     BASE_PATH = os.path.join(MEDIA_ROOT, "plagfiles", OUTFILE)
-                    FILE_RE = "*.txt" # Will this from the choice field
+                    FILE_RE = "*.txt"  # Will this from the choice field
                     FILE_PATH = os.path.join(MEDIA_ROOT, plag_post.plagzip.name)
 
                     # Call plag checker on a separate thread
-                    
+
                     # print(FILE_NAME)
                     # print(EXT)
                     # print(OUTFILE)
                     # print(OUT_PATH)
                     # print(BASE_PATH)
                     # print(FILE_RE)
-                    # print(FILE_PATH)                  
+                    # print(FILE_PATH)
                     lock = threading.Lock()
-                    txtobj = TxtPlagChecker(BASE_PATH, FILE_PATH, FILE_RE, 
+                    txtobj = TxtPlagChecker(BASE_PATH, FILE_PATH, FILE_RE,
                                             OUT_PATH, OUTFILE, EXT, plag_post, lock)
                     txtobj.daemon = False
-                    txtobj.name = plag_post.id # Name of the thread
+                    txtobj.name = plag_post.id  # Name of the thread
                     LIST_THREADS[plag_post.id] = txtobj
-                    txtobj.start() # Saves the csv inside the plagfiles directory
+                    txtobj.start()  # Saves the csv inside the plagfiles directory
                 except:
-                    # Won't interrupt the flow of execution, 
+                    # Won't interrupt the flow of execution,
                     # but will generate a null outfile
                     # TODO: Make this Fail-safe
                     pass
-                
+
                 serializer = PlagSampSerializer(plag_post)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -98,13 +99,13 @@ def download_csv(request, pk):
         except (PlagSamp.DoesNotExist, Profile.DoesNotExist):
             data['response'] = "Forbidden or Wrong Primary Key"
             return Response(data, status=status.HTTP_403_FORBIDDEN)
-        
+
         file = plagsample.outfile
-        ## Wait till thread has done its job
+        # Wait till thread has done its job
         if not file.name:
             if pk in LIST_THREADS:
                 LIST_THREADS[pk].join()
-                LIST_THREADS.pop(pk)
+                LIST_THREADS.pop(pk, None)
             else:
                 data['response'] = "Some unknown error happened while processing the csv"
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
@@ -112,10 +113,9 @@ def download_csv(request, pk):
             plagsample = PlagSamp.objects.get(pk=pk)
             file = plagsample.outfile
         else:
-            if pk in LIST_THREADS:
-                LIST_THREADS.pop(pk)
+            LIST_THREADS.pop(pk, None)
         ####################################
-        
+
         if not file.name:
             data['response'] = "Some unknown error happened while processing the csv"
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
