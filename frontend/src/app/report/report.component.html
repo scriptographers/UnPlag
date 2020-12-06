@@ -1,8 +1,32 @@
-<p>display works!</p>
+<!-- <p>display works!</p>
 <div *ngFor="let i of content">
   <span *ngFor="let j of i">
     {{j}}
   </span>
+</div> -->
+
+<div *ngIf="is_processing; else processed">
+  <div class="mat-display-1">
+    <span>Processing</span>
+  </div>
 </div>
 
-<button class="button" (click)="download()">Download</button>
+<ng-template #processed>
+  <mat-card>
+    <button style="margin-bottom: 1em;" mat-raised-button color="primary" (click)="download()">Download CSV</button>
+  </mat-card>
+
+  <!-- <div id="tester" style="width:90%;height:250px;"></div> -->
+  <mat-card style="width: 70%;">
+    <plotly-plot [data]="data1" [layout]="layout1"></plotly-plot>
+  </mat-card>
+  <mat-card style="width: 70%;">
+    <plotly-plot [data]="data2" [layout]="layout2"></plotly-plot>
+  </mat-card>
+  <mat-card style="width: 70%;">
+    <!-- <plotly-plot [data]="data3" [layout]="layout3" (hover)="onhover($event)" (unhover)="onunhover($event)"></plotly-plot> -->
+    <plotly-plot [data]="data3" [layout]="layout3"></plotly-plot>
+  </mat-card>
+</ng-template>
+
+<!-- <div #chart></div> -->

@@ -36,6 +36,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
+import { PlotlyViaWindowModule } from 'angular-plotly.js';
+
 
 @NgModule({
   declarations: [
@@ -71,6 +73,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatTableModule,
     MatIconModule,
     MatMenuModule,
+    PlotlyViaWindowModule,
   ],
   providers: [
     AuthService,

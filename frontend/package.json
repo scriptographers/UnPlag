@@ -21,8 +21,10 @@
     "@angular/platform-browser": "~9.1.12",
     "@angular/platform-browser-dynamic": "~9.1.12",
     "@angular/router": "~9.1.12",
+    "angular-plotly.js": "^3.0.0",
     "file-saver": "^2.0.2",
     "ngx-material-file-input": "^2.1.1",
+    "plotly.js": "^1.58.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
