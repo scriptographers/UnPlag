@@ -7,8 +7,9 @@
         <a routerLink="/report/{{sample.id}}">
           {{sample.name}}
         </a>
+        <span *ngIf="!sample.filename">&nbsp;(Processing)</span>
         <br>
-        File name (in backend): {{sample.filename}}
+        File type: *.{{sample.file_type}}
         <br>
         Upload time: {{sample.timestamp}}
         <br>
@@ -22,8 +23,9 @@
         <a routerLink="/report/{{sample.id}}">
           {{sample.name}}
         </a>
+        <span *ngIf="!sample.filename">&nbsp;(Processing)</span>
         <br>
-        File name (in backend): {{sample.filename}}
+        File type: *.{{sample.file_type}}
         <br>
         Upload time: {{sample.timestamp}}
         <br>

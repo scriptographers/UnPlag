@@ -17,9 +17,11 @@ Members:
     <a routerLink="/report/{{sample.id}}">
       {{sample.name}}
     </a>
+    <span *ngIf="!sample.filename">&nbsp;(Processing)</span>
     <br>
-    File name: {{sample.filename}}
+    File type: *.{{sample.file_type}}
     <br>
     Upload time: {{sample.timestamp}}
+    <br>
   </li>
 </ul>
