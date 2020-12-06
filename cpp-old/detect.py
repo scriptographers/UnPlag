@@ -6,7 +6,7 @@ import numpy as np
 import seaborn as sns
 from tqdm import tqdm
 from collections import Counter
-from ctokenizer import *
+from ctokenizer import CTokenizer
 from matplotlib import pyplot as plt
 
 # Arguments parsing
@@ -37,7 +37,6 @@ def sigvec(F, vocab):
 def cosineSimilarity(F1, F2, vocab):
     V1 = sigvec(F1, vocab)
     V2 = sigvec(F2, vocab)
-    print(V1, V2)
     return (np.dot(V1, V2)/(np.linalg.norm(V1)*np.linalg.norm(V2)))
 
 # Computes the Jaccard similarity between 2 preprocessed_files
@@ -60,7 +59,8 @@ tic = time.time()
 files = []
 problematic_files = []
 for filepath in tqdm(glob.glob(os.path.join(BASE_PATH, FILE_RE))):
-    tokens = tokenize(filepath)
+    t = CTokenizer(filepath)
+    tokens = t.rawTokenization()
     if len(tokens) > 0:
         files.append(tokens)
     else:

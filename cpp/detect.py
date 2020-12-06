@@ -6,7 +6,7 @@ import numpy as np
 import seaborn as sns
 from tqdm import tqdm
 from collections import Counter
-from ctokenizer import CTokenizer
+from ctokenizer import *
 from matplotlib import pyplot as plt
 
 # Arguments parsing
@@ -59,8 +59,7 @@ tic = time.time()
 files = []
 problematic_files = []
 for filepath in tqdm(glob.glob(os.path.join(BASE_PATH, FILE_RE))):
-    t = CTokenizer(filepath)
-    tokens = t.rawTokenization()
+    tokens = tokenize(filepath)
     if len(tokens) > 0:
         files.append(tokens)
     else:

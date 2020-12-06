@@ -1,191 +1,137 @@
 import sys
 import clang.cindex as ci
 from clang.cindex import CursorKind as ck
-
-"""
-Almost all functions used are present inside cindex.py itself
-Code/docs for clang.cindex: 
-https://github.com/llvm-mirror/clang/blob/master/bindings/python/clang/cindex.py
-"""
+from clang.cindex import TypeKind as tk
+from clangData import *
 
 # Set the config (works on linux devices only)
 ci.Config.set_library_path("/usr/lib/x86_64-linux-gnu")
 
-class CTokenizer:
+def tokenize(path):
 
-    # Create the index and parse the entire file:
-    def __init__(self, filePath):
-        self.index = ci.Index.create()
-        self.parsed_data = self.index.parse(filePath) # A ci.TranslationUnit object
-        self.path = filePath
-        self.allowed_kinds = [
-            ck.FUNCTION_DECL, 
-            ck.CLASS_DECL, 
-            ck.STRUCT_DECL, 
-            ck.VAR_DECL,
-            ck.ENUM_DECL,
-            ck.CXX_METHOD,
-            ck.FUNCTION_TEMPLATE,
-            ck.CLASS_TEMPLATE,
-        ]
-        # This needs to be updated, all special identifiers from STL need to be added
-        self.special_identifiers = [
-            "std", "cout", "cin", "endl", "vector", "pair", "string", "NULL", "size_t"
-        ]
+    index = ci.Index.create()
+    root  = index.parse(path)
+    cursor = root.cursor
 
-    # Print all kinds included in clang
-    def showAllKinds(self):
-        # Prints all the available kinds parsed by clang:
-        for kind in ck._kinds:
-            if kind:
-                print(kind)
-    
-    # Igores a set of delimiters
-    def processPunctuation(self, pnc):
-        if pnc in ["{", "}", "(", ")", "[", "]", ";", ",", ".", ":"]:
-            return None
-        else:
-            return pnc
-    
-    # Processes literals
-    def processLiteral(self, ltr):
-        kind = ltr.cursor.kind
-        if kind == ck.INTEGER_LITERAL:
-            return "int"
-        elif kind == ck.FLOATING_LITERAL:
-            return "flt"
-        elif kind == ck.IMAGINARY_LITERAL:
-            return "imag"
-        elif kind == ck.STRING_LITERAL:
-            return "str"
-        elif kind == ck.CHARACTER_LITERAL:
-            return "char"
-        elif kind == ck.CXX_BOOL_LITERAL_EXPR:
-            return "bool"
-        elif kind == ck.COMPOUND_STMT:
-            return "cmpd"
-        elif kind == ck.IF_STMT:
-            return "if"
-        elif kind == ck.FOR_STMT:
-            return "for"
-        elif kind == ck.DECL_STMT:
-            return "dec"
-        elif kind == ck.CXX_METHOD or kind == ck.FUNCTION_DECL:
-            return "fun"
-        else:
-            print("Error in file: ", self.path)
-            print("Token: ", ltr.spelling, kind)
-            raise NameError("Unknown literal encountered")
+    tokens = []
+    # Traverse the AST
+    preOrder = cursor.walk_preorder() # A generator of cursors
+    for c in preOrder:
+        if str(c.location.file) == path:
 
-    # To optimize
-    def processIdentifier(self, idt):
-        # Special "identifiers" (Not exhaustive)
-        if idt.spelling in self.special_identifiers:
-            return idt.spelling
-        kind = idt.cursor.kind
-        # Declaration:
-        if kind.is_declaration():
-            return "dec"
-        # References:
-        elif kind.is_reference():
-            return "ref"
-        # Expressions (Not really needed):
-        # elif kind.is_expression():
-        #     return "exp"
-        # Statements:
-        elif kind.is_statement():
-            return "stm"
-        # Attributes:
-        elif kind.is_attribute():
-            return "atr"
-        # Invalid:
-        elif kind.is_invalid():
-            return "inv"
-        # Variable use after declaration:
-        elif kind == ck.DECL_REF_EXPR:
-            return "use"
-        else:
-            # print(idt.spelling)
-            return "var"
+            ckind = c.kind
+            tkind = c.type.kind
 
-    # Tokenizes the given cursor completely:
-    def completeTokenization(self, cursor):
-        tokens = cursor.get_tokens()
-        processedTokens = []
-        for token in tokens:
-            tkn = token.kind.name
-            kind = token.kind
-            # Comments
-            if tkn == "COMMENT":
-                pass
-            # Constructor:
-            elif kind == ck.CONSTRUCTOR:
-                processedTokens.append("con")
-            # Destructor:
-            elif kind == ck.DESTRUCTOR:
-                processedTokens.append("des")
-            # Ternary operator:
-            elif kind in [ck.CONDITIONAL_OPERATOR, ck.CXX_FUNCTIONAL_CAST_EXPR]:
-                processedTokens.append("ter")
-            # Explicit type casting:
-            elif kind == ck.CSTYLE_CAST_EXPR:
-                processedTokens.append("cst")
-            # Punctuations:
-            elif tkn == "PUNCTUATION":
-                p = self.processPunctuation(token.spelling)
-                if p:
-                    processedTokens.append(p)
-            # Literals:
-            elif tkn == "LITERAL":
-                processedTokens.append(self.processLiteral(token))
-            # Identifiers:
-            elif tkn == "IDENTIFIER":
-                processedTokens.append(self.processIdentifier(token))
-            # Add keyword directly
-            elif tkn == "KEYWORD":
-                processedTokens.append(token.spelling)
-            else:
-                raise NameError("Unknown token type encountered")
-        return processedTokens
-    
-    # Treats the entire document on a global level (Not really useful), contains namespaces and headers
-    def documentTokenization(self):
-        mainCursor = self.parsed_data.cursor
-        return self.completeTokenization(mainCursor)
-    
-    # (Level-1 (Global) Tokenization) Kind-wise tokenization of the document based on allowed_kinds
-    def splitByKinds(self):
-        kindwiseTokens = []
-        # Iterate over children of L1 Tokens:
-        mainCursor = self.parsed_data.cursor
-        for c in mainCursor.get_children():
-            currentPath = c.location.file.name
-            if c.kind in self.allowed_kinds and currentPath == self.path:
-                kindName = c.spelling
-                # (Level-2 Tokenization) Tokenize each child of the L1 Tokens
-                tokens = self.completeTokenization(c)
-                kindwiseTokens.append((kindName, tokens))
-        return kindwiseTokens
+            if ckind in funcDec:
+                if c.is_const_method():
+                    tokens.append("const_func")
+                elif c.is_static_method():
+                    tokens.append("static_func")
+                else:
+                    tokens.append("func")
+                # https://stackoverflow.com/questions/7035356/c-why-static-member-function-cant-be-created-with-const-qualifier
 
-    # Combines kindwise tokens
-    def rawTokenization(self):
-        rawTokens = []
-        # Iterate over children of L1 Tokens:
-        mainCursor = self.parsed_data.cursor
-        for c in mainCursor.get_children():
-            currentPath = c.location.file.name
-            if c.kind in self.allowed_kinds and currentPath == self.path:
-                # (Level-2 Tokenization) Tokenize each child of the L1 Tokens
-                tokens = self.completeTokenization(c)
-                rawTokens += tokens # List addition
-        return rawTokens
+            elif ckind == ck.CONSTRUCTOR:
+                if c.is_converting_constructor():
+                    tmp = "conv_con"
+                elif c.is_copy_constructor():
+                    tmp = "copy_con"
+                elif c.is_default_constructor():
+                    tmp = "def_con"
+                elif c.is_move_constructor():
+                    tmp = "move_con"
+                else:
+                    tmp = "con"
+                tokens.append(tmp)
 
-# Tester: 
-if __name__ == "__main__":
-    FILE_PATH = sys.argv[1] 
-    ctok = CTokenizer(FILE_PATH)
-    kindwiseTokens = ctok.splitByKinds()
-    # rawTokens = ctok.rawTokenization()
-    # print(rawTokens)
-    for t in kindwiseTokens:
-        print("{}:\nTokens: {}\n".format(t[0], t[1]))
+            elif ckind in varDec:
+                if tkind not in ignoreTypeKinds:
+                    tokens.append(tkind.name + "_var")
+                else:
+                    tokens.append("var")
+
+            elif ckind == ck.PARM_DECL:
+                if tkind not in ignoreTypeKinds:
+                    tokens.append(tkind.name + "_par")
+                else:
+                    tokens.append("par")
+
+            elif ckind == ck.TEMPLATE_TYPE_PARAMETER:
+                tokens.append("T_par")
+
+            elif ckind == ck.CXX_ACCESS_SPEC_DECL:
+                tokens.append(str(c.access_specifier).split('.')[1])
+
+            elif ckind == ck.DECL_REF_EXPR:
+                if tkind not in ignoreTypeKinds:
+                    tokens.append(tkind.name + "_used")
+
+            elif ckind == ck.CALL_EXPR:
+                if tkind not in ignoreTypeKinds:
+                    tokens.append(tkind.name + "_called")
+
+            elif ckind == ck.UNARY_OPERATOR:
+                subtokens = c.get_tokens()
+                for st in subtokens:
+                    if st.kind.name == "PUNCTUATION" and st.spelling in unary_operators:
+                        tokens.append(st.spelling)
+            elif ckind == ck.BINARY_OPERATOR:
+                subtokens = c.get_tokens()
+                for st in subtokens:
+                    # print(st.spelling, end=' ')
+                    if st.kind.name == "PUNCTUATION" and st.spelling in binary_operators:
+                        if st.spelling == "<<":
+                            tokens.append("lshift")
+                        elif st.spelling == ">>":
+                            tokens.append("rshift")
+                        else:
+                            tokens.append(st.spelling)
+                # print("")
+                # alreadyProcessedChildren = c.get_children()
+                # for child in alreadyProcessedChildren:
+                #     if child.kind == ck.BINARY_OPERATOR:
+                #         preOrder.remove(child)
+            elif ckind == ck.COMPOUND_ASSIGNMENT_OPERATOR:
+                # Compund assignment operator is equivalent to binary operator
+                subtokens = c.get_tokens()
+                for st in subtokens:
+                    if st.kind.name == "PUNCTUATION" and "=" in st.spelling:
+                        tmp = st.spelling.split("=")[0]
+                        if tmp == "<<":
+                            tokens.append("lshift")
+                        elif tmp == ">>":
+                            tokens.append("rshift")
+                        else:
+                            tokens.append(tmp)
+            elif ckind == ck.CONDITIONAL_OPERATOR:
+                tokens.append("?:")
+
+            elif ckind == ck.CSTYLE_CAST_EXPR or ckind == ck.CXX_FUNCTIONAL_CAST_EXPR:
+                if tkind not in ignoreTypeKinds:
+                    tokens.append("cast_" + tkind.name)
+                else:
+                    tokens.append("cast")
+
+            elif ckind == ck.CXX_BOOL_LITERAL_EXPR:
+                tokens.append("BOOL_LITERAL")
+            elif ckind == ck.CXX_NULL_PTR_LITERAL_EXPR:
+                tokens.append(tkind.name)
+
+            elif ckind == ck.CXX_THIS_EXPR:
+                tokens.append("this")
+            elif ckind == ck.CXX_THROW_EXPR:
+                tokens.append("throw")
+            elif ckind == ck.CXX_NEW_EXPR:
+                tokens.append("new")
+            elif ckind == ck.CXX_DELETE_EXPR:
+                tokens.append("delete")
+
+            elif ckind == ck.CXX_FOR_RANGE_STMT:
+                tokens.append("FOR_STMT")
+ 
+            elif ckind in misc:
+                tokens.append(ckind.name)
+
+    tokens = [token.lower() for token in tokens]
+
+    return tokens
