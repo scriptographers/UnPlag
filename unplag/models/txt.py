@@ -100,12 +100,14 @@ class TxtPlagChecker(threading.Thread):
 
         preprocessed_files = []
         unpreprocessed_files = []
+        filelist = []
 
         # TODO: A more efficient way to extend to n files
 
         for filepath in glob.glob(os.path.join(self.BASE_PATH, self.FILE_RE)):
             with open(filepath, 'r', encoding="utf-8", errors="ignore") as f:
                 F = f.read()
+                filelist.append(os.path.basename(filepath))
                 unpreprocessed_files.append(F)
                 preprocessed_files.append(self.preprocess(F))
 
@@ -136,7 +138,8 @@ class TxtPlagChecker(threading.Thread):
 
         # TF-IDF similarity matrix
         tfidf_matrix = self.TfIdfSimilarity(unpreprocessed_files) 
-
+        
+        tfidf_matrix_wfn = np.vstack([tfidf_matrix, filelist])
         # toc = time.time()
 
         # if showTime:
@@ -164,9 +167,11 @@ class TxtPlagChecker(threading.Thread):
 
         # Dump results into a CSV file
         # np.savetxt("cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
-        SAVE_PATH = os.path.join(self.OUT_PATH, "jaccard_" + self.OUTFILE + ".csv")
-        np.savetxt(SAVE_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
-        
+        # SAVE_PATH = os.path.join(self.OUT_PATH, "jaccard_" + self.OUTFILE + ".csv")
+        # np.savetxt(SAVE_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
+        SAVE_PATH = os.path.join(self.OUT_PATH, "tfidf_" + self.OUTFILE + ".csv")
+        np.savetxt(SAVE_PATH, tfidf_matrix_wfn, fmt="%.10s", delimiter=',')  
+
         csv_f = File(open(SAVE_PATH, 'r'))
         # time.sleep(20) # Uncomment to check
         self.PLAG_POST.outfile.save(SAVE_PATH, csv_f)
