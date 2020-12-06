@@ -21,6 +21,7 @@ export class ReportComponent implements OnInit {
   public layout1: any;
   public layout2: any;
   public layout3: any;
+  public config: any;
 
   is_processing: boolean;
 
@@ -49,11 +50,12 @@ export class ReportComponent implements OnInit {
             console.log(buffer);
             console.log(typeof buffer);
             let arr = buffer.split('\n');
-            console.log(arr)
-            for (var i = 0; i < arr.length - 1; i++) {
+            console.log(arr);
+            var i = 0;
+            for (; i < arr.length - 2; i++) {
               this.content.push(arr[i].split(","));
-              this.file_names.push(`File ${i}`);
             }
+            this.file_names = arr[i].split(",");
             for (var i = 0; i < this.file_names.length; i++) {
               this.text.push([]);
               for (var j = 0; j < this.file_names.length; j++) {
@@ -83,6 +85,11 @@ export class ReportComponent implements OnInit {
               width: 500,
               height: 500,
               hovermode: 'closest',
+              scene: {
+                xaxis: { showticklabels: false, zeroline: false, title: '' },
+                yaxis: { showticklabels: false, zeroline: false, title: '' },
+                zaxis: { showticklabels: false, title: '' },
+              }
             };
 
             this.data2 = [{
@@ -101,6 +108,8 @@ export class ReportComponent implements OnInit {
               width: 500,
               height: 500,
               hovermode: 'closest',
+              xaxis: { showticklabels: false, zeroline: false, visible: false },
+              yaxis: { showticklabels: false, zeroline: false, visible: false },
             };
 
             this.data3 = [{
@@ -119,7 +128,11 @@ export class ReportComponent implements OnInit {
               width: 500,
               height: 500,
               hovermode: 'closest',
+              xaxis: { showticklabels: false, zeroline: false, visible: false },
+              yaxis: { showticklabels: false, zeroline: false, visible: false },
             };
+
+            this.config = { displaylogo: false };
           }
         )
         console.log(response.headers);
