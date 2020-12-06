@@ -132,3 +132,29 @@ def download_csv(request, pk):
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.name)
         return response
 ###################################################################
+
+
+# Get Sample Info
+@api_view(['GET', ])
+def get_sample_info(request, pk):
+    if request.method == 'GET':
+        data = {}
+        try:
+            plagsample = PlagSamp.objects.get(pk=pk)
+            checkuser = plagsample.organization.profile_set.get(user=request.user)
+        except (PlagSamp.DoesNotExist, Profile.DoesNotExist):
+            data['response'] = "Forbidden or Wrong Primary Key"
+            return Response(data, status=status.HTTP_403_FORBIDDEN)
+        
+        data['id'] = plagsample.id
+        data['name'] = plagsample.name
+        data['filename'] = os.path.basename(plagsample.plagzip.name)
+        data['file_type'] = plagsample.file_type
+        data['timestamp'] = plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
+        data['org_id'] = plagsample.organization.id
+        data['org_name'] = plagsample.organization.name
+        data['uploader_id'] = plagsample.user.id
+        data['uploader'] = plagsample.user.username
+        
+        return Response(data, status=status.HTTP_200_OK)
+###################################################################
