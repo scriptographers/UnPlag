@@ -78,7 +78,7 @@ def get_profile(request):
         data = pr_serializer.data
         data['username'] = profile.user.username
 
-        orgs = profile.organizations.all().order_by("id")
+        orgs = profile.organizations.all().order_by("name")
         data['orgs'] = [{"org_id": org.id, "org_name": org.name} for org in orgs]
         return Response(data)
 ###################################################################
