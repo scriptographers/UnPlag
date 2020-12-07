@@ -22,3 +22,4 @@ sklearn==0.0
 threadpoolctl==2.1.0
 tqdm==4.50.2
 gensim==3.8.3
+Unidecode==1.1.1
