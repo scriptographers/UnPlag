@@ -1,0 +1,11 @@
+# Usage 
+- Main file: `txt/tfidf.py`  
+- Direct usage: `python3 tfidf.py -d <dataset> -r "<RegEx>" -out <output>`
+    - `<dataset>`: This must contain the path to directory containing all the files which you want to check. The files are expected to be english text files.
+    - `<regEx>`: This must contain the regular expression for testing some subset of the files inside `<dataset>`. For example, if you have java, C++ and text files in your dataset, and you want to check for plagiarism only on the text files, then you `<regEx>` will be `*.txt`.
+    - `<output>`: This contains a string which determines where the output `.csv` file will be saved. For example, if `<output> = my_file.csv` then the output csv file is saved at `results/tfidf_my_file.csv` 
+- Output: Running the code generates:
+    - A `.csv` file at `results/tfidf_<output>`. This contains the pairwise similarities between the pairs of files. The axis is indexed as `0,..., n-1` where `n` is the number of files, the index to file mapping can be found via running `ls -U` in the `<dataset>`.
+    - A heatmap corresponding to the `.csv` file, at `plots/tfidf_heatmap.png`, same indexing is followed as in the csv file. 
+    - A progressbar will also been shown on the terminal, this indicates the progress made in reading, processing and tokenizing the files.
+    - Note: Reading this output for a large number of files may be cumbersome, so it is advised to use the front-end interface which contains much nicer interactive plots.
