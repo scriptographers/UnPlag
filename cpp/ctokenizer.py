@@ -1,20 +1,21 @@
 import sys
-import clang.cindex as ci
-from clang.cindex import CursorKind as ck
-from clang.cindex import TypeKind as tk
 from clangData import *
+import clang.cindex as ci
+from clang.cindex import TypeKind as tk
+from clang.cindex import CursorKind as ck
 
-# Set the config (works on linux devices only)
+# Set the config (works on linux/WSL only)
 ci.Config.set_library_path("/usr/lib/x86_64-linux-gnu")
 
+# Tokenizes the cpp file present at the given path:
 def tokenize(path):
 
     index = ci.Index.create()
-    root  = index.parse(path)
+    root  = index.parse(path) # Root of the AST
     cursor = root.cursor
 
     tokens = []
-    # Traverse the AST
+    # Traverse the AST in preorder
     preOrder = cursor.walk_preorder() # A generator of cursors
     for c in preOrder:
         if str(c.location.file) == path:
@@ -22,6 +23,7 @@ def tokenize(path):
             ckind = c.kind
             tkind = c.type.kind
 
+            # Function declarations:
             if ckind in funcDec:
                 if c.is_const_method():
                     tokens.append("const_func")
@@ -31,6 +33,7 @@ def tokenize(path):
                     tokens.append("func")
                 # https://stackoverflow.com/questions/7035356/c-why-static-member-function-cant-be-created-with-const-qualifier
 
+            # Constructors:
             elif ckind == ck.CONSTRUCTOR:
                 if c.is_converting_constructor():
                     tmp = "conv_con"
@@ -44,7 +47,8 @@ def tokenize(path):
                     tmp = "con"
                 tokens.append(tmp)
 
-            elif ckind in varDec:
+            # Variable declarations:
+            elif ckind == ck.VAR_DECL:
                 if tkind not in ignoreTypeKinds:
                     if tkind in numeric_types:
                         tokens.append("num_var")
@@ -53,6 +57,7 @@ def tokenize(path):
                 else:
                     tokens.append("var")
 
+            # Parameter declarations:
             elif ckind == ck.PARM_DECL:
                 if tkind not in ignoreTypeKinds:
                     if tkind in numeric_types:
@@ -65,9 +70,11 @@ def tokenize(path):
             elif ckind == ck.TEMPLATE_TYPE_PARAMETER:
                 tokens.append("T_par")
 
+            # Access specifiers:
             elif ckind == ck.CXX_ACCESS_SPEC_DECL:
                 tokens.append(str(c.access_specifier).split('.')[1])
 
+            # Usage of an already declared variable:
             elif ckind == ck.DECL_REF_EXPR:
                 if tkind not in ignoreTypeKinds:
                     if tkind in numeric_types:
@@ -75,6 +82,7 @@ def tokenize(path):
                     else:
                         tokens.append(tkind.name + "_used")
 
+            # Function calls:
             elif ckind == ck.CALL_EXPR:
                 if tkind not in ignoreTypeKinds:
                     if tkind in numeric_types:
@@ -82,11 +90,14 @@ def tokenize(path):
                     else:
                         tokens.append(tkind.name + "_called")
 
+            # Unary operator:
             elif ckind == ck.UNARY_OPERATOR:
                 subtokens = c.get_tokens()
                 for st in subtokens:
                     if st.kind.name == "PUNCTUATION" and st.spelling in unary_operators:
                         tokens.append(st.spelling)
+            
+            # Binary operators:
             elif ckind == ck.BINARY_OPERATOR:
                 subtokens = c.get_tokens()
                 for st in subtokens:
@@ -98,11 +109,8 @@ def tokenize(path):
                             tokens.append("rshift")
                         else:
                             tokens.append(st.spelling)
-                # print("")
-                # alreadyProcessedChildren = c.get_children()
-                # for child in alreadyProcessedChildren:
-                #     if child.kind == ck.BINARY_OPERATOR:
-                #         preOrder.remove(child)
+
+            # Compound operators:
             elif ckind == ck.COMPOUND_ASSIGNMENT_OPERATOR:
                 # Compund assignment operator is equivalent to binary operator
                 subtokens = c.get_tokens()
@@ -115,9 +123,12 @@ def tokenize(path):
                             tokens.append("rshift")
                         else:
                             tokens.append(tmp)
+            
+            # Conditional operators:
             elif ckind == ck.CONDITIONAL_OPERATOR:
                 tokens.append("?:")
 
+            # Explicit type casting:
             elif ckind == ck.CSTYLE_CAST_EXPR or ckind == ck.CXX_FUNCTIONAL_CAST_EXPR:
                 if tkind not in ignoreTypeKinds:
                     if tkind in numeric_types:
@@ -127,11 +138,15 @@ def tokenize(path):
                 else:
                     tokens.append("cast")
 
+            # Boolean literals
             elif ckind == ck.CXX_BOOL_LITERAL_EXPR:
-                tokens.append("BOOL_LITERAL")
+                tokens.append("bool_literal")
+            
+            # Null pointer literals
             elif ckind == ck.CXX_NULL_PTR_LITERAL_EXPR:
-                tokens.append(tkind.name)
+                tokens.append("nullptr")
 
+            # Common keywords
             elif ckind == ck.CXX_THIS_EXPR:
                 tokens.append("this")
             elif ckind == ck.CXX_THROW_EXPR:
@@ -141,12 +156,19 @@ def tokenize(path):
             elif ckind == ck.CXX_DELETE_EXPR:
                 tokens.append("delete")
 
+            # for(:) is treated the same as for(;;)
             elif ckind == ck.CXX_FOR_RANGE_STMT:
-                tokens.append("FOR_STMT")
- 
+                tokens.append("for_stmt")
+            
+            # All numeric literals are treated the same:
+            elif ckind in numeric_literals:
+                    tokens.append("num_literal")
+
+            # Directly add miscellanous tokens
             elif ckind in misc:
                 tokens.append(ckind.name)
 
+    # Convert all to lowercase (sanity check)
     tokens = [token.lower() for token in tokens]
 
     return tokens

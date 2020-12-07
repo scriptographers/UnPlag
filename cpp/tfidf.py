@@ -14,13 +14,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--data", "-d", type=str, required=True)
 parser.add_argument("--regex", "-r", type=str, required=True)
 parser.add_argument("--output", "-out", type=str, required=True)
-parser.add_argument("--time", required=False, default=False, action="store_true")
 args = parser.parse_args()
 
 BASE_PATH = args.data
 FILE_RE   = args.regex
 OUT_PATH  = args.output
-showTime  = args.time
 
 files = []
 problematic_files = []
@@ -32,20 +30,20 @@ for filepath in tqdm(glob.glob(os.path.join(BASE_PATH, FILE_RE))):
         # Files which result in empty tokens
         problematic_files.append(filepath)
 
+N_DOCS = len(files)
+
 # Show problematic files
 if len(problematic_files) > 0:
     print("The following files have some problem: ")
     for pf in problematic_files:
         print(pf)
 
-N_DOCS = len(files)
-
-# A good reference: http://www.davidsbatista.net/blog/2018/02/28/TfidfVectorizer/
+# A good reference for customizing TfIdf: http://www.davidsbatista.net/blog/2018/02/28/TfidfVectorizer/
 
 def identityFunction(file):
     return file
 
-VOCAB_LIMIT = 1000 # Can be increased if efficency is not an issue
+VOCAB_LIMIT = 2000 # Can be increased if efficency is not an issue
 vectorizer = TfidfVectorizer(
     analyzer='word',
     tokenizer = identityFunction,
@@ -57,15 +55,12 @@ vectorizer = TfidfVectorizer(
     decode_error="ignore",
     stop_words = None,
     lowercase=False,
-    norm = "l2" # Each row will be normalized
+    norm = "l2" # Each row will be unit normalized
 )
-S = vectorizer.fit_transform(files)
 
-# print(vectorizer.vocabulary_)
-print(len(vectorizer.vocabulary_))
-
+S = vectorizer.fit_transform(files) # Vocabulary built is inside vectorizer.vocabulary_
+# linear_kernel computes the dot product of the sparse matrix:
 tfm = linear_kernel(S, S)
-#tfm = tfm.toarray()
 
 # TF-IDF Heatmap
 thm = sns.heatmap(tfm)
