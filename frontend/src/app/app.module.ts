@@ -37,6 +37,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { PlotlyViaWindowModule } from 'angular-plotly.js';
 
@@ -77,6 +78,7 @@ import { PlotlyViaWindowModule } from 'angular-plotly.js';
     MatMenuModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
     PlotlyViaWindowModule,
   ],
   providers: [

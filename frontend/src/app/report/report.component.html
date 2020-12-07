@@ -1,27 +1,49 @@
-<div *ngIf="is_processing; else processed">
-  <div class="mat-display-1">
-    <span>Processing</span>
-    <mat-progress-spinner mode="indeterminate" value="100"></mat-progress-spinner>
-    <!-- Need to center this -->
+<mat-accordion>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Info
+      </mat-panel-title>
+      <mat-panel-description>
+        Description and detail of the upload
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      Name: <a routerLink="/org/view/{{ info.org_id }}">{{ info.org_name }}</a> / {{ info.name }}<br>
+      Time of upload: {{ info.timestamp }}<br>
+      File Type: {{ info.file_type }}<br>
+      File count: {{ info.file_count }}<br>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<div *ngIf="info.file_count != 0">
+
+  <div *ngIf="is_processing; else processed">
+    <div class="mat-display-1">
+      <span>Processing</span>
+      <mat-progress-spinner mode="indeterminate" value="100"></mat-progress-spinner>
+      <!-- Need to center this -->
+    </div>
   </div>
+
+  <ng-template #processed>
+    <mat-card>
+      <button style="margin-bottom: 1em;" mat-raised-button color="primary" (click)="download()">Download CSV</button>
+    </mat-card>
+
+    <mat-card style="width: 80%;">
+      <mat-tab-group mat-align-tabs="center" dynamicHeight>
+        <mat-tab label="Surface Plot">
+          <plotly-plot [data]="plots.data1" [layout]="plots.layout1" [config]="plots.config"></plotly-plot>
+        </mat-tab>
+        <mat-tab label="Heat Map">
+          <plotly-plot [data]="plots.data2" [layout]="plots.layout2" [config]="plots.config"></plotly-plot>
+        </mat-tab>
+        <mat-tab label="Contour Plot">
+          <plotly-plot [data]="plots.data3" [layout]="plots.layout3" [config]="plots.config"></plotly-plot>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </ng-template>
 </div>
-
-<ng-template #processed>
-  <mat-card>
-    <button style="margin-bottom: 1em;" mat-raised-button color="primary" (click)="download()">Download CSV</button>
-  </mat-card>
-
-  <mat-card style="width: 80%;">
-    <mat-tab-group mat-align-tabs="center" dynamicHeight>
-      <mat-tab label="Surface Plot">
-        <plotly-plot [data]="data1" [layout]="layout1" [config]="config"></plotly-plot>
-      </mat-tab>
-      <mat-tab label="Heat Map">
-        <plotly-plot [data]="data2" [layout]="layout2" [config]="config"></plotly-plot>
-      </mat-tab>
-      <mat-tab label="Contour Plot">
-        <plotly-plot [data]="data3" [layout]="layout3" [config]="config"></plotly-plot>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card>
-</ng-template>

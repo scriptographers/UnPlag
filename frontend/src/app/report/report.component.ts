@@ -10,20 +10,17 @@ import { DataService } from '../data.service';
 export class ReportComponent implements OnInit {
 
   id: string;
-  content: Array<Array<string>>;
-  file_names: Array<string>;
-  buffer: any;
-  text: Array<Array<string>>;
 
-  public data1: any;
-  public data2: any;
-  public data3: any;
-  public layout1: any;
-  public layout2: any;
-  public layout3: any;
-  public config: any;
+  info: any;
 
   is_processing: boolean;
+
+  buffer: any;
+  content: Array<Array<string>>;
+  file_names: Array<string>;
+  text: Array<Array<string>>;
+
+  plots: any;
 
   constructor(
     private router: Router,
@@ -34,42 +31,74 @@ export class ReportComponent implements OnInit {
     this.content = [];
     this.file_names = [];
     this.text = [];
+    this.info = {
+      name: '',
+      org_name: '',
+      org_id: '',
+      timestamp: '',
+      file_type: '',
+      file_count: 0
+    }
+
+    this.plots = {
+      data1: [],
+      data2: [],
+      data3: [],
+      layout1: {},
+      layout2: {},
+      layout3: {},
+      config: {},
+    };
   }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id');
     });
-    this.data.download(this.id).subscribe(
+
+    this.data.info(this.id).subscribe(
       response => {
         console.log(response);
-        console.log(response.body);
+        this.info.name = response.name;
+        this.info.org_name = response.org_name;
+        this.info.org_id = response.org_id;
+        this.info.timestamp = response.timestamp;
+        this.info.file_type = response.file_type;
+        this.info.file_count = response.file_count;
+
+        if (this.info.file_count != 0) {
+          this.retrieve();
+        }
+      },
+      error => {
+        console.log(error);
+        this.router.navigateByUrl('/dashboard');
+      }
+    );
+  }
+
+  retrieve() {
+    this.data.download(this.id).subscribe(
+      response => {
         this.buffer = response.body;
-        response.body.text().then(
+        this.buffer.text().then(
           (buffer: string) => {
-            console.log(buffer);
-            console.log(typeof buffer);
             let arr = buffer.split('\n');
-            console.log(arr);
-            var i = 0;
-            for (; i < arr.length - 2; i++) {
+            this.file_names = arr[0].split(",");
+            for (var i = 0; i < arr.length - 2; ++i) {
               this.content.push(arr[i].split(","));
             }
-            this.file_names = arr[i].split(",");
+            this.info.file_count = this.file_names.length;
             for (var i = 0; i < this.file_names.length; i++) {
               this.text.push([]);
               for (var j = 0; j < this.file_names.length; j++) {
                 this.text[i].push(`x: ${this.file_names[i]} <br>y: ${this.file_names[j]} <br>Similarity: ${this.content[i][j]}`);
               }
             }
-            console.log(this.content);
-            console.log(Array.isArray(this.content));
-            console.log(this.file_names);
-            console.log(this.text);
 
             this.is_processing = false;
 
-            this.data1 = [{
+            this.plots.data1 = [{
               x: this.file_names,
               y: this.file_names,
               z: this.content,
@@ -79,7 +108,7 @@ export class ReportComponent implements OnInit {
               type: 'surface'
             }];
 
-            this.layout1 = {
+            this.plots.layout1 = {
               title: 'Surface Plot',
               autosize: false,
               width: 500,
@@ -92,7 +121,7 @@ export class ReportComponent implements OnInit {
               }
             };
 
-            this.data2 = [{
+            this.plots.data2 = [{
               x: this.file_names,
               y: this.file_names,
               z: this.content,
@@ -102,7 +131,7 @@ export class ReportComponent implements OnInit {
               type: 'heatmap'
             }];
 
-            this.layout2 = {
+            this.plots.layout2 = {
               title: 'Heat Map',
               autosize: false,
               width: 500,
@@ -112,7 +141,7 @@ export class ReportComponent implements OnInit {
               yaxis: { showticklabels: false, zeroline: false, visible: false },
             };
 
-            this.data3 = [{
+            this.plots.data3 = [{
               x: this.file_names,
               y: this.file_names,
               z: this.content,
@@ -122,7 +151,7 @@ export class ReportComponent implements OnInit {
               type: 'contour'
             }];
 
-            this.layout3 = {
+            this.plots.layout3 = {
               title: 'Contour Plot',
               autosize: false,
               width: 500,
@@ -132,14 +161,12 @@ export class ReportComponent implements OnInit {
               yaxis: { showticklabels: false, zeroline: false, visible: false },
             };
 
-            this.config = { displaylogo: false };
+            this.plots.config = { displaylogo: false };
           }
         )
-        console.log(response.headers);
       },
       error => {
         console.log(error);
-        this.router.navigateByUrl('/dashboard');
       }
     );
   }

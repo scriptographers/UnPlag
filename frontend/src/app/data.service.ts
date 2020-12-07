@@ -41,4 +41,8 @@ export class DataService {
     console.log(blobData)
     saveAs(blobData, name);
   }
+
+  info(id: string) {
+    return this.server.get(`/api/plagsample/info/${id}/`);
+  }
 }
