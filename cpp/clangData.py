@@ -1,5 +1,5 @@
 from clang.cindex import CursorKind
-from clang.cindex import TypeKind as tk
+from clang.cindex import TypeKind
 
 unary_operators = ["-", "++", "--", "!", "&"]
 
@@ -12,6 +12,11 @@ binary_operators = [
 ]
 
 ignorePunctuations = ["#", "{", "}", "(", ")", "[", "]", ";", ",", ".", ":"]
+
+numeric_literals = [
+    CursorKind.INTEGER_LITERAL,
+    CursorKind.FLOATING_LITERAL,
+]
 
 misc = [
     CursorKind.STRUCT_DECL,
@@ -74,16 +79,36 @@ varDec = [
     CursorKind.VAR_DECL
 ]
 
+# This ensures changing all INTs to LONG LONG INTs doesn't affect the similarity
+# This also reduces the vocabulary size required
+numeric_types = [
+    TypeKind.SHORT,
+    TypeKind.INT,
+    TypeKind.LONG,
+    TypeKind.LONGLONG,
+    TypeKind.INT128,
+    TypeKind.FLOAT,
+    TypeKind.DOUBLE,
+    TypeKind.LONGDOUBLE,
+    TypeKind.FLOAT128,
+    TypeKind.USHORT,
+    TypeKind.UINT,
+    TypeKind.ULONG, 
+    TypeKind.ULONGLONG, 
+    TypeKind.UINT128,
+]
+
+# We treat character types differently: https://docs.microsoft.com/en-us/cpp/cpp/char-wchar-t-char16-t-char32-t?view=msvc-160
+
 ignoreTypeKinds = [
-    tk.INVALID, 
-    tk.DEPENDENT, 
-    tk.UNEXPOSED, 
-    tk.FUNCTIONPROTO, 
-    tk.TYPEDEF, 
-    tk.LVALUEREFERENCE, 
-    tk.RVALUEREFERENCE,
-    tk.ELABORATED,
-    tk.RECORD,
-    tk.ELABORATED,
-    tk.OVERLOAD
+    TypeKind.INVALID, 
+    TypeKind.DEPENDENT, 
+    TypeKind.UNEXPOSED, 
+    TypeKind.FUNCTIONPROTO, 
+    TypeKind.TYPEDEF, 
+    TypeKind.LVALUEREFERENCE, 
+    TypeKind.RVALUEREFERENCE,
+    TypeKind.RECORD,
+    TypeKind.ELABORATED,
+    TypeKind.OVERLOAD
 ]

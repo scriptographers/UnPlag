@@ -70,6 +70,6 @@ tfm = linear_kernel(S, S)
 # TF-IDF Heatmap
 thm = sns.heatmap(tfm)
 fig = thm.get_figure()    
-fig.savefig("plots/tfidf_heatmap_large.png", dpi=150)
+fig.savefig("plots/tfidf_heatmap.png", dpi=150)
 
 np.savetxt("results/tfidf_" + OUT_PATH, tfm, fmt="%.4f", delimiter=',')

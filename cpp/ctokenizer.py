@@ -46,13 +46,19 @@ def tokenize(path):
 
             elif ckind in varDec:
                 if tkind not in ignoreTypeKinds:
-                    tokens.append(tkind.name + "_var")
+                    if tkind in numeric_types:
+                        tokens.append("num_var")
+                    else:
+                        tokens.append(tkind.name + "_var")
                 else:
                     tokens.append("var")
 
             elif ckind == ck.PARM_DECL:
                 if tkind not in ignoreTypeKinds:
-                    tokens.append(tkind.name + "_par")
+                    if tkind in numeric_types:
+                        tokens.append("num_par")
+                    else:
+                        tokens.append(tkind.name + "_par")
                 else:
                     tokens.append("par")
 
@@ -64,11 +70,17 @@ def tokenize(path):
 
             elif ckind == ck.DECL_REF_EXPR:
                 if tkind not in ignoreTypeKinds:
-                    tokens.append(tkind.name + "_used")
+                    if tkind in numeric_types:
+                        tokens.append("num_used")
+                    else:
+                        tokens.append(tkind.name + "_used")
 
             elif ckind == ck.CALL_EXPR:
                 if tkind not in ignoreTypeKinds:
-                    tokens.append(tkind.name + "_called")
+                    if tkind in numeric_types:
+                        tokens.append("num_called")
+                    else:
+                        tokens.append(tkind.name + "_called")
 
             elif ckind == ck.UNARY_OPERATOR:
                 subtokens = c.get_tokens()
@@ -108,7 +120,10 @@ def tokenize(path):
 
             elif ckind == ck.CSTYLE_CAST_EXPR or ckind == ck.CXX_FUNCTIONAL_CAST_EXPR:
                 if tkind not in ignoreTypeKinds:
-                    tokens.append("cast_" + tkind.name)
+                    if tkind in numeric_types:
+                        tokens.append("cast_num")
+                    else:
+                        tokens.append("cast_" + tkind.name)
                 else:
                     tokens.append("cast")
 
