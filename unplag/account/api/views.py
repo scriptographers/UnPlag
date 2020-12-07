@@ -78,7 +78,7 @@ def get_profile(request):
         data = pr_serializer.data
         data['username'] = profile.user.username
 
-        orgs = profile.organizations.all().order_by("id")
+        orgs = profile.organizations.all().order_by("name")
         data['orgs'] = [{"org_id": org.id, "org_name": org.name} for org in orgs]
         return Response(data)
 ###################################################################
@@ -144,6 +144,7 @@ def get_pastchecks(request):
         data = {}
         data['pastchecks'] = [{"name": plagsample.name,
                                "filename": os.path.basename(plagsample.plagzip.name),
+                               "file_type": plagsample.file_type,
                                "id": plagsample.id,
                                "timestamp": plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
                                "org_id": plagsample.organization.id,

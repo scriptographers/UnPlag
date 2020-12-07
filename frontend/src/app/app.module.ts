@@ -24,6 +24,22 @@ import { ReportComponent } from './report/report.component';
 
 // Material Modules
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MaterialFileInputModule } from 'ngx-material-file-input';
+import { MatInputModule } from '@angular/material/input';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+import { PlotlyViaWindowModule } from 'angular-plotly.js';
 
 
 @NgModule({
@@ -49,6 +65,21 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSnackBarModule,
+    MatSelectModule,
+    MatCardModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MaterialFileInputModule,
+    MatInputModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatTableModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatExpansionModule,
+    PlotlyViaWindowModule,
   ],
   providers: [
     AuthService,

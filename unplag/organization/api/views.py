@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 
 from organization.models import Organization
 from organization.api.serializers import OrganizationSerializer
@@ -72,6 +71,7 @@ def get_profile(request, pk):
             pastchecks = org.plagsamp_set.all().order_by("-date_posted")
             data['pastchecks'] = [{"name": plagsample.name,
                                    "filename": os.path.basename(plagsample.plagzip.name),
+                                   "file_type": plagsample.file_type,
                                    "id": plagsample.id,
                                    "timestamp": plagsample.date_posted.astimezone(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S"),
                                    } for plagsample in pastchecks]

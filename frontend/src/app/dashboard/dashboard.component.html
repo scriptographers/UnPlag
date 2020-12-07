@@ -1,18 +1,35 @@
 <div>Past uploads</div>
 <ul>
-  <li *ngFor="let sample of history">
-    <a routerLink="/report/{{sample.id}}">
-      {{sample.name}}
-    </a>
-    <br>
-    File name: {{sample.filename}}
-    <br>
-    Upload time: {{sample.timestamp}}
-    <br>
-    Org:
-    <a routerLink="/org/view/{{sample.org_id}}">
-      {{ sample.org_name }}
-    </a>
-    <br>
+  <li>
+    Private History (Organization: {{ profile.username }})
+    <ul>
+      <li *ngFor="let sample of personal_history">
+        <a routerLink="/report/{{sample.id}}">
+          {{sample.name}}
+        </a>
+        <span *ngIf="!sample.filename">&nbsp;(Processing)</span>
+        <br>
+        File type: *.{{sample.file_type}}
+        <br>
+        Upload time: {{sample.timestamp}}
+        <br>
+      </li>
+    </ul>
+  </li>
+  <li *ngFor="let history of orgs_history | keyvalue">
+    Organization: {{ history.key }}
+    <ul>
+      <li *ngFor="let sample of history.value">
+        <a routerLink="/report/{{sample.id}}">
+          {{sample.name}}
+        </a>
+        <span *ngIf="!sample.filename">&nbsp;(Processing)</span>
+        <br>
+        File type: *.{{sample.file_type}}
+        <br>
+        Upload time: {{sample.timestamp}}
+        <br>
+      </li>
+    </ul>
   </li>
 </ul>

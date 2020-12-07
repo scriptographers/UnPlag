@@ -7,6 +7,9 @@ import { AuthService } from './auth.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+  title :string = 'UnPlag';
+
   constructor(public auth: AuthService) { }
 
   onLogout() {

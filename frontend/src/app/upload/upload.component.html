@@ -1,20 +1,58 @@
-<p>upload works!</p>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Upload zip</h2>
-  <label class="full-width-input">
-    Compressed Folder
-    <input type="file" class="form-control" (change)="onFileChange($event)" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    Sample Name
-    <input type="text" placeholder="Sample Name" formControlName="sample_name" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    Org ID
-    <input type="text" placeholder="Org ID" formControlName="org_id" required>
-  </label>
-  <br>
-  <button class="button">Upload</button>
-</form>
+<mat-card>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Upload Compressed Folder</span>
+      </div>
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Compressed Folder</mat-label>
+        <ngx-mat-file-input id="xx" formControlName="file_source" [accept]="'.zip, *rar, *tar.gz'"
+          (change)="onFileChange($event)" required></ngx-mat-file-input>
+        {{ file_name }}
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Sample Name</mat-label>
+        <input matInput type="text" formControlName="sample_name" placeholder="Sample Name" />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Organization</mat-label>
+        <mat-select formControlName="org_id" required>
+          <mat-option *ngFor="let org of orgs" [value]="org.org_id">
+            {{ org.org_name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>File Type</mat-label>
+        <mat-select formControlName="file_type" required>
+          <mat-option *ngFor="let language of languages" [value]="language">
+            {{ language }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Upload</button>
+    </div>
+  </form>
+</mat-card>

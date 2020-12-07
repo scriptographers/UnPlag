@@ -13,17 +13,18 @@ export class DataService {
     private server: ServerService
   ) { }
 
-  upload(data: File, name: string, org_id: string) {
+  upload(data: File, name: string, org_id: string, file_type: string) {
     let formData: FormData = new FormData();
     formData.append('plagzip', data, data.name);
     console.log(data)
     formData.append('name', name);
     formData.append('org_id', org_id);
+    formData.append('file_type', file_type);
     console.log(formData);
     return this.server.post('/api/plagsample/upload/', formData).subscribe(
       response => {
         console.log(response.id);
-        this.router.navigateByUrl('display/' + response.id)
+        this.router.navigateByUrl('report/' + response.id)
       },
       error => {
         console.log(error.error);
@@ -40,5 +41,9 @@ export class DataService {
     const url = window.URL.createObjectURL(blobData);
     console.log(blobData)
     saveAs(blobData, name);
+  }
+
+  info(id: string) {
+    return this.server.get(`/api/plagsample/info/${id}/`);
   }
 }
