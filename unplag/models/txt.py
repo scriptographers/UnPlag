@@ -1,18 +1,21 @@
 import os
 import glob
 import time
+import argparse
+import threading
 import numpy as np
 import seaborn as sns
-import threading
+from tqdm import tqdm
+from models.extractutil import *
 from string import punctuation
-from collections import Counter
+from unidecode import unidecode
 from nltk.corpus import stopwords
+from django.core.files import File
 from nltk.stem import PorterStemmer 
 from matplotlib import pyplot as plt
 from nltk.tokenize import word_tokenize
-from sklearn.feature_extraction.text import TfidfVectorizer as tfidfv 
-from models.extractutil import *
-from django.core.files import File
+from sklearn.metrics.pairwise import linear_kernel
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TxtPlagChecker(threading.Thread):
     def __init__(self, BASE_PATH, FILE_PATH, FILE_RE, OUT_PATH, OUTFILE, EXT, PLAG_POST, LOCK):
@@ -30,62 +33,15 @@ class TxtPlagChecker(threading.Thread):
         self.SW = stopwords.words("english") # Common english stop-words
         self.ps = PorterStemmer() # TODO: Try more stemming algorithms
 
-    # FUNCTIONS
-
-    # Preprocessing:
-    def preprocess(self, F):
-        # 1. Convert to lowercase
+    # Preprocessing and tokenizing:
+    def preprocessAndTokenize(self, F):
         F = F.lower() 
-        # 2. Remove all punctuations
         F.translate(str.maketrans('', '', punctuation))
-        # 3. Tokenize the words
+        F = unidecode(F) # Equivalent to strip_ascii of TfIdfVectorizer
         F = word_tokenize(F)
-        # 4. Stem each word and remove all stop_words (can also use isalpha() here)
-        F = [self.ps.stem(f) for f in F if f.isalnum() and f not in self.SW] # TODO: Make this more efficient
-        # We can also use PySpellChecker to correct common mispellings, but that may decrease the efficiency
+        F = [self.ps.stem(f) for f in F if f.isalnum() and f not in self.SW]
         return F
-
-    # Creates the signature vector for a file
-    def sigvec(self, F, vocab):
-        # TODO: A more efficient way needed
-        D = {word:0 for word in vocab}
-        # Count frequency
-        for word in F:
-            D[word] += 1 
-        # The actual words don't matter from now on, convert to frequency vector
-        V = np.fromiter(D.values(), dtype=float)
-        return V
-
-    # Computes the cosine similarity between 2 preprocessed_files
-    def cosineSimilarity(self, F1, F2, vocab):
-        V1 = self.sigvec(F1, vocab)
-        V2 = self.sigvec(F2, vocab)
-        return (np.dot(V1, V2)/(np.linalg.norm(V1)*np.linalg.norm(V2)))
-
-    # Computes the Jaccard similarity between 2 preprocessed_files
-    def jaccardSimilarity(self, F1, F2):
-        n1, n2 = len(F1), len(F2)
-        D1, D2 = Counter(F1), Counter(F2)
-        D = D1 & D2 # Intersection
-        ni = sum(D.values())
-        nu = n1 + n2 - ni # Union
-        niou = ni/nu # Jaccard Similarity: Intersection over Union
-        return niou
-
-    # TF-IDF Approach
-    def TfIdfSimilarity(self, files):
-        S = tfidfv(
-            decode_error="ignore", # Ignore encoding errors
-            stop_words = "english",
-            strip_accents="ascii", # Removes characters like: á
-            norm="l2"
-        ).fit_transform(files) # Converts list of files to TF-IDF features
-        # S is already normalized, ||S|| = 1, thus cosine similarity: S*S.T
-        similarity = S*S.T # Of the type: scipy.sparse.csr.csr_matrix
-        similarity = similarity.toarray() # Converting into a standard numpy array
-        return similarity
-
-    # MAIN:
+    
     def run(self):
         self.LOCK.acquire()
         if self.EXT == "gz":
@@ -95,19 +51,16 @@ class TxtPlagChecker(threading.Thread):
         elif self.EXT == "rar":
             unrar(self.FILE_PATH, self.BASE_PATH)
 
-        print("extarct done")
-
-        preprocessed_files = []
-        unpreprocessed_files = []
+        print("extract done")
+        tokenized_files = []
         filelist = []
 
-        # TODO: A more efficient way to extend to n files
-
-        for filepath in glob.glob(os.path.join(self.BASE_PATH, self.FILE_RE)):
+        for filepath in tqdm(glob.glob(os.path.join(self.BASE_PATH, self.FILE_RE))):
             with open(filepath, 'r', encoding="utf-8", errors="ignore") as f:
-                F = f.read()
                 filelist.append(os.path.basename(filepath))
-                unpreprocessed_files.append(F)
+                contents = f.read()
+                tokens = self.preprocessAndTokenize(contents)
+                tokenized_files.append(tokens)
 
         N_DOCS = len(filelist)
         self.PLAG_POST.file_count = N_DOCS
@@ -118,14 +71,37 @@ class TxtPlagChecker(threading.Thread):
             return
         #######################
 
-        # TF-IDF similarity matrix
-        tfidf_matrix = self.TfIdfSimilarity(unpreprocessed_files) 
-        
-        tfidf_matrix_wfn = np.vstack([filelist, tfidf_matrix])
-        
+        def identityFunction(file):
+            return file
+
+        VOCAB_LIMIT = 10000 # Can be increased if efficency is not an issue
+        vectorizer = TfidfVectorizer(
+            # Already preprocessed and tokenized
+            analyzer = "word",
+            tokenizer = identityFunction,
+            preprocessor = identityFunction,
+            # Consider unigrams and bigrams
+            ngram_range = (1, 2),
+            max_features = VOCAB_LIMIT,
+            encoding = "utf-8", 
+            decode_error="ignore",
+            stop_words = None,
+            lowercase = False,
+            norm = "l2" # Each row will be unit normalized
+        )
+
+        S = vectorizer.fit_transform(tokenized_files) # Vocabulary built is inside vectorizer.vocabulary_
+        # linear_kernel computes the dot product of the sparse matrix:
+        tfm = linear_kernel(S, S)
+
+        # TF-IDF Heatmap
+        # thm = sns.heatmap(tfm)
+        # fig = thm.get_figure()    
+        # fig.savefig("plots/tfidf_heatmap.png", dpi=150)
+
         # Dump results into a CSV file
         SAVE_PATH = os.path.join(self.OUT_PATH, "tfidf_" + self.OUTFILE + ".csv")
-        np.savetxt(SAVE_PATH, tfidf_matrix_wfn, fmt="%s", delimiter=',')  
+        np.savetxt(SAVE_PATH, tfm, fmt="%.4f", delimiter=',', header=','.join(filelist), comments='')  
 
         csv_f = File(open(SAVE_PATH, 'r'))
         # time.sleep(20) # Uncomment to check

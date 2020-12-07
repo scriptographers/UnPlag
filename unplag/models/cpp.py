@@ -86,7 +86,6 @@ class CppPlagChecker(threading.Thread):
         S = vectorizer.fit_transform(files) # Vocabulary built is inside vectorizer.vocabulary_
         # linear_kernel computes the dot product of the sparse matrix:
         tfm = linear_kernel(S, S)
-        tfm_wfn = np.vstack([filelist, tfm])
 
         # TF-IDF Heatmap
         # thm = sns.heatmap(tfm)
@@ -94,7 +93,7 @@ class CppPlagChecker(threading.Thread):
         # fig.savefig("tfidf_heatmap.png", dpi=150)
 
         SAVE_PATH = os.path.join(self.OUT_PATH, "tfidf_" + self.OUTFILE + ".csv")
-        np.savetxt(SAVE_PATH, tfm_wfn, fmt="%s", delimiter=',')
+        np.savetxt(SAVE_PATH, tfm, fmt="%.4f", delimiter=',', header=','.join(filelist), comments='')
 
         csv_f = File(open(SAVE_PATH, 'r'))
         # time.sleep(20) # Uncomment to check

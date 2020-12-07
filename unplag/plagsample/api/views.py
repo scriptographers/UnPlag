@@ -79,8 +79,8 @@ def upload_sample(request):
                     plagcheckobj.name = plag_post.id  # Name of the thread
                     LIST_THREADS[plag_post.id] = plagcheckobj
                     plagcheckobj.start()  # Saves the csv inside the plagfiles directory
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
 
                 serializer = PlagSampSerializer(plag_post)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
