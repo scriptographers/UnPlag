@@ -87,7 +87,6 @@ class TxtPlagChecker(threading.Thread):
 
     # MAIN:
     def run(self):
-        # tic = time.time()
         self.LOCK.acquire()
         if self.EXT == "gz":
             untar(self.FILE_PATH, self.BASE_PATH)
@@ -96,7 +95,7 @@ class TxtPlagChecker(threading.Thread):
         elif self.EXT == "rar":
             unrar(self.FILE_PATH, self.BASE_PATH)
 
-        print("extarct doen")
+        print("extarct done")
 
         preprocessed_files = []
         unpreprocessed_files = []
@@ -109,68 +108,24 @@ class TxtPlagChecker(threading.Thread):
                 F = f.read()
                 filelist.append(os.path.basename(filepath))
                 unpreprocessed_files.append(F)
-                preprocessed_files.append(self.preprocess(F))
 
-        N_DOCS = len(preprocessed_files)
-
-        cosine_matrix  = np.zeros((N_DOCS, N_DOCS), dtype=float)
-        jaccard_matrix = np.zeros((N_DOCS, N_DOCS), dtype=float)
-
-        for i in range(N_DOCS):
-            for j in range(i+1, N_DOCS):
-                F1 = preprocessed_files[i]
-                F2 = preprocessed_files[j]
-                # Create the vocabulary
-                vocab = F1 + F2
-                # Remove all duplicates
-                vocab = list(set(vocab))
-                cosine_matrix[i, j]  = self.cosineSimilarity(F1, F2, vocab)
-                jaccard_matrix[i, j] = self.jaccardSimilarity(F1, F2)
-
-        # Utilize the symmetric nature of the matrix
-        for i in range(N_DOCS):
-            for j in range(i):
-                cosine_matrix[i][j]  = cosine_matrix[j][i]
-                jaccard_matrix[i][j] = jaccard_matrix[j][i]
-
-        np.fill_diagonal(cosine_matrix, 1)
-        np.fill_diagonal(jaccard_matrix, 1)
+        N_DOCS = len(filelist)
+        self.PLAG_POST.file_count = N_DOCS
+        self.PLAG_POST.save()
+        # Check Integrity of uploaded compressed file
+        if N_DOCS == 0:
+            self.LOCK.release()
+            return
+        #######################
 
         # TF-IDF similarity matrix
         tfidf_matrix = self.TfIdfSimilarity(unpreprocessed_files) 
         
-        tfidf_matrix_wfn = np.vstack([tfidf_matrix, filelist])
-        # toc = time.time()
-
-        # if showTime:
-        #     print("Time: {:.4f}".format(toc-tic))
-
-        # Heatmaps
-
-        # ## Cosine Heatmap
-        # chm = sns.heatmap(cosine_matrix)
-        # fig1 = chm.get_figure()
-        # fig1.savefig("plots/cosine_heatmap.png", dpi=150)   
-        # plt.figure() 
-
-        # ## Jaccard Heatmap
-        # jhm = sns.heatmap(jaccard_matrix)
-        # fig2 = jhm.get_figure()    
-        # fig2.savefig("plots/jaccard_heatmap.png", dpi=150)
-        # plt.figure()
-
-        # ## TF-IDF Heatmap
-        # thm = sns.heatmap(tfidf_matrix)
-        # fig3 = thm.get_figure()    
-        # fig3.savefig("plots/tfidf_heatmap.png", dpi=150)
-        # plt.figure()
-
+        tfidf_matrix_wfn = np.vstack([filelist, tfidf_matrix])
+        
         # Dump results into a CSV file
-        # np.savetxt("cosine_" + OUT_PATH, cosine_matrix, fmt="%.4f", delimiter=',')
-        # SAVE_PATH = os.path.join(self.OUT_PATH, "jaccard_" + self.OUTFILE + ".csv")
-        # np.savetxt(SAVE_PATH, jaccard_matrix, fmt="%.4f", delimiter=',')
         SAVE_PATH = os.path.join(self.OUT_PATH, "tfidf_" + self.OUTFILE + ".csv")
-        np.savetxt(SAVE_PATH, tfidf_matrix_wfn, fmt="%.10s", delimiter=',')  
+        np.savetxt(SAVE_PATH, tfidf_matrix_wfn, fmt="%s", delimiter=',')  
 
         csv_f = File(open(SAVE_PATH, 'r'))
         # time.sleep(20) # Uncomment to check

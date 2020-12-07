@@ -19,6 +19,7 @@ from organization.models import Organization
 from account.models import Profile
 
 from models.txt import TxtPlagChecker
+from models.cpp import CppPlagChecker
 
 import os
 import queue
@@ -62,25 +63,23 @@ def upload_sample(request):
                     FILE_PATH = os.path.join(MEDIA_ROOT, plag_post.plagzip.name)
 
                     # Call plag checker on a separate thread
-
-                    # print(FILE_NAME)
-                    # print(EXT)
-                    # print(OUTFILE)
-                    # print(OUT_PATH)
-                    # print(BASE_PATH)
-                    # print(FILE_RE)
-                    # print(FILE_PATH)
                     lock = threading.Lock()
-                    txtobj = TxtPlagChecker(BASE_PATH, FILE_PATH, FILE_RE,
+
+                    if plag_post.file_type == 'txt':
+                        plagcheckobj = TxtPlagChecker(BASE_PATH, FILE_PATH, FILE_RE,
                                             OUT_PATH, OUTFILE, EXT, plag_post, lock)
-                    txtobj.daemon = False
-                    txtobj.name = plag_post.id  # Name of the thread
-                    LIST_THREADS[plag_post.id] = txtobj
-                    txtobj.start()  # Saves the csv inside the plagfiles directory
+                    elif plag_post.file_type == 'cpp':
+                        plagcheckobj = CppPlagChecker(BASE_PATH, FILE_PATH, FILE_RE,
+                                            OUT_PATH, OUTFILE, EXT, plag_post, lock)
+                    else:
+                        return Response({'response': "Unknown file_type error encountered"}, 
+                                            status=status.HTTP_400_BAD_REQUEST)
+                        
+                    plagcheckobj.daemon = False
+                    plagcheckobj.name = plag_post.id  # Name of the thread
+                    LIST_THREADS[plag_post.id] = plagcheckobj
+                    plagcheckobj.start()  # Saves the csv inside the plagfiles directory
                 except:
-                    # Won't interrupt the flow of execution,
-                    # but will generate a null outfile
-                    # TODO: Make this Fail-safe
                     pass
 
                 serializer = PlagSampSerializer(plag_post)
@@ -103,21 +102,20 @@ def download_csv(request, pk):
             data['response'] = "Forbidden or Wrong Primary Key"
             return Response(data, status=status.HTTP_403_FORBIDDEN)
 
-        file = plagsample.outfile
         # Wait till thread has done its job
-        if not file.name:
-            if pk in LIST_THREADS:
-                LIST_THREADS[pk].join()
-                LIST_THREADS.pop(pk, None)
-            else:
-                data['response'] = "Some unknown error happened while processing the csv"
-                return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-            plagsample = PlagSamp.objects.get(pk=pk)
-            file = plagsample.outfile
-        else:
+        if pk in LIST_THREADS:
+            LIST_THREADS[pk].join()
             LIST_THREADS.pop(pk, None)
+
+        # Need to call again to reflect the saved changes
+        # in the other thread
+        plagsample = PlagSamp.objects.get(pk=pk) 
+        file = plagsample.outfile
         ####################################
+
+        if plagsample.file_count == 0:
+            data['response'] = "No files of given file_type found"
+            return Response(data, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
         if not file.name:
             data['response'] = "Some unknown error happened while processing the csv"
@@ -155,6 +153,7 @@ def get_sample_info(request, pk):
         data['org_name'] = plagsample.organization.name
         data['uploader_id'] = plagsample.user.id
         data['uploader'] = plagsample.user.username
+        data['file_count'] = plagsample.file_count
         
         return Response(data, status=status.HTTP_200_OK)
 ###################################################################
