@@ -25,6 +25,7 @@ class PlagSamp(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, editable=False)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=None, editable=False)
     outfile = models.FileField(upload_to='outputcsvfiles/', null=False, blank=True)
+    file_count = models.IntegerField(default=-1)
 
     def __str__(self):
-        return os.path.basename(self.plagzip.name)
+        return self.name
