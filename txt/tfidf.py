@@ -1,6 +1,5 @@
 import os
 import glob
-import time
 import argparse
 import numpy as np
 import seaborn as sns
