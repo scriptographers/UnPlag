@@ -11,7 +11,7 @@ exports.handler = function (argv) {
     require('../src/login').login(data,
       (login_res) => {
         require('../src/profile').profile(login_res.access,
-          (token, profile_res) => {
+          (profile_res) => {
 
             var org_name_list = [], org;
             for (org of profile_res.orgs) {
@@ -33,12 +33,12 @@ exports.handler = function (argv) {
                 }
 
                 require('../src/upload').upload(
-                  token,
+                  login_res.access,
                   answers.file_loc,
                   answers.name,
                   answers.org_id,
                   answers.file_type
-                )
+                );
               }
             )
           });
@@ -92,7 +92,7 @@ async function getargs(argv, org_list) {
     {
       name: 'org_name',
       type: 'list',
-      message: 'Enter Org location:',
+      message: 'Choose Organization:',
       choices: org_list
     },
     {

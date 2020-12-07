@@ -11,7 +11,7 @@ async function profile(access, callback) {
   const req = http.request(options, (res) => {
     if (res.statusCode == 200) {
       res.on('data', function (d) {
-        callback(access, JSON.parse(d));
+        callback(JSON.parse(d));
       });
     } else {
       console.log(`Access Token expired - too long time, try again`)

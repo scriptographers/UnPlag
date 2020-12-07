@@ -31,7 +31,7 @@ function upload(access, file_loc, file_name, org_id, file_type) {
     }
 
     res.on('error', error => {
-      console.error(error);
+      console.log(error);
     });
   });
 

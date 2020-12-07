@@ -139,7 +139,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 def get_pastchecks(request):
     if request.method == 'GET':
         logged_user = request.user
-        past_plagchecks = logged_user.plagsamp_set.all().order_by("organization__id", "-date_posted")
+        past_plagchecks = logged_user.plagsamp_set.all().order_by("organization__name", "-date_posted")
 
         data = {}
         data['pastchecks'] = [{"name": plagsample.name,
