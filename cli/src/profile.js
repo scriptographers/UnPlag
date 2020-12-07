@@ -1,31 +1,29 @@
 const http = require('http');
 
-function login(data, callback) {
+async function profile(access, callback) {
   const options = {
     hostname: '127.0.0.1',
     port: 8000,
-    path: '/api/token/',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length
-    }
+    path: '/api/account/profile/',
+    method: 'GET',
   };
 
   const req = http.request(options, (res) => {
     if (res.statusCode == 200) {
       res.on('data', function (d) {
-        callback(JSON.parse(d));
+        callback(access, JSON.parse(d));
       });
     } else {
-      console.log(`Incorrect username password`)
+      console.log(`Access Token expired - too long time, try again`)
     }
     res.on('error', function (e) {
       console.log(e);
     });
   });
-  req.write(data);
+
+  req.setHeader('Authorization', `Bearer ${access}`)
+
   req.end();
 }
 
-module.exports.login = login;
+module.exports.profile = profile;

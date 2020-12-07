@@ -30,5 +30,4 @@ async function auth() {
   return inquirer.prompt(questions);
 }
 
-
 module.exports.auth = auth;
