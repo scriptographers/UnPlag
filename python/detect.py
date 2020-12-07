@@ -60,3 +60,5 @@ for i in range(N_DOCS):
         cs = np.dot(X[i], X[j])/(np.linalg.norm(X[i])*np.linalg.norm(X[j]))
         if cs >= THRESH_CS:
             print("High similarity in {} and {}".format(idxToPath[i], idxToPath[j]))
+
+# Hyperparameters: Euclidean distance: 0.2, Cosine similarity: 0.998
