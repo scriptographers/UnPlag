@@ -1,3 +1,6 @@
+
+<!-- Older version of README
+
 # UnPlag Models
 
 This branch contains all the models for ***Part 1: The Core Logic***.  
@@ -65,3 +68,4 @@ Submissions of Text Based Assignments](https://arxiv.org/ftp/arxiv/papers/1403/1
 3. [(TF-IDF) How to compute the similarity between two text documents?
  (StackOverflow)](https://stackoverflow.com/questions/8897593/how-to-compute-the-similarity-between-two-text-documents)
 
+-->
