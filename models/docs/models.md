@@ -176,6 +176,7 @@ We obtain the following results (indexed according to filenames):
 | 0.2615 | 0.2615 | 0.2481 | 0.3    | 0.1885 | 0.2659 | 0.1956 | 0.0653 | 0.1526 | 0.1733 | 0.2999 | 0.2591 | 0.2374 | 1      | 0.2772 | 0.2623 | 
 | 0.1583 | 0.1583 | 0.1438 | 0.31   | 0.1243 | 0.161  | 0.0736 | 0.0719 | 0.097  | 0.0982 | 0.3435 | 0.2915 | 0.3875 | 0.2772 | 1      | 0.3128 | 
 | 0.1676 | 0.1676 | 0.1618 | 0.2538 | 0.1304 | 0.1671 | 0.1493 | 0.106  | 0.133  | 0.1404 | 0.296  | 0.4656 | 0.3199 | 0.2623 | 0.3128 | 1      | 
+  
 
 These results are precisely what we expect.
 The detector is not fooled by variable name changes, variable type changes, reordering, dead code injections, and detects moderate/heavy plagiarism accurately.
@@ -208,6 +209,8 @@ The results are as follows:
 | 0.7146 | 0.7146 | 0.7267 | 0.663  | 0.3941 | 0.7112 | 0.7001 | 0.1442 | 0.6653 | 0.6787 | 0.5972 | 0.4777 | 0.4564 | 1      | 0.5972 | 0.6848 | 
 | 0.6911 | 0.6911 | 0.6774 | 0.7414 | 0.5987 | 0.6918 | 0.5762 | 0.1968 | 0.6302 | 0.61   | 0.7824 | 0.7338 | 0.8006 | 0.5972 | 1      | 0.8479 | 
 | 0.7877 | 0.7877 | 0.7759 | 0.8062 | 0.6851 | 0.7866 | 0.6753 | 0.2418 | 0.7497 | 0.7352 | 0.8008 | 0.8058 | 0.756  | 0.6848 | 0.8479 | 1      | 
+  
+  
 As it is clearly seen, the distribution is not uniform between 0 and 1, thus selection of a proper threshold becomes quite difficult. Also, this metric cannot segregate different approaches properly, as files `00.cpp` and `06.cpp` report a similarity of 0.82, even the last 2 different implementations of Fibonacci numbers is incorrectly reported as similar. Many more false positives are also clearly visible.
 
 - Jaccard similarity:
@@ -230,6 +233,8 @@ As it is clearly seen, the distribution is not uniform between 0 and 1, thus sel
 | 0.2715 | 0.2715 | 0.2718 | 0.2832 | 0.1722 | 0.2662 | 0.194  | 0.0795 | 0.2167 | 0.2162 | 0.2626 | 0.2462 | 0.1333 | 1      | 0.2282 | 0.185  | 
 | 0.2804 | 0.2804 | 0.2811 | 0.2582 | 0.28   | 0.3099 | 0.2417 | 0.1111 | 0.3061 | 0.2897 | 0.3851 | 0.2756 | 0.3368 | 0.2282 | 1      | 0.4536 | 
 | 0.2428 | 0.2428 | 0.25   | 0.2017 | 0.2791 | 0.271  | 0.3261 | 0.1444 | 0.3306 | 0.3333 | 0.298  | 0.256  | 0.4085 | 0.185  | 0.4536 | 1      | 
+  
+
 Jaccard reports a similarity of 0.4536 between 2 different approaches for Fibonacci numbers, this value is quite moderate in terms of Jaccard values. It even reports a very high value of 0.7881 between DFS and BFS. 
 Injection of dead code also decreased the similarity drastically to 0.7085.
 This shows that TF-IDF is better at detecting different approaches to the same problem, and is less sensitive to "tricks" like dead code injection.
