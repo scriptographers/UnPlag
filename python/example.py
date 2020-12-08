@@ -1,40 +1,102 @@
-# Python program for 
-# validation of a graph
+# Dead code injection
 
-# import dictionary for graph
-from collections import defaultdict
+# Represents the node of list.
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
 
-# function for adding edge to graph
-graph = defaultdict(list)
-def addEdge(graph,u,v):
-    graph[u].append(v)
+    def __eq__(self, other):
+        if self.data == other.data:
+            return True
+        else:
+            return False
 
-# definition of function
-def generate_edges(graph):
-    edges = []
+    def __str__(self):
+        return self.data
 
-    # for each node in graph
-    for node in graph:
-        
-        # for each neighbour node of a single node
-        for neighbour in graph[node]:
-            
-            # if edge exists then append
-            edges.append((node, neighbour))
-    return edges
 
-# declaration of graph as dictionary
-addEdge(graph,'a','c')
-addEdge(graph,'b','c')
-addEdge(graph,'b','e')
-addEdge(graph,'c','d')
-addEdge(graph,'c','e')
-addEdge(graph,'c','a')
-addEdge(graph,'c','b')
-addEdge(graph,'e','b')
-addEdge(graph,'d','c')
-addEdge(graph,'e','c')
+class CreateList:
+    # Declaring head and tail pointer as null.
+    def __init__(self):
+        self.head = Node(None)
+        self.tail = Node(None)
+        self.head.next = self.tail
+        self.tail.next = self.head
 
-# Driver Function call 
-# to print generated graph
-print(generate_edges(graph)) 
+    # This function will add the new node at the end of the list.
+    def add(self, data):
+        newNode = Node(data)
+        # Checks if the list is empty.
+        if self.head.data is None:
+            # If list is empty, both head and tail would point to new node.
+            self.head = newNode
+            self.tail = newNode
+            newNode.next = self.head
+        else:
+            # tail will point to new node.
+            self.tail.next = newNode
+            # New node will become new tail.
+            self.tail = newNode
+            # Since, it is circular linked list tail will point to head.
+            self.tail.next = self.head
+
+    # Displays all the nodes in the list
+    def display(self):
+        current = self.head
+        if self.head is None:
+            print("List is empty")
+            return
+        else:
+            # Prints each node by incrementing pointer.
+            print(current.data),
+            while current.next != self.head:
+                current = current.next
+                print(current.data),
+
+    # Reverse the order of the nodes present in the list.
+    def reverse(self, current):
+        # Checks if the next node is head, if yes then prints it.
+        if current.next == self.head:
+            print(current.data),
+            return
+        # Recursively calls the reverse function
+        self.reverse(current.next)
+        print(current.data),
+
+    def display5(self):
+        current = self.head
+        if self.head is None:
+            print("List is empty")
+            return
+        else:
+            # Prints each node by incrementing pointer.
+            print(current.data),
+            while current.next != self.head:
+                current = current.next
+                print(current.data),
+
+    def reverse2(self, current):
+        # Checks if the next node is head, if yes then prints it.
+        if current.next == self.head:
+            print(current.data),
+            return
+        # Recursively calls the reverse function
+        self.reverse(current.next)
+        print(current.data),
+
+
+class CircularLinkedList:
+    cl = CreateList()
+    # Adds data to the list
+    cl.add(1)
+    cl.add(2)
+    cl.add(3)
+    cl.add(4)
+    cl.add(5)
+    cl.add(6)
+    print("Original List: ")
+    cl.display()
+    print("\nReversed List: ")
+    # Print reversed list
+    cl.reverse(cl.head)

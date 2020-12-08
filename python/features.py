@@ -5,7 +5,7 @@ from radon.metrics import mi_parameters, mi_compute, h_visit, h_visit_ast
 
 idxToDesc = [
     # Raw metrics:
-    "loc", "lloc", "sloc", "comments", "multi", "single", "blank",
+    "LLOC: The number of logical lines of code. Every logical line of code contains exactly one statement.",
 
     # Halstead metrics:
     "h1: the number of distinct operators",
@@ -34,6 +34,8 @@ def extractFeatures(path):
         contents = f.read()
 
     raw_metrics = analyze(contents)
+    lloc = raw_metrics[1]
+    
     features = [r for r in raw_metrics]
 
     halsteadMetrics = h_visit(contents)[0]
