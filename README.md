@@ -60,21 +60,21 @@ We also discuss the problems faced, results and drawbacks.
 
 #### Character-level LSTM based approach:
 
-For: `c/c++`
-We tried implementing this [paper](https://cdn.iiit.ac.in/cdn/cvit.iiit.ac.in/images/ConferencePapers/2017/PlagDetection_DeepFeatures17.pdf).
+For: `c/c++`  
+We tried implementing this [paper](https://cdn.iiit.ac.in/cdn/cvit.iiit.ac.in/images/ConferencePapers/2017/PlagDetection_DeepFeatures17.pdf).  
 We tried to train an character-level LSTM on the sequence prediction task on the entire Linux kernel source code (`.c, .cpp` and `.h` files).  
 If this was successful, we would've fine-tuned this model on less complicated C files, and then use the output of the last layer as our learned features, which would eventually be passed into a SVM classifier for ternary classification, each class signifying a different degree of plagiarism.
 
 ##### Problems faced while implementation:
 
 - **Lack of computational power:** Google Colab was being used for training the LSTM. After concatenation of all relevant files from the Linux source code, the resultant text file was extremely large (440 MB for only `.c` files). We tried training a 3-layered LSTM each layer having 512 units but Colab's RAM kept exploding as it couldn't handle the large number of 100-character-long sequences for training the model.
-- **Unavailability of a labelled dataset:** Even if we somehow managed to train the LSTM model using other ways to feed the sequences, training of the SVM classifier would be infeasible due to the lack of a properly labelled dataset. The authors of the paper have made their own dataset for this purpose using the submissions from an actual college course, which have been properly annotated by their teaching assistants and cross-verified with MOSS scores. Unfortunately, they haven't released this dataset, and we couldn't find any other such labelled dataset containing a good number of files. Creating our own dataset (without the access to MOSS or TAs), and manually annotating each file would take ages (and also may cause copyright issues).
-  Due to the above reasons and a shortage of time, we decided to not go on with this approach.
+- **Unavailability of a labelled dataset:** Even if we somehow managed to train the LSTM model using other ways to feed the sequences, training of the SVM classifier would be infeasible due to the lack of a properly labelled dataset. The authors of the paper have made their own dataset for this purpose using the submissions from an actual college course, which have been properly annotated by their teaching assistants and cross-verified with MOSS scores. Unfortunately, they haven't released this dataset, and we couldn't find any other such labelled dataset containing a good number of files. Creating our own dataset (without the access to MOSS or TAs), and manually annotating each file would take ages (and also may cause copyright issues).  
+  Due to the above reasons and a shortage of time, we decided to not go on with this approach.  
   However, this approach seems very promising, and the authors claim that this model performs much better than MOSS on their labelled dataset.
 
 #### Using unsupervised learning on source code metrics
 
-For: `c/c++`
+For: `c/c++`  
 We tried implementing [this](https://cdn.iiit.ac.in/cdn/cvit.iiit.ac.in/images/ConferencePapers/2017/cv_17Plagiarism-Detection.pdf) paper.  
 In this paper, the authors try using 55 source code metrics extracted using [Milepost GCC](http://ctuning.org/wiki/index.php?title=CTools:MilepostGCC) as features, and then use a clustering algorithm based on the Euclidean distance between the feature vectors to identify similar groups of files.
 
@@ -90,8 +90,8 @@ In this paper, the authors try using 55 source code metrics extracted using [Mil
 
 For: `python3`
 
-Taking inspiration from the previous approach for `c/c++` files, we decided try the same for `python3` files.
-We used [`radon`](https://pypi.org/project/radon/) to extract a total of 21 source code metrics from python files to be used as 21-dimensional features.
+Taking inspiration from the previous approach for `c/c++` files, we decided try the same for `python3` files.  
+We used [`radon`](https://pypi.org/project/radon/) to extract a total of 21 source code metrics from python files to be used as 21-dimensional features.  
 The metrics are:
 
 - Raw metrics:
@@ -120,11 +120,11 @@ The metrics are:
 
 (These are all possible metrics which Radon can compute)
 
-For each file in the collection provided, we compute a 21-dimensional vector.
-We center and standardize this feature-wise.
-For similarity computation, we used cosine similarity.
-For testing, we cloned [this](https://github.com/AllAlgorithms/python) GitHub repository containing 576 files, flattened it, and ran our program on all these files.
-Ideally, we would want the similarity to be low for all pairs, since each file was a different algorithm.
+For each file in the collection provided, we compute a 21-dimensional vector.  
+We center and standardize this feature-wise.  
+For similarity computation, we used cosine similarity.  
+For testing, we cloned [this](https://github.com/AllAlgorithms/python) GitHub repository containing 576 files, flattened it, and ran our program on all these files.  
+Ideally, we would want the similarity to be low for all pairs, since each file was a different algorithm.  
 On running, and keeping the threshold for cosine similarity as `0.998` , we obtain a high similarity between:
 
 ```
@@ -138,13 +138,31 @@ remove_duplicate.py test_prime_check.py
 sol1.py sol5.py
 ```
 
-We see that most of these pairs (apart from maybe `random_forest_classifier.py and random_forest_regressor.py`) are indeed similar.
+We see that most of these pairs (apart from maybe `random_forest_classifier.py and random_forest_regressor.py`) are indeed similar.  
 The program takes only `7s` for 567 files (On `WSL-2`).Thus the efficiency is better when compared to our detector for `c++` files.
 
 ---
 
 The above dataset didn't contain any actual cases of plagiarism, so we created a 16-file dataset containing python code taken from various free sources like GeeksForGeeks, Javatpoint, GitHub, etc.
-The dataset description is as follows: - `00.py`: Python program to create a Circular Linked List of n nodes and display it in reverse order - `01.py`: Same as above but with variables changed, extra useless comments added - `02.py`: Order of functions, classes, declarations has been changed - `03.py`: Small changes in logic - `while` changed to `for`, `if-else` blocks reversed, completely new `main` function, extra useless functions added - `04.py`: Blocks of useless/repeated code inserted throughout the file - `05.py`: Different approach for the same problem - `06.py`: Another different approach for the same problem - `07.py`: Somewhat related to `00.py`, contains an implementation of circular linked lists - `08.py`: Another implementation of circular linked lists, related to `07.py` - `09.py`: Completely unrelated, a program for topological sorting - `10.py`: Unrelated, an implementation of heapsort - `11.py`: Unrelated, Dijkstra's algorithm - `12.py`: Unrelated, Radix sort - `13.py`: Recursive Fibonacci - `14.py`: Dynamic programming Fibonacci - `15.py`: Fibonacci with memoization
+
+The dataset description is as follows:
+
+- `00.py`: Python program to create a Circular Linked List of n nodes and display it in reverse order
+- `01.py`: Same as above but with variables changed, extra useless comments added
+- `02.py`: Order of functions, classes, declarations has been changed
+- `03.py`: Small changes in logic - `while` changed to `for`, `if-else` blocks reversed, completely new `main` function, extra useless functions added
+- `04.py`: Blocks of useless/repeated code inserted throughout the file
+- `05.py`: Different approach for the same problem
+- `06.py`: Another different approach for the same problem
+- `07.py`: Somewhat related to `00.py`, contains an implementation of circular linked lists
+- `08.py`: Another implementation of circular linked lists, related to `07.py`
+- `09.py`: Completely unrelated, a program for topological sorting
+- `10.py`: Unrelated, an implementation of heapsort
+- `11.py`: Unrelated, Dijkstra's algorithm
+- `12.py`: Unrelated, Radix sort
+- `13.py`: Recursive Fibonacci
+- `14.py`: Dynamic programming Fibonacci
+- `15.py`: Fibonacci with memoization
 
 Keeping the threshold as 0.7, we obtain high similarity between the following files:
 
@@ -185,7 +203,7 @@ We then process each node according to it's "kind" (`clang.cindex.CursorKind`), 
 - All identifiers are ignored, and are stored as the token "`var`". For example, declaring a variable, say `string a` is stored as the token `string_var`, and whenever the variable `a` is used later, eg:`cout << a` is stored as `string_used`
 - Explicit type casting and functional type casting are treated the same, eg: `a = (int)b` and `a = int(b)` are assumed to be equivalent
 
-We then create a vocabulary using unigrams (single tokens) and bigrams (two consecutive tokens) and apply the [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) weighting scheme using [sub-linear TF](https://nlp.stanford.edu/IR-book/html/htmledition/sublinear-tf-scaling-1.html).
+We then create a vocabulary using unigrams (single tokens) and bigrams (two consecutive tokens) and apply the [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) weighting scheme using [sub-linear TF](https://nlp.stanford.edu/IR-book/html/htmledition/sublinear-tf-scaling-1.html).  
 Cosine similarity is used for computing the similarity between the resultant weight vectors.
 
 ##### Testing dataset:
@@ -233,9 +251,9 @@ We obtain the following results (indexed according to filenames):
 | 0.1583 | 0.1583 | 0.1438 | 0.31 | 0.1243 | 0.161 | 0.0736 | 0.0719 | 0.097 | 0.0982 | 0.3435 | 0.2915 | 0.3875 | 0.2772 | 1 | 0.3128 |
 | 0.1676 | 0.1676 | 0.1618 | 0.2538 | 0.1304 | 0.1671 | 0.1493 | 0.106 | 0.133 | 0.1404 | 0.296 | 0.4656 | 0.3199 | 0.2623 | 0.3128 | 1 |
 
-These results are precisely what we expect.
-The detector is not fooled by variable name changes, variable type changes, reordering, dead code injections, and detects moderate/heavy plagiarism accurately.
-It also nicely segregates different approaches to the same problem effectively and doesn't report them as plagiarized.
+These results are precisely what we expect.  
+The detector is not fooled by variable name changes, variable type changes, reordering, dead code injections, and detects moderate/heavy plagiarism accurately.  
+It also nicely segregates different approaches to the same problem effectively and doesn't report them as plagiarized.  
 Furthermore, the similarity values are nicely distributed between 0 and 1, thus easing threshold selection.
 
 ##### TF-IDF's superiority compared to Cosine Similarity and Jaccard Similarity
@@ -291,8 +309,8 @@ As it is clearly seen, the distribution is not uniform between 0 and 1, thus sel
 | 0.2804 | 0.2804 | 0.2811 | 0.2582 | 0.28   | 0.3099 | 0.2417 | 0.1111 | 0.3061 | 0.2897 | 0.3851 | 0.2756 | 0.3368 | 0.2282 | 1      | 0.4536 |
 | 0.2428 | 0.2428 | 0.25   | 0.2017 | 0.2791 | 0.271  | 0.3261 | 0.1444 | 0.3306 | 0.3333 | 0.298  | 0.256  | 0.4085 | 0.185  | 0.4536 | 1      |
 
-Jaccard reports a similarity of 0.4536 between 2 different approaches for Fibonacci numbers, this value is quite moderate in terms of Jaccard values. It even reports a very high value of 0.7881 between DFS and BFS.
-Injection of dead code also decreased the similarity drastically to 0.7085.
+Jaccard reports a similarity of 0.4536 between 2 different approaches for Fibonacci numbers, this value is quite moderate in terms of Jaccard values. It even reports a very high value of 0.7881 between DFS and BFS.  
+Injection of dead code also decreased the similarity drastically to 0.7085.  
 This shows that TF-IDF is better at detecting different approaches to the same problem, and is less sensitive to "tricks" like dead code injection.
 
 #### TF-IDF on preprocessed textual data:
@@ -353,7 +371,7 @@ Run `pip install -r requirements.txt`, you may need to perform some additional s
   - `<regEx>`: This must contain the regular expression for testing some subset of the files inside `<dataset>`. For example, if you have Java, C++ and text files in your dataset, and you want to check for plagiarism only on the text files, then you `<regEx>` will be `*.txt`.
   - `<output>`: This contains a string which determines where the output `.csv` file will be saved. For example, if `<output> = my_file.csv` then the output csv file is saved at `txt/results/tfidf_my_file.csv`
 - **Output:** Running the code generates:
-  - A `.csv` file at `txt/results/tfidf_<output>`
+  - A `.csv` file at `txt/results/tfidf_<output>`  
     This contains the pairwise similarities between the pairs of files. The axis is indexed as `0,..., n-1` where `n` is the number of files, the index to file mapping can be found via running `ls -U` in the `<dataset>`.
   - A heatmap corresponding to the `.csv` file, at `txt/plots/tfidf_heatmap.png`, same indexing is followed as in the csv file.
   - A progress bar will also been shown on the terminal, this indicates the progress made in reading, processing and tokenizing the files.
@@ -368,7 +386,7 @@ Run `pip install -r requirements.txt`, you may need to perform some additional s
   - `<regEx>`: This must contain the regular expression for testing some subset of the files inside `<dataset>`. For example, if you have Java, C++ and text files in your dataset, and you want to check for plagiarism only on the `C++` files, then you `<regEx>` will be `*.cpp`.
   - `<output>`: This contains a string which determines where the output `.csv` file will be saved. For example, if `<output> = my_file.csv` then the output csv file is saved at `cpp/results/tfidf_my_file.csv`
 - **Output:** Running the code generates:
-  - A `.csv` file at `cpp/results/tfidf_<output>`
+  - A `.csv` file at `cpp/results/tfidf_<output>`  
     This contains the pairwise similarities between the pairs of files. The axis is indexed as `0,..., n-1` where `n` is the number of files, the index to file mapping can be found via running `ls -U` in the `<dataset>`.
   - A heatmap corresponding to the `.csv` file, at `cpp/plots/tfidf_heatmap.png`, same indexing is followed as in the csv file.
   - A progress bar will also been shown on the terminal, this indicates the progress made in reading, processing and tokenizing the files.
