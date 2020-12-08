@@ -14,7 +14,7 @@ async function profile(access, callback) {
         callback(JSON.parse(d));
       });
     } else {
-      console.log(`Access Token expired - too long time, try again`)
+      console.log(`Access Token expired - too long time - maybe slow internet, try again`)
     }
     res.on('error', function (e) {
       console.log(e);

@@ -9,13 +9,13 @@ exports.handler = function (argv) {
     const data = JSON.stringify(res);
 
     require('../src/login').login(data,
-      (login_res) => {
+      (login_res) => { // callback function to login
         require('../src/profile').profile(login_res.access,
-          (profile_res) => {
+          (profile_res) => { // callback function to profile
             require('../src/pastchecks').pastchecks(
               login_res.access,
               profile_res.username,
-              (history) => {
+              (history) => { // callback function to pastchecks
                 let sample_descs = [];
                 history.forEach(sample => {
                   sample_descs.push(sample.desc)
@@ -64,7 +64,7 @@ async function getargs(argv, sample_descs) {
           return 'Please enter location of file to save.';
         }
       },
-      when: function() {
+      when: function () {
         if (typeof argv.save_loc != 'string') {
           return true;
         } else {
