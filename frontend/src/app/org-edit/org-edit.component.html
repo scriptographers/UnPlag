@@ -11,13 +11,17 @@
         <mat-label>Description</mat-label>
         <textarea matInput type="text" formControlName="description" placeholder="Enter Description"
           required></textarea>
+        <mat-error *ngIf="form.controls.description.hasError('required')">
+          Description is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
       <mat-divider></mat-divider>
       <br>
 
-      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Update</button>
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Update</button>
     </div>
   </form>
 </mat-card>

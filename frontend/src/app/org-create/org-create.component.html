@@ -10,6 +10,9 @@
       <mat-form-field>
         <mat-label>Name of Organization</mat-label>
         <input matInput type="text" formControlName="name" placeholder="Enter Name of Organization" required />
+        <mat-error *ngIf="form.controls.name.hasError('required')">
+          Name of Organization is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
@@ -25,7 +28,8 @@
       <mat-divider></mat-divider>
       <br>
 
-      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Create</button>
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Create</button>
     </div>
   </form>
 </mat-card>

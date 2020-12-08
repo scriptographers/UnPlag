@@ -80,11 +80,23 @@ export class OrgEditComponent implements OnInit {
     if (data.title !== '') {
       return this.server.put(`/api/organization/update/${this.id}/`, data).subscribe(
         response => {
-          console.log(response);
+          this.snackBar.open("Successfully Updated", "Done", {
+            duration: 5000, // 5 sec timeout
+          });
           this.router.navigateByUrl(`/org/view/${this.id}`);
         },
         error => {
-          console.log(error);
+          let error_message = '';
+          if (error.error.detail != null) {
+            error_message += error.error.detail;
+          }
+          if (error_message == '') {
+            error_message = 'Something went wrong!';
+          }
+          this.snackBar.open(error_message, "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+          this.router.navigateByUrl(`/org/view/${this.id}`);
         }
       )
     }

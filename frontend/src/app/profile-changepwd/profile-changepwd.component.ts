@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./profile-changepwd.component.scss']
 })
 export class ProfileChangepwdComponent implements OnInit {
+
   profile: any;
   form: FormGroup;
 
@@ -75,11 +76,22 @@ export class ProfileChangepwdComponent implements OnInit {
     if (user.old_password !== '' && user.new_password !== '' && user.new_password2 !== '') {
       return this.server.put('/api/account/upassword/', user).subscribe(
         response => {
-          console.log(response);
           this.router.navigateByUrl('/dashboard');
         },
         error => {
-          console.log(error);
+          let error_message = '';
+          if (error.error.password != null) {
+            error_message += error.error.password;
+          }
+          if (error.error.old_password != null) {
+            error_message += error.error.old_password;
+          }
+          if (error_message == '') {
+            error_message = 'Something went wrong!';
+          }
+          this.snackBar.open(error_message, "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
         }
       )
     }

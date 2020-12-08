@@ -10,6 +10,9 @@
       <mat-form-field>
         <mat-label>Current Password</mat-label>
         <input matInput type="password" formControlName="old_password" placeholder="Enter Current Password" required />
+        <mat-error *ngIf="form.controls.old_password.hasError('required')">
+          Current Password is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
@@ -19,6 +22,9 @@
       <mat-form-field>
         <mat-label>New Password</mat-label>
         <input matInput type="password" formControlName="new_password" placeholder="Enter New Password" required />
+        <mat-error *ngIf="form.controls.new_password.hasError('required')">
+          New Password is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
@@ -28,13 +34,18 @@
       <mat-form-field>
         <mat-label>Confirm New Password</mat-label>
         <input matInput type="password" formControlName="new_password2" placeholder="Re-enter New Password" required />
+        <mat-error *ngIf="form.controls.new_password2.hasError('required')">
+          Confirm New Password is <strong>required</strong>
+        </mat-error>
+
       </mat-form-field>
 
       <br>
       <mat-divider></mat-divider>
       <br>
 
-      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Change</button>
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Change</button>
     </div>
   </form>
 </mat-card>

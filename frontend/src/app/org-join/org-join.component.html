@@ -10,13 +10,17 @@
       <mat-form-field>
         <mat-label>Passcode</mat-label>
         <input matInput type="text" formControlName="passcode" placeholder="Enter Passcode" required />
+        <mat-error *ngIf="form.controls.passcode.hasError('required')">
+          Passcode is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
       <mat-divider></mat-divider>
       <br>
 
-      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Join</button>
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Join</button>
     </div>
   </form>
 </mat-card>

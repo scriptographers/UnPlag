@@ -74,11 +74,23 @@ export class ProfileEditComponent implements OnInit {
     if (data.nick !== '') {
       return this.server.put('/api/account/update/', data).subscribe(
         response => {
-          console.log(response);
+          this.snackBar.open("Successfully Updated", "Done", {
+            duration: 5000, // 5 sec timeout
+          });
           this.router.navigateByUrl('/profile/view');
         },
         error => {
-          console.log(error);
+          let error_message = '';
+          if (error.error.detail != null) {
+            error_message += error.error.detail;
+          }
+          if (error_message == '') {
+            error_message = 'Something went wrong!';
+          }
+          this.snackBar.open(error_message, "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+          this.router.navigateByUrl('/profile/view');
         }
       )
     }

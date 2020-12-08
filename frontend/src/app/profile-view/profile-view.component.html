@@ -14,12 +14,19 @@
             Organizations you are part of
           </mat-expansion-panel-header>
           <mat-list>
-            <mat-list-item *ngFor="let org of profile.orgs">
+            <mat-list-item>
               <div mat-line>
-                <a routerLink="/org/view/{{ org.org_id }}">{{ org.org_name }}</a>
-                <span *ngIf="org.is_personal">(Private Org)</span>
+                Private org: <a routerLink="/org/view/{{ profile.personal_org }}">{{ profile.username }}</a>
               </div>
             </mat-list-item>
+
+            <div *ngFor="let org of profile.orgs">
+              <mat-list-item *ngIf="!org.is_personal">
+                <div mat-line>
+                  <a routerLink="/org/view/{{ org.org_id }}">{{ org.org_name }}</a>
+                </div>
+              </mat-list-item>
+            </div>
           </mat-list>
         </mat-expansion-panel>
       </mat-accordion>

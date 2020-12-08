@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, EMPTY } from 'rxjs';
 import { ServerService } from './server.service';
 import { catchError, tap } from "rxjs/operators";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,8 @@ export class AuthService {
 
   constructor(
     private router: Router,
-    private server: ServerService
+    private server: ServerService,
+    private snackBar: MatSnackBar,
   ) {
     console.log('Auth Service');
     const access = localStorage.getItem('access');
@@ -33,9 +35,21 @@ export class AuthService {
           localStorage.setItem('refresh', response.refresh);
           this.loggedIn.next(true);
           this.router.navigateByUrl(ret);
+          this.snackBar.open("Successfully Logged in", "Done", {
+            duration: 5000, // 5 sec timeout
+          });
         },
         error => {
-          console.log(error.error.detail);
+          let error_message = '';
+          if (error.error.detail != null) {
+            error_message += error.error.detail;
+          }
+          if (error_message == '') {
+            error_message = 'Something went wrong!';
+          }
+          this.snackBar.open(error_message, "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
         }
       );
     }
@@ -45,19 +59,28 @@ export class AuthService {
     if (user.username !== '' && user.password !== '' && user.password2 !== '') {
       return this.server.post('/api/account/signup/', user, true).subscribe(
         response => {
-          console.log(response);
           localStorage.setItem('access', response.access);
           localStorage.setItem('refresh', response.refresh);
           this.loggedIn.next(true);
           this.router.navigateByUrl('/dashboard');
+          this.snackBar.open("Successfully Registered", "Done", {
+            duration: 5000, // 5 sec timeout
+          });
         },
         error => {
+          let error_message = '';
           if (error.error.password != null) {
-            console.log(error.error.password)
+            error_message += error.error.password;
           }
-          else if (error.error.username != null) {
-            console.log(error.error.username)
+          if (error.error.username != null) {
+            error_message += error.error.username;
           }
+          if (error_message == '') {
+            error_message = 'Something went wrong!';
+          }
+          this.snackBar.open(error_message, "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
         }
       );
     }
@@ -67,6 +90,9 @@ export class AuthService {
     this.loggedIn.next(false);
     localStorage.clear();
     this.router.navigateByUrl('/login');
+    this.snackBar.open(' Successfully Logged out. Come back again!', "Done", {
+      duration: 5000, // 5 sec timeout
+    });
   }
 
   refresh() {
@@ -75,11 +101,19 @@ export class AuthService {
       refresh: refresh
     }, true).pipe(
       tap(response => {
-        console.log(response);
         localStorage.setItem('access', response.access);
       }),
       catchError(error => {
-        console.log(error.error.detail);
+        let error_message = '';
+        if (error.error.detail != null) {
+          error_message += error.error.detail;
+        }
+        if (error_message == '') {
+          error_message = 'Something went wrong!';
+        }
+        this.snackBar.open(error_message + ' Logging out.', "Try Again", {
+          duration: 5000, // 5 sec timeout
+        });
         this.logout();
         return EMPTY;
       })

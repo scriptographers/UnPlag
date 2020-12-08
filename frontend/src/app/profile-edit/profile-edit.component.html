@@ -10,13 +10,17 @@
       <mat-form-field>
         <mat-label>Nickname</mat-label>
         <input matInput type="text" formControlName="nickname" placeholder="Enter Nickname" required />
+        <mat-error *ngIf="form.controls.nickname.hasError('required')">
+          Nickname is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
       <mat-divider></mat-divider>
       <br>
 
-      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Update</button>
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Update</button>
     </div>
   </form>
 </mat-card>

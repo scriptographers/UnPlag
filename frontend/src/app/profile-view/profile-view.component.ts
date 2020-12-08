@@ -39,6 +39,7 @@ export class ProfileViewComponent implements OnInit {
         this.profile.orgs.forEach(org => {
           if (org.org_name == this.profile.username) {
             org.is_personal = true;
+            this.profile.personal_org = org.org_id;
           }
         });
       },

@@ -12,6 +12,9 @@
         <ngx-mat-file-input id="xx" formControlName="file_source" [accept]="'.zip, *rar, *tar.gz'"
           (change)="onFileChange($event)" required></ngx-mat-file-input>
         {{ file_name }}
+        <mat-error *ngIf="form.controls.file_source.hasError('required')">
+          Compressed Folder is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
@@ -21,6 +24,9 @@
       <mat-form-field>
         <mat-label>Sample Name</mat-label>
         <input matInput type="text" formControlName="sample_name" placeholder="Enter Sample Name" required />
+        <mat-error *ngIf="form.controls.sample_name.hasError('required')">
+          Sample Name is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
@@ -34,6 +40,9 @@
             {{ org.org_name }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="form.controls.org_id.hasError('required')">
+          Organization is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
@@ -47,13 +56,17 @@
             {{ language }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="form.controls.file_type.hasError('required')">
+          File Type is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
 
       <br>
       <mat-divider></mat-divider>
       <br>
 
-      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Upload</button>
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Upload</button>
     </div>
   </form>
 </mat-card>
