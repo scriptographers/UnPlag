@@ -1,4 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+$colors : #e4d8f0 1/20*100%,
+#cfc3e4 2/20*100%;
+
+body {
+  background:
+    repeating-radial-gradient(circle at bottom left, $colors),
+    repeating-radial-gradient(circle at bottom right, $colors);
+  background-blend-mode: overlay;
+}

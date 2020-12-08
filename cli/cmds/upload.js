@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const { profile } = require('../src/profile');
 
 exports.command = 'upload [file_loc] [name]'
 exports.desc = 'Upload compressed folder'
