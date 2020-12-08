@@ -17,7 +17,8 @@ export class ReportComponent implements OnInit {
   is_processing: boolean;
 
   buffer: any;
-  content: Array<Array<string>>;
+  data_matrix: Array<Array<string>>;
+  data_vector: Array<string>;
   file_names: Array<string>;
   text: Array<Array<string>>;
 
@@ -30,7 +31,8 @@ export class ReportComponent implements OnInit {
     private snackBar: MatSnackBar,
   ) {
     this.is_processing = true;
-    this.content = [];
+    this.data_matrix = [];
+    this.data_vector = [];
     this.file_names = [];
     this.text = [];
     this.info = {
@@ -46,9 +48,11 @@ export class ReportComponent implements OnInit {
       data1: [],
       data2: [],
       data3: [],
+      data4: [],
       layout1: {},
       layout2: {},
       layout3: {},
+      layout4: {},
       config: {},
     };
   }
@@ -95,23 +99,30 @@ export class ReportComponent implements OnInit {
           (buffer: string) => {
             let arr = buffer.split('\n');
             this.file_names = arr[0].split(",");
-            for (var i = 0; i < arr.length - 2; ++i) {
-              this.content.push(arr[i].split(","));
+            for (var i = 1; i < arr.length - 1; ++i) {
+              this.data_matrix.push(arr[i].split(","));
             }
             this.info.file_count = this.file_names.length;
-            for (var i = 0; i < this.file_names.length; i++) {
+            for (var i = 0; i < this.file_names.length; ++i) {
               this.text.push([]);
-              for (var j = 0; j < this.file_names.length; j++) {
-                this.text[i].push(`x: ${this.file_names[i]} <br>y: ${this.file_names[j]} <br>Similarity: ${this.content[i][j]}`);
+              for (var j = 0; j < this.file_names.length; ++j) {
+                this.text[i].push(`x: ${this.file_names[i]} <br>y: ${this.file_names[j]} <br>Similarity: ${this.data_matrix[i][j]}`);
               }
             }
+            for (var i = 0; i < this.file_names.length; ++i) {
+              for (var j = i + 1; j < this.file_names.length; ++j) {
+                this.data_vector.push(this.data_matrix[i][j]);
+              }
+            }
+            this.data_vector.sort();
+            console.log(this.data_vector);
 
             this.is_processing = false;
 
             this.plots.data1 = [{
               x: this.file_names,
               y: this.file_names,
-              z: this.content,
+              z: this.data_matrix,
               text: this.text,
               hoverinfo: 'text',
               hoverlabel: { bgcolor: '#41454c' },
@@ -121,8 +132,8 @@ export class ReportComponent implements OnInit {
             this.plots.layout1 = {
               title: 'Surface Plot',
               autosize: false,
-              width: 500,
-              height: 500,
+              width: 750,
+              height: 750,
               hovermode: 'closest',
               scene: {
                 xaxis: { showticklabels: false, zeroline: false, title: '' },
@@ -134,7 +145,7 @@ export class ReportComponent implements OnInit {
             this.plots.data2 = [{
               x: this.file_names,
               y: this.file_names,
-              z: this.content,
+              z: this.data_matrix,
               text: this.text,
               hoverinfo: 'text',
               hoverlabel: { bgcolor: '#41454c' },
@@ -144,8 +155,8 @@ export class ReportComponent implements OnInit {
             this.plots.layout2 = {
               title: 'Heat Map',
               autosize: false,
-              width: 500,
-              height: 500,
+              width: 750,
+              height: 750,
               hovermode: 'closest',
               xaxis: { showticklabels: false, zeroline: false, visible: false },
               yaxis: { showticklabels: false, zeroline: false, visible: false },
@@ -154,7 +165,7 @@ export class ReportComponent implements OnInit {
             this.plots.data3 = [{
               x: this.file_names,
               y: this.file_names,
-              z: this.content,
+              z: this.data_matrix,
               text: this.text,
               hoverinfo: 'text',
               hoverlabel: { bgcolor: '#41454c' },
@@ -164,11 +175,42 @@ export class ReportComponent implements OnInit {
             this.plots.layout3 = {
               title: 'Contour Plot',
               autosize: false,
-              width: 500,
-              height: 500,
+              width: 750,
+              height: 750,
               hovermode: 'closest',
               xaxis: { showticklabels: false, zeroline: false, visible: false },
               yaxis: { showticklabels: false, zeroline: false, visible: false },
+            };
+
+            this.plots.data4 = [{
+              x: this.data_vector,
+              autobinx: false,
+              histnorm: "count",
+              xbins: {
+                size: 0.05,
+              },
+              type: 'histogram'
+            }];
+
+            this.plots.layout4 = {
+              title: 'Histogram',
+              autosize: false,
+              width: 750,
+              height: 750,
+              hovermode: 'x',
+            };
+
+            this.plots.data5 = [{
+              y: this.data_vector,
+              type: 'box'
+            }];
+
+            this.plots.layout5 = {
+              title: 'Box Plot',
+              autosize: false,
+              width: 750,
+              height: 750,
+              xaxis: { showticklabels: false, zeroline: false, visible: false },
             };
 
             this.plots.config = { displaylogo: false };
@@ -191,6 +233,6 @@ export class ReportComponent implements OnInit {
   }
 
   download() {
-    this.data.downloadCSV(this.buffer, "demo.csv");
+    this.data.downloadCSV(this.buffer, `${this.info.org_name}-${this.info.name}.csv`);
   }
 }

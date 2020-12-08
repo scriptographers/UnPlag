@@ -102,7 +102,7 @@ async function getargs(argv, org_list) {
       name: 'file_type',
       type: 'list',
       message: 'Choose file type:',
-      choices: ['txt', 'cpp', 'py']
+      choices: ['txt', 'cpp']
     },
   ];
 

@@ -13,7 +13,7 @@
         Name of Sample: <a routerLink="/org/view/{{ info.org_id }}">{{ info.org_name }}</a> / {{ info.name }}<br>
         Time of upload: {{ info.timestamp }}<br>
         File Format: {{ info.file_type }}<br>
-        File count: {{ info.file_count }}<br>
+        File count: {{ info.file_count }} <span *ngIf="info.file_count == -1">(Sample is being evaluated)</span><br>
       </div>
     </mat-expansion-panel>
   </mat-accordion>
@@ -35,7 +35,7 @@
       <button style="margin-bottom: 1em;" mat-raised-button color="primary" (click)="download()">Download CSV</button>
     </mat-card>
 
-    <mat-card style="width: 80%; margin-top: 2%;">
+    <mat-card style="margin-top: 2%; width: 800px; height:800px;">
       <mat-tab-group mat-align-tabs="center" dynamicHeight>
         <mat-tab label="Surface Plot">
           <plotly-plot [data]="plots.data1" [layout]="plots.layout1" [config]="plots.config"></plotly-plot>
@@ -45,6 +45,12 @@
         </mat-tab>
         <mat-tab label="Contour Plot">
           <plotly-plot [data]="plots.data3" [layout]="plots.layout3" [config]="plots.config"></plotly-plot>
+        </mat-tab>
+        <mat-tab label="Histogram">
+          <plotly-plot [data]="plots.data4" [layout]="plots.layout4" [config]="plots.config"></plotly-plot>
+        </mat-tab>
+        <mat-tab label="Line Graph">
+          <plotly-plot [data]="plots.data5" [layout]="plots.layout5" [config]="plots.config"></plotly-plot>
         </mat-tab>
       </mat-tab-group>
     </mat-card>

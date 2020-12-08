@@ -7,10 +7,23 @@
       <p>User id: {{ profile.userid }}</p>
       <mat-divider></mat-divider>
       <br>
-      Orgs:
-      <div *ngFor="let org of profile.orgs">
-        <li><a routerLink="/org/view/{{ org.org_id }}">{{ org.org_name }}</a></li>
-      </div>
+
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            Organizations you are part of
+          </mat-expansion-panel-header>
+          <mat-list>
+            <mat-list-item *ngFor="let org of profile.orgs">
+              <div mat-line>
+                <a routerLink="/org/view/{{ org.org_id }}">{{ org.org_name }}</a>
+                <span *ngIf="org.is_personal">(Private Org)</span>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+
     </mat-card-content>
   </mat-card>
 

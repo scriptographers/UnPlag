@@ -26,7 +26,7 @@ export class UploadComponent implements OnInit {
     private data: DataService,
     private snackBar: MatSnackBar,
   ) {
-    this.languages = ['txt', 'cpp', 'py'];
+    this.languages = ['txt', 'cpp'];
     this.orgs = [];
   }
 
