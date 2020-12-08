@@ -1,2 +1,0 @@
-1.) Changing all ints to long long ints (and similar to other types) decreases similarity significantly. This is due to the large frequency with which these terms occur - Fixed
-2.) Allow identifiers (vector, queue, etc) from STL. Most of these identifiers will be present during declaration or parameter

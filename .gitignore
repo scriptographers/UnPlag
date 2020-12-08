@@ -4,6 +4,4 @@ __pycache__/
 *$py.class
 *.ipynb_checkpoints
 
-temp
 datasets
-docs-temp
