@@ -2,54 +2,24 @@
 
 Course project for **CS 251: Software Systems Lab**
 
+---
+
+# UnPlag Backend API-Documentation
+
 ## **How to run**
 
 ### Backend
 
 ```
-cd to the base of the repository
-pipenv install
-pipenv shell
+cd to UnPlag/
+python3 -m venv UnPlag
+source UnPlag/bin/activate
+pip install -r requirements.txt
 cd unplag
-python manage.py migrate --run-syncdb
+python manage.py makemigrations account plagsample organization
+python manage.py migrate
 python manage.py runserver
 ```
-
-### Frontend
-
-```
-cd to the base of the repository
-cd frontend
-npm install
-ng serve
-```
-
----
-
----
-
-## **Backend**
-
-### Implemented so far
-
-- Implemented a **Django 3.1** and **Django REST Framework** based backend for the Plag Checker API
-- Used **JWT** for secure User Authentication
-- Created serializers for _Login, Sign-Up and Change Password_
-- Created a **User Profile** Model for storing personal data (later to be linked to Organisation models)
-- Used DRF's **function based views** for creating and updating profiles
-- Integrated a **PlagSample** Model to store the data from the plagiarism checks in the backend database
-- Implemented a combination of class and function based **authenticated endpoints** to serve and upload files
-
----
-
-### Plans for Phase-2:
-
-- Introduce more fields in user profile
-- Use an actual production server like **nginx** for serving media files
-- Introduce **tarfile** and **zipfile** checks to ensure the integrity of the uploaded compressed file
-- Devise a methodology to run the backend computation parallely, to **reduce overall django overhead**
-
----
 
 ### API Endpoints Implemented (Links given to the detailed documentation)
 
@@ -69,7 +39,15 @@ ng serve
 #### Plagsample API Endpoints :
 
 8. ['/api/plagsample/upload/'](#upload-files)
-9. ['/api/plagsample/download/'](#download-csv)
+9. ['/api/plagsample/download/<int:id>/'](#download-csv)
+10. ['/api/plagsample/info/<int:id>/'](#plagsample-info)
+
+#### Organization API Endpoints :
+
+11. ['/api/organization/makeorg/'](#create-new-organization)
+12. ['/api/organization/get/<int:id>/'](#organization-info)
+13. ['/api/organization/update/<int:id>/'](#update-organization)
+14. ['/api/organization/joinorg/'](#join-organization)
 
 ### Detailed API Documentation
 
@@ -122,7 +100,7 @@ Returns profile details of the current authenticated user
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[JSON response] id(profile id), user(user id), username, nick
+@[JSON response] id(profile id), user(user id), username, nick, orgs: [{org_id, org_name},...]
 ```
 
 #### **Profile Update**
@@ -164,13 +142,17 @@ Format:
 
 @[in header] “Authorization: Bearer <access>”
 @[in body]
-@[JSON response]
+@[JSON response] // Sorted by org_id and then date_posted.
 {
    "pastchecks": [
        {
-           "filename": "filename1.xip",
-           "id": 10,
-           "timestamp": "2020-10-25T16:29:12.954791Z"
+           "filename": "Outlab5-Resources.tar_e3Ce4OJ.gz",
+           "file_type": "txt"
+           "id": 2,
+           "name": "Outlab5-Resources",
+           "timestamp": "2020-11-26 20:15:30",
+           "org_id": "1",
+           "org_name": "scriptographers",    
        },
        ...,
        ...
@@ -183,27 +165,108 @@ Format:
 `ENDPOINT : 'api/plagsample/upload/' | REQUEST TYPE : POST (Authenticated Endpoint)`
 
 Returns a plagiarism check id for the uploaded compressed file
+Supplied org_id must be valid and the user must be in it
 
+This method processes the uploaded compressed file on a separate thread, so as to keep the backend open to further uploads.
 ```
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[in body] plagzip (Filefields) (As of now zip, tar.gz, rar are allowed, but just checking extensions wont work !)
-@[JSON response] id(plagsample id), plagzip(name of the files), user(user id), date_posted, outfile (name of output csv)
+@[in body] name, org_id, file_type(must, available choices : [“txt”, “cpp”]), 
+plagzip (Filefields) (As of now zip, tar.gz, rar are allowed)
+@[JSON response] id(plagsample id), name, file_type, plagzip(name of the files), 
+user(user id), date_posted, outfile (name of output csv)
 ```
 
 #### **Download CSV**
 
 `ENDPOINT : 'api/plagsample/download/<id>' | REQUEST TYPE : GET (Authenticated Endpoint)`
 
-Returns the processed CSV file as a JSON file attachment response blob(If the authentication details match correctly)
+Returns the processed CSV file as a JSON file attachment response blob(If the authentication details match correctly: User needs to be a part of the organization to which the uploaded sample belongs)
 
 ```
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[out]  CSV is returned as a file attachment in the body(as a file Blob). Name of the file can be found under the "Content-Disposition" header.
+@[out]  CSV is returned as a file attachment in the body(as a file Blob). 
+Name of the file can be found under the "Content-Disposition" header.
 @[out in case of error] JSON form of error is returned along with correct HTTP error code.
+Throws 415_UNSUPPORTED_MEDIA HTTP Error if no files of give file_type is 
+found after extracting the compressed ball.
+```
+
+#### **Plagsample Info**
+
+`ENDPOINT : 'api/plagsample/info/<int:id>/' | REQUEST TYPE : GET (Authenticated Endpoint)`
+
+Returns details of a particular plag check
+Supplied id must correspond to a valid plagsample and the user must be in the organization to which it belongs.
+
+```
+Format:
+
+@[in header] “Authorization: Bearer <access>”
+@[in body] 
+@[JSON response] id, name , filename, file_type, timestamp, org_id, org_name, uploader, uploader_id, file_count
+```
+
+#### **Create New Organization**
+
+`ENDPOINT : 'api/organization/makeorg/' | REQUEST TYPE : POST (Authenticated Endpoint)`
+
+Signs up a new organization with the currently logged in user as its first and only member.
+
+```
+Format:
+
+@[in header] “Authorization: Bearer <access>”
+@[in body] name(required), title(optional description) 
+@[JSON response] id(organization id), creator(name of creator), title, date_created, unique_code
+```
+
+#### **Organization Info**
+
+`ENDPOINT : 'api/organization/get/<int:id>/' | REQUEST TYPE : GET (Authenticated Endpoint)`
+
+Returns details of the inquired organization. Inquiring user must be a member of the organization.
+
+```
+Format:
+
+@[in header] “Authorization: Bearer <access>”
+@[in body] 
+@[JSON response] id(org id), name, creator, title, unique_code, date_created, 
+members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted according to user_id), 
+pastchecks : [{filename, id, file_type, timestamp}, ...]
+```
+
+#### **Update Organization**
+
+`ENDPOINT : 'api/organization/update/<int:id>/' | REQUEST TYPE : PUT (Authenticated Endpoint)`
+
+A user belonging to the organizaation can update the title.
+
+```
+Format:
+
+@[in header] “Authorization: Bearer <access>”
+@[in body] title
+@[JSON response] id(org id), name, title, creator, date_created
+```
+#### **Join Organization**
+
+`ENDPOINT : 'api/organization/joinorg/' | REQUEST TYPE : POST (Authenticated Endpoint)`
+
+Given a unique_code adds the user to the org(unless its a personal organization)
+
+
+```
+Format:
+
+@[in header] “Authorization: Bearer <access>”
+@[in body] unique_code
+@[JSON response] id(org id), creator, name, title, date_created, unique_code, 
+members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted according to user_id)
 ```
 
 ---
@@ -231,6 +294,15 @@ Format:
 - Make UX better by adding features like user interactive tools
 - Implementing and integrating **multiple model** system
 
+---
+### Frontend
+
+```
+cd to the base of the repository
+cd frontend
+npm install
+ng serve
+```
 ---
 
 ### Routes
