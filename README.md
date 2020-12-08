@@ -4,7 +4,17 @@ Course project for **CS 251: Software Systems Lab**
 
 ---
 
-## Getting started:
+## **Table of Contents**
+
+1. [Getting Started](#getting-started)
+2. [Core Logic](#core-logic)
+3. [UnPlag Backend API Documentation](#unplag-backend-api-documentation)
+4. [Angular Frontend Routes Documentation](#angular-frontend-routes-documentation)
+5. [Command Line Interface](#command-line-interface)
+
+---
+
+## **Getting Started**
 
 ### Backend
 
@@ -28,7 +38,7 @@ npm install
 ng serve
 ```
 
-### Command Line Interface
+### CLI
 
 ```
 cd to UnPlag/
@@ -329,10 +339,10 @@ Run `pip install -r requirements.txt`, you may need to perform some additional s
 - `clang`: For parsing `c++` files, creating and traversing the AST, and tokenizing it.
 *(Note: `clang` as used by us works only on `linux` based machines. You also may need to install it using `sudo apt-get`, and create symbolic links)*
 
-#### Usage (for textual files)
+#### Usage (for Textual files)
 
 - **Main file:** `models/txt/tfidf.py`  
-- **Direct usage:** 
+- **Direct usage:**
 	  `python3 tfidf.py -d <dataset> -r "<RegEx>" -out <output>`
     - `<dataset>`: This must contain the path to directory containing all the files which you want to check. The files are expected to be in English.
     - `<regEx>`: This must contain the regular expression for testing some subset of the files inside `<dataset>`. For example, if you have Java, C++ and text files in your dataset, and you want to check for plagiarism only on the text files, then you `<regEx>` will be `*.txt`.
@@ -672,7 +682,7 @@ members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted ac
 
 #### **Change Password**
 
-- User can change(update) the password
+- Change(update) the password
 - Accessible only if the user is logged in and if the token has not expired
 - Redirects to dashboard if successful
 
@@ -683,7 +693,7 @@ members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted ac
 
 #### **Edit Profile**
 
-- User can update the profile
+- Update the profile
 - Accessible only if the user is logged in and if the token has not expired
 - Redirects to the profile page if successful.
 
@@ -701,48 +711,48 @@ members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted ac
 
 #### **View Organization**
 
-- User can update the profile
-- Only if the user is logged in and if the token has not expired
-- Redirects to the profile page if the edit was successful.
+- Contains the organization details and list of members and samples uploaded
+- Accessible only if the user is logged in and is part of the organization and if the token has not expired
 
 #### **Edit Organization**
 
-- User can update the profile
-- Only if the user is logged in and if the token has not expired
-- Redirects to the profile page if the edit was successful.
+- Update the organization details
+- Accessible only if the user is logged in and is part of the organization and if the token has not expired
+- Redirects to the organization's page if successful.
 
 #### **Upload Sample**
 
-- User uploads files here (for now only zip, tar, gz, rar are allowed)
-- Only if the user is logged in and if the token has not expired
-- Redirects to the display of the result if the upload is successful.
+- Upload sample to the organization (only zip, tar, gz, rar are allowed, content type - _.txt or _.cpp)
+- Accessible only if the user is logged in and if the token has not expired
+- Redirects to the report if the upload is successful.
 
 #### **Display Report**
 
 - Users can view the result here.
-- Only if the user is logged in and if the token has not expired.
-- Throws 403 error if the user is not allowed to view this or it doesn’t exist -> back to dashboard
+- Accessible only if the user is logged in and is part of the organization and if the token has not expired
+- User can download csv file.
 
 ---
 
 ---
 
-## **Bonus plan: Terminal Client**
+## **Command Line Interface**
 
-### Thoughts and references
+### Usage
 
-There are two options to develop a CLI - NodeJS or Python.  
-Links referred to:
+```
+unplag-cli <command>
 
-1. [Build a Terminal Chat Application With Node.js](https://getstream.io/blog/build-a-terminal-chat-application-with-node-js/)
-2. [Making a simple Web based SSH client using Node.js and Socket.io](https://hub.packtpub.com/making-simple-web-based-ssh-client-using-nodejs-and-socketio/)
-3. [SSH web console](https://medium.com/codingtown/ssh-web-console-21e87b611674)
-4. [xterm.js Docs](https://xtermjs.org/)
-5. [How to build a CLI with Node.js](https://www.twilio.com/blog/how-to-build-a-cli-with-node-js)
-6. [How to write a login script in python via an interactive CLI](https://stackoverflow.com/questions/57194845/how-to-write-a-login-script-in-python-via-an-interactive-cli)
-7. [Creating A Real-World CLI App With Node](https://timber.io/blog/creating-a-real-world-cli-app-with-node/)
-8. [How To Build A Command-Line Tool With NodeJS - A step-by-step guide](https://dev.to/dendekky/how-to-build-a-command-line-tool-with-nodejs-a-step-by-step-guide-386k)
-9. [Build a Password Field for the Terminal using Nodejs](https://blog.bitsrc.io/build-a-password-field-for-the-terminal-using-nodejs-31cd6cfa235)
-10. [How do I prompt users for input from a command-line script?](https://nodejs.org/en/knowledge/command-line/how-to-prompt-for-command-line-input/)
+Commands:
+  unplag-cli download [save_loc]       Download csv
+  unplag-cli upload [file_loc] [name]  Upload compressed folder
+
+Options:
+  --version  Show version number                      [boolean]
+  --help     Show help                                [boolean]
+
+```
+
+---
 
 ---
