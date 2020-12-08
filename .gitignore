@@ -47,3 +47,6 @@ typings
 # System Files
 .DS_Store
 Thumbs.db
+
+# Testing datasets:
+datasets
