@@ -4,8 +4,6 @@ Course project for **CS 251: Software Systems Lab**
 
 ---
 
-# UnPlag Backend API-Documentation
-
 ## **How to run**
 
 ### Backend
@@ -20,6 +18,103 @@ python manage.py makemigrations account plagsample organization
 python manage.py migrate
 python manage.py runserver
 ```
+
+### Frontend
+
+```
+cd to UnPlag/
+cd frontend
+npm install
+ng serve
+```
+
+### Command Line Interface
+
+```
+cd to UnPlag/
+cd cli
+npm install
+npm link
+```
+
+---
+
+---
+
+## **Core Logic**
+
+### Models implemented so far:
+
+**(Unigram) Bag of Words Model and TF-IDF**:
+
+- Language used: `Python 3.8.2`
+- Libraries used:
+  - **`nltk`**: Used for removing stopwords, Porter stemming and word tokenization
+  - **`sklearn`**: Used the `TfidfVectorizer`
+  - **`collections`**: Used `Counter` while computing the Jaccard similarity
+  - **`numpy`**: Used for basic vector operations and for computing the cosine similarities
+  - **`seaborn`**: Used for creating heatmaps
+  - **`argparse`**: Used for parsing the command line arguments
+  - **`glob`** : Used for iterating through the given folder of files based on the given RegEx
+- **File**: `detect.py`
+- **Similarity metrics used for the model**: Cosine similarity and Jaccard similarity
+- **Usage**:
+  `python3 detect.py -d <folder> -r "<RegEx>" -o <output>`  
+  (or)  
+  `python3 detect.py --data <folder> --regex "<RegEx>" --output <output> --time`  
+  Arguments description:
+  - `<folder>` - The folder containing the files to be checked
+  - `<RegEx>` - Any RegEx applied to the file names inside the folder (Eg. `*.txt`)
+  - `<output>` - The path where the results (A `.csv` file) will be saved
+  - `--time` - Optional, displays the time taken for the "core logic" to execute  
+    Example usage: `python3 detect.py -d ./datasets/data/ -r "*.txt" -o results.csv --time`
+- **Output**:
+  - 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)
+  - 2 heatmaps corresponding to each similarity metric and one heatmap for TF-IDF
+
+---
+
+### Plans for Phase-2:
+
+- Try to find an accurately labelled dataset for testing/evaluating all the models
+- Extend the above models to work well with `C++` files (Handling functional calls, language specific syntax, stub code)
+- Experiment with more models and try to implement ideas from relevant research papers
+- Look for different ways to visualize the matrix to gain valuable insights
+
+---
+
+### Papers on Plagiarism Checking:
+
+1. [Winnowing: Local Algorithms for Document Fingerprinting
+   (MOSS)](http://theory.stanford.edu/~aiken/publications/papers/sigmod03.pdf)
+2. [Plagiarism Detection on Electronic Text based
+   Assignments using Vector Space Model](https://arxiv.org/ftp/arxiv/papers/1412/1412.7782.pdf)
+3. [AntiPlag: Plagiarism Detection on Electronic
+   Submissions of Text Based Assignments](https://arxiv.org/ftp/arxiv/papers/1403/1403.1310.pdf)
+4. [Universal Sentence Encoder](https://arxiv.org/abs/1803.11175) (Pre-trained model by Google Research)
+5. [BERTScore: Evaluating Text Generation with BERT](https://arxiv.org/abs/1904.09675)
+
+---
+
+### Possible Testing Datasets:
+
+1. [A Corpus of (100) Plagiarised Short Answers](https://ir.shef.ac.uk/cloughie/resources/plagiarism_corpus.html)
+2. [PAN Plagiarism Corpus 2011 (PAN-PC-11)](https://zenodo.org/record/3250095#.X5b8EIgzZPY) _(Not yet tried this dataset, it has many files, can be used for efficiency check atleast)_
+
+---
+
+### References used till now:
+
+1. [Simple Plagiarism Detection Using NLP](https://medium.com/@heerambavi/simple-plagiarism-detection-using-nlp-1ee60c4f1d48)
+2. [A Gentle Introduction to the Bag-of-Words Model](https://machinelearningmastery.com/gentle-introduction-bag-words-model/)
+3. [(TF-IDF) How to compute the similarity between two text documents?
+   (StackOverflow)](https://stackoverflow.com/questions/8897593/how-to-compute-the-similarity-between-two-text-documents)
+
+---
+
+---
+
+## **UnPlag Backend API Documentation**
 
 ### API Endpoints Implemented (Links given to the detailed documentation)
 
@@ -152,7 +247,7 @@ Format:
            "name": "Outlab5-Resources",
            "timestamp": "2020-11-26 20:15:30",
            "org_id": "1",
-           "org_name": "scriptographers",    
+           "org_name": "scriptographers",
        },
        ...,
        ...
@@ -168,13 +263,14 @@ Returns a plagiarism check id for the uploaded compressed file
 Supplied org_id must be valid and the user must be in it
 
 This method processes the uploaded compressed file on a separate thread, so as to keep the backend open to further uploads.
+
 ```
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[in body] name, org_id, file_type(must, available choices : [“txt”, “cpp”]), 
+@[in body] name, org_id, file_type(must, available choices : [“txt”, “cpp”]),
 plagzip (Filefields) (As of now zip, tar.gz, rar are allowed)
-@[JSON response] id(plagsample id), name, file_type, plagzip(name of the files), 
+@[JSON response] id(plagsample id), name, file_type, plagzip(name of the files),
 user(user id), date_posted, outfile (name of output csv)
 ```
 
@@ -188,10 +284,10 @@ Returns the processed CSV file as a JSON file attachment response blob(If the au
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[out]  CSV is returned as a file attachment in the body(as a file Blob). 
+@[out]  CSV is returned as a file attachment in the body(as a file Blob).
 Name of the file can be found under the "Content-Disposition" header.
 @[out in case of error] JSON form of error is returned along with correct HTTP error code.
-Throws 415_UNSUPPORTED_MEDIA HTTP Error if no files of give file_type is 
+Throws 415_UNSUPPORTED_MEDIA HTTP Error if no files of give file_type is
 found after extracting the compressed ball.
 ```
 
@@ -206,7 +302,7 @@ Supplied id must correspond to a valid plagsample and the user must be in the or
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[in body] 
+@[in body]
 @[JSON response] id, name , filename, file_type, timestamp, org_id, org_name, uploader, uploader_id, file_count
 ```
 
@@ -220,7 +316,7 @@ Signs up a new organization with the currently logged in user as its first and o
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[in body] name(required), title(optional description) 
+@[in body] name(required), title(optional description)
 @[JSON response] id(organization id), creator(name of creator), title, date_created, unique_code
 ```
 
@@ -234,9 +330,9 @@ Returns details of the inquired organization. Inquiring user must be a member of
 Format:
 
 @[in header] “Authorization: Bearer <access>”
-@[in body] 
-@[JSON response] id(org id), name, creator, title, unique_code, date_created, 
-members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted according to user_id), 
+@[in body]
+@[JSON response] id(org id), name, creator, title, unique_code, date_created,
+members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted according to user_id),
 pastchecks : [{filename, id, file_type, timestamp}, ...]
 ```
 
@@ -253,19 +349,19 @@ Format:
 @[in body] title
 @[JSON response] id(org id), name, title, creator, date_created
 ```
+
 #### **Join Organization**
 
 `ENDPOINT : 'api/organization/joinorg/' | REQUEST TYPE : POST (Authenticated Endpoint)`
 
 Given a unique_code adds the user to the org(unless its a personal organization)
 
-
 ```
 Format:
 
 @[in header] “Authorization: Bearer <access>”
 @[in body] unique_code
-@[JSON response] id(org id), creator, name, title, date_created, unique_code, 
+@[JSON response] id(org id), creator, name, title, date_created, unique_code,
 members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted according to user_id)
 ```
 
@@ -273,160 +369,111 @@ members : [{“id” : 1, “username” : “ardy”}, {...}, {...}] (sorted ac
 
 ---
 
-## **Frontend**
+## **Angular Frontend Routes Documentation**
 
-### Implemented so far
+### Routes Implemented (Links given to the detailed documentation)
 
-- Developed User interface with **AngularTS 9.0**
-- Created components for Register, Login, Change Password, Dashboard, Profile, Edit Profile, Upload and Download
-- Added **JWT support** in **Auth Service** which takes care of Login, Register as well as Refreshing of Tokens
-- Added **HTTP Interceptor** which added the token if present to the header whenever required
-- Added **HTTP Guard** to prevent unauthorized user to visit urls which are meant for only certain users
-- Added **DataService** to upload zip files and download the csv file and display it (for now as a table)
+#### User Account Routes :
 
----
+1. ['/register'](#register)
+2. ['/login'](#login)
 
-### Plans for Phase-2:
+#### Dashboard Routes :
 
-- Designing the header and footer using Bootstrap or Angular Materials
-- Adding stylings using **SCSS**
-- Testing visualization approaches like **Surface plots**, **Heat maps** (or **Grayscale image**), **Graph** representation
-- Make UX better by adding features like user interactive tools
-- Implementing and integrating **multiple model** system
+3. ['/dashboard'](#dashboard)
 
----
-### Frontend
+#### Profile Routes :
 
-```
-cd to the base of the repository
-cd frontend
-npm install
-ng serve
-```
----
+4. ['/profile/changepwd'](#change-password)
+5. ['/profile/view'](#view-profile)
+6. ['/profile/edit'](#edit-profile)
 
-### Routes
+#### Organization Routes :
 
-#### **/register**
+7. ['/org/create'](#create-an-organization)
+8. ['/org/join'](#join-an-organization)
+9. ['/org/view/:id'](#view-organization)
+10. ['/org/edit/:id'](#edit-organization)
 
-- Register the user
-- Only accessible if the user is not logged in
-- Redirects to login if successful
+#### Plagsample Routes :
 
-#### **/login**
+11. ['/upload'](#upload-sample)
+12. ['/report/:id'](#display-report)
+
+### Detailed API Documentation
+
+#### **Token**
+
+#### **Register**
+
+- Create a new user
+- Accessible only if the user is not logged in
+- Redirects to dashboard if successful
+
+#### **Login**
 
 - Login the user
-- Only accessible if the user is not logged in
+- Accessible only if the user is not logged in
 - Redirects to dashboard if successful
 
-#### **/changepwd**
-
-- User can change/update password
-- Only if the user is logged in or not, just checks if a token is present or not
-- If token is expired, throws a 401 error -> tries refreshing, if failed -> logout and back to login page
-- Redirects to dashboard if successful
-
-#### **/dashboard**
+#### **Dashboard**
 
 - Landing page after login
-- Displays list of uploads and their results
-- Only if the user is logged in and if the token has not expired.
+- Displays list of organizations and uploads belonging to each sorted by latest.
+- Accessible only if the user is logged in and if the token has not expired
 
-#### **/profile**
+#### **Change Password**
 
-- Contains the profile details (for now only nickname)
-- Only if the user is logged in and if the token has not expired
+- User can change(update) the password
+- Accessible only if the user is logged in and if the token has not expired
+- Redirects to dashboard if successful
 
-#### **profile/edit**
+#### **View Profile**
+
+- Contains the profile details and list of organizations
+- Accessible only if the user is logged in and if the token has not expired
+
+#### **Edit Profile**
+
+- User can update the profile
+- Accessible only if the user is logged in and if the token has not expired
+- Redirects to the profile page if successful.
+
+#### **Create an Organization**
+
+- Create a new organization
+- Accessible only if the user is logged in and if the token has not expired
+- Redirects to the organization's page if successful.
+
+#### **Join an Organization**
+
+- Join an existing organization
+- Accessible only if the user is logged in and if the token has not expired
+- Redirects to the organization's page if successful.
+
+#### **View Organization**
 
 - User can update the profile
 - Only if the user is logged in and if the token has not expired
 - Redirects to the profile page if the edit was successful.
 
-#### **/upload**
+#### **Edit Organization**
+
+- User can update the profile
+- Only if the user is logged in and if the token has not expired
+- Redirects to the profile page if the edit was successful.
+
+#### **Upload Sample**
 
 - User uploads files here (for now only zip, tar, gz, rar are allowed)
 - Only if the user is logged in and if the token has not expired
 - Redirects to the display of the result if the upload is successful.
 
-#### **display/:id**
+#### **Display Report**
 
-- User could view the result here. For now prints only the csv data
+- Users can view the result here.
 - Only if the user is logged in and if the token has not expired.
 - Throws 403 error if the user is not allowed to view this or it doesn’t exist -> back to dashboard
-
----
-
----
-
-## **Core Logic**
-
-### Models implemented so far:
-
-**(Unigram) Bag of Words Model and TF-IDF**:
-
-- Language used: `Python 3.8.2`
-- Libraries used:
-  - **`nltk`**: Used for removing stopwords, Porter stemming and word tokenization
-  - **`sklearn`**: Used the `TfidfVectorizer`
-  - **`collections`**: Used `Counter` while computing the Jaccard similarity
-  - **`numpy`**: Used for basic vector operations and for computing the cosine similarities
-  - **`seaborn`**: Used for creating heatmaps
-  - **`argparse`**: Used for parsing the command line arguments
-  - **`glob`** : Used for iterating through the given folder of files based on the given RegEx
-- **File**: `detect.py`
-- **Similarity metrics used for the model**: Cosine similarity and Jaccard similarity
-- **Usage**:
-  `python3 detect.py -d <folder> -r "<RegEx>" -o <output>`  
-  (or)  
-  `python3 detect.py --data <folder> --regex "<RegEx>" --output <output> --time`  
-  Arguments description:
-  - `<folder>` - The folder containing the files to be checked
-  - `<RegEx>` - Any RegEx applied to the file names inside the folder (Eg. `*.txt`)
-  - `<output>` - The path where the results (A `.csv` file) will be saved
-  - `--time` - Optional, displays the time taken for the "core logic" to execute  
-    Example usage: `python3 detect.py -d ./datasets/data/ -r "*.txt" -o results.csv --time`
-- **Output**:
-  - 3 files (`cosine_<output>, jaccard_<output>, tfidf_<output>`)
-  - 2 heatmaps corresponding to each similarity metric and one heatmap for TF-IDF
-
----
-
-### Plans for Phase-2:
-
-- Try to find an accurately labelled dataset for testing/evaluating all the models
-- Extend the above models to work well with `C++` files (Handling functional calls, language specific syntax, stub code)
-- Experiment with more models and try to implement ideas from relevant research papers
-- Look for different ways to visualize the matrix to gain valuable insights
-
----
-
-### Papers on Plagiarism Checking:
-
-1. [Winnowing: Local Algorithms for Document Fingerprinting
-   (MOSS)](http://theory.stanford.edu/~aiken/publications/papers/sigmod03.pdf)
-2. [Plagiarism Detection on Electronic Text based
-   Assignments using Vector Space Model](https://arxiv.org/ftp/arxiv/papers/1412/1412.7782.pdf)
-3. [AntiPlag: Plagiarism Detection on Electronic
-   Submissions of Text Based Assignments](https://arxiv.org/ftp/arxiv/papers/1403/1403.1310.pdf)
-4. [Universal Sentence Encoder](https://arxiv.org/abs/1803.11175) (Pre-trained model by Google Research)
-5. [BERTScore: Evaluating Text Generation with BERT](https://arxiv.org/abs/1904.09675)
-
----
-
-### Possible Testing Datasets:
-
-1. [A Corpus of (100) Plagiarised Short Answers](https://ir.shef.ac.uk/cloughie/resources/plagiarism_corpus.html)
-2. [PAN Plagiarism Corpus 2011 (PAN-PC-11)](https://zenodo.org/record/3250095#.X5b8EIgzZPY) _(Not yet tried this dataset, it has many files, can be used for efficiency check atleast)_
-
----
-
-### References used till now:
-
-1. [Simple Plagiarism Detection Using NLP](https://medium.com/@heerambavi/simple-plagiarism-detection-using-nlp-1ee60c4f1d48)
-2. [A Gentle Introduction to the Bag-of-Words Model](https://machinelearningmastery.com/gentle-introduction-bag-words-model/)
-3. [(TF-IDF) How to compute the similarity between two text documents?
-   (StackOverflow)](https://stackoverflow.com/questions/8897593/how-to-compute-the-similarity-between-two-text-documents)
 
 ---
 
