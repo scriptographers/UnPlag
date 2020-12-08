@@ -1,0 +1,41 @@
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Create New Organization</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Name of Organization</mat-label>
+        <input matInput type="text" formControlName="name" placeholder="Enter Name of Organization" required />
+        <mat-error *ngIf="form.controls.name.hasError('required')">
+          Name of Organization is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput type="text" formControlName="description" placeholder="Description"></textarea>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Create</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/dashboard" mat-raised-button color="primary">
+    Go back to dashboard
+  </button>
+</mat-card>

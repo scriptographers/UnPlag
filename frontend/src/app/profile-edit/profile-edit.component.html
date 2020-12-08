@@ -1,0 +1,32 @@
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Edit Profile</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Nickname</mat-label>
+        <input matInput type="text" formControlName="nickname" placeholder="Enter Nickname" required />
+        <mat-error *ngIf="form.controls.nickname.hasError('required')">
+          Nickname is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Update</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/profile/view" mat-raised-button color="primary">
+    Go back to Profile
+  </button>
+</mat-card>

@@ -1,0 +1,32 @@
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Join Organization</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Passcode</mat-label>
+        <input matInput type="text" formControlName="passcode" placeholder="Enter Passcode" required />
+        <mat-error *ngIf="form.controls.passcode.hasError('required')">
+          Passcode is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" [disabled]="form.invalid" mat-raised-button
+        color="primary">Join</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/dashboard" mat-raised-button color="primary">
+    Go back to dashboard
+  </button>
+</mat-card>

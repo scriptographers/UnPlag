@@ -1,0 +1,25 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "unplag-cli": "unplag-cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arg": "^5.0.0",
+    "esm": "^3.2.25",
+    "form-data": "^3.0.0",
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
+    "inquirer": "^7.3.3",
+    "prompt": "^1.0.0",
+    "yargs": "^16.2.0"
+  }
+}

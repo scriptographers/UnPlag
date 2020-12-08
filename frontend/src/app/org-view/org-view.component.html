@@ -1,0 +1,54 @@
+<div class="org">
+  <h1 class="mat-display-1">Organization - {{ org.name }}</h1>
+  <mat-card>
+    <mat-card-content>
+      <p>Description: {{ org.description }}</p>
+      <p>Passcode: {{ org.passcode }}</p>
+      <p>Date Created: {{ org.date_created }}</p>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-accordion>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            Members
+          </mat-expansion-panel-header>
+          <mat-list>
+            <mat-list-item *ngFor="let member of org.members">
+              <div mat-line>
+                {{ member.username }}
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            Past Uploads
+          </mat-expansion-panel-header>
+          <mat-list>
+            <mat-list-item *ngFor="let sample of org.history">
+              <mat-icon mat-list-icon>folder</mat-icon>
+              <div mat-line>
+                <a routerLink="/report/{{sample.id}}" style="font-size: 18px;">
+                  {{sample.name}}
+                </a>
+              </div>
+              <br>
+              <div mat-line> File type: {{sample.file_type}} </div>
+              <div mat-line> Upload time: {{sample.timestamp}} </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card style="margin-top: 2%;">
+    <button routerLink="/org/edit/{{ org.id }}" mat-raised-button color="primary">
+      Edit Organization
+    </button>
+  </mat-card>
+</div>
