@@ -1,0 +1,34 @@
+// SCSS Mixin that adds shadow to elements
+@mixin shadow {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
+
+// SCSS Mixin that adds margins to elements
+@mixin margin($top: 0, $bottom: 0, $left: 0, $right: 0) {
+  margin-top: $top;
+  margin-bottom: $bottom;
+  margin-left: $left;
+  margin-right: $right;
+}
+
+mat-card {
+  width: 50%;
+  @include margin(0, 0, auto, auto);
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 0;
+  text-align: center;
+}
+
+mat-card:hover {
+  @include shadow();
+}
+
+.mat-display-1 {
+  margin-bottom: 0.3em;
+  text-align: center;
+}
+
+mat-form-field {
+  width: 90%;
+}

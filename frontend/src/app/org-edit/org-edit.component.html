@@ -1,9 +1,29 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Update Description</h2>
-  <label class="full-width-input">
-    Description
-    <input type="text" placeholder="Description" formControlName="description">
-  </label>
-  <br>
-  <button class="button">Update</button>
-</form>
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Edit Organization</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput type="text" formControlName="description" placeholder="Enter Description"
+          required></textarea>
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Update</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/org/view/{{ org.id }}" mat-raised-button color="primary">
+    Go back to Organization
+  </button>
+</mat-card>

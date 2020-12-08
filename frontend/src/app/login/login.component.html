@@ -1,18 +1,37 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Log In</h2>
-  <p>Please login to continue</p>
-  <label class="full-width-input">
-    Username
-    <input type="text" placeholder="Username" formControlName="username" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    Password
-    <input type="password" placeholder="Password" formControlName="password" required>
-  </label>
-  <br>
-  <button class="button">Login</button>
-</form>
-<!-- <div class="register-link">
-  Not yet registered? <a routerLink="/register">Register Now</a>
-</div> -->
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Log In</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>UserName</mat-label>
+        <input matInput type="text" formControlName="username" placeholder="Enter Username" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Enter Password" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Login</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/register" mat-raised-button color="primary">
+    Register Here
+  </button>
+</mat-card>

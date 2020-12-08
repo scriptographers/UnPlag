@@ -1,23 +1,46 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Sign Up</h2>
-  <p>Please enter your details</p>
-  <label class="full-width-input">
-    Username
-    <input type="text" placeholder="Username" formControlName="username" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    Password
-    <input type="password" placeholder="Password" formControlName="password" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    Confirm Password
-    <input type="password" placeholder="Re-enter Password" formControlName="password2" required>
-  </label>
-  <br>
-  <button class="button">Register</button>
-</form>
-<!-- <div class="login-link">
-  Already registered? <a routerLink="/login">Login Here!</a>
-</div> -->
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Sign Up</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>UserName</mat-label>
+        <input matInput type="text" formControlName="username" placeholder="Enter Username" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Enter Password" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input matInput type="password" formControlName="password2" placeholder="Re-enter Password" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Register</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/login" mat-raised-button color="primary">
+    Login Here
+  </button>
+</mat-card>

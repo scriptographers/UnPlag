@@ -13,10 +13,11 @@
 
 mat-card {
   width: 50%;
-  @include margin(7%, 0, auto, auto);
+  @include margin(0, 0, auto, auto);
   padding-left: 1em;
   padding-right: 1em;
   padding-bottom: 0;
+  text-align: center;
 }
 
 mat-card:hover {

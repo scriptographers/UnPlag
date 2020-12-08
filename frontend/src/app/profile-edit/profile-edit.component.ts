@@ -66,7 +66,7 @@ export class ProfileEditComponent implements OnInit {
       return this.server.put('/api/account/update/', data).subscribe(
         response => {
           console.log(response);
-          this.router.navigateByUrl('/profile');
+          this.router.navigateByUrl('/profile/view');
         },
         error => {
           console.log(error);

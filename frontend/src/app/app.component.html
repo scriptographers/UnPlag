@@ -1,26 +1,27 @@
 <div *ngIf="auth.isLoggedIn | async as isLoggedIn; then authenticated else unauthenticated"></div>
+
 <ng-template #authenticated>
   <mat-toolbar color="primary">
     <a routerLink="/dashboard" class="title">{{title}}</a>
     <span class="spacing"></span>
-    <button mat-icon-button routerLink="/upload" class="add">
+    <button mat-icon-button routerLink="/upload" class="navbar_icons">
       <mat-icon>add</mat-icon>
     </button>
-    <button mat-icon-button [matMenuTriggerFor]="group">
+    <button mat-icon-button [matMenuTriggerFor]="group" class="navbar_icons">
       <mat-icon>group</mat-icon>
     </button>
     <mat-menu #group="matMenu">
       <button mat-menu-item routerLink="/org/create">Create Organization</button>
       <button mat-menu-item routerLink="/org/join">Join Organization</button>
     </mat-menu>
-    <button mat-icon-button [matMenuTriggerFor]="account_box">
+    <button mat-icon-button [matMenuTriggerFor]="account_box" class="navbar_icons">
       <mat-icon>account_box</mat-icon>
     </button>
     <mat-menu #account_box="matMenu">
       <button mat-menu-item routerLink="/profile/view">View Profile</button>
       <button mat-menu-item routerLink="/profile/edit">Edit Profile</button>
     </mat-menu>
-    <button mat-icon-button [matMenuTriggerFor]="settings">
+    <button mat-icon-button [matMenuTriggerFor]="settings" class="navbar_icons">
       <mat-icon>settings</mat-icon>
     </button>
     <mat-menu #settings="matMenu">
@@ -29,12 +30,10 @@
     </mat-menu>
   </mat-toolbar>
 </ng-template>
+
 <ng-template #unauthenticated>
   <mat-toolbar color="primary">
     <a routerLink="/dashboard" class="title">{{title}}</a>
-    <span class="spacing"></span>
-    <a routerLink="/login" mat-raised-button class="btn">Login</a>
-    <a routerLink="/register" mat-raised-button class="btn">Register</a>
   </mat-toolbar>
 </ng-template>
 <router-outlet></router-outlet>

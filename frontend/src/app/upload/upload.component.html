@@ -1,9 +1,10 @@
-<mat-card>
+<mat-card style="margin-top: 2%;">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div>
       <div class="mat-display-1">
-        <span>Upload Compressed Folder</span>
+        <span>Upload Sample</span>
       </div>
+
       <mat-divider></mat-divider>
 
       <mat-form-field>
@@ -19,7 +20,7 @@
 
       <mat-form-field>
         <mat-label>Sample Name</mat-label>
-        <input matInput type="text" formControlName="sample_name" placeholder="Sample Name" />
+        <input matInput type="text" formControlName="sample_name" placeholder="Enter Sample Name" required />
       </mat-form-field>
 
       <br>

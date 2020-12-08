@@ -1,9 +1,28 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Update Profile</h2>
-  <label class="full-width-input">
-    Nickname
-    <input type="text" placeholder="Nickname" formControlName="nickname" required>
-  </label>
-  <br>
-  <button class="button">Update</button>
-</form>
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Edit Profile</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Nickname</mat-label>
+        <input matInput type="text" formControlName="nickname" placeholder="Enter Nickname" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Update</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/profile/view" mat-raised-button color="primary">
+    Go back to Profile
+  </button>
+</mat-card>

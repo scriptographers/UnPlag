@@ -1,38 +1,41 @@
-<mat-accordion>
-  <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Info
-      </mat-panel-title>
-      <mat-panel-description>
-        Description and detail of the upload
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <div>
-      Name: <a routerLink="/org/view/{{ info.org_id }}">{{ info.org_name }}</a> / {{ info.name }}<br>
-      Time of upload: {{ info.timestamp }}<br>
-      File Type: {{ info.file_type }}<br>
-      File count: {{ info.file_count }}<br>
-    </div>
-  </mat-expansion-panel>
-</mat-accordion>
+<div class="report">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Info
+        </mat-panel-title>
+        <mat-panel-description>
+          Description and detail of the Sample
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div>
+        Name of Sample: <a routerLink="/org/view/{{ info.org_id }}">{{ info.org_name }}</a> / {{ info.name }}<br>
+        Time of upload: {{ info.timestamp }}<br>
+        File Format: {{ info.file_type }}<br>
+        File count: {{ info.file_count }}<br>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
 
 <div *ngIf="info.file_count != 0">
 
   <div *ngIf="is_processing; else processed">
-    <div class="mat-display-1">
-      <span>Processing</span>
-      <mat-progress-spinner mode="indeterminate" value="100"></mat-progress-spinner>
-      <!-- Need to center this -->
+    <div style="margin-top: 2%; align-items: center;" class="mat-display-1">
+      <div style="margin-bottom: 2%;">
+        Processing
+      </div>
+        <mat-progress-spinner mode="indeterminate" value="100" style="margin: auto;"></mat-progress-spinner>
     </div>
   </div>
 
   <ng-template #processed>
-    <mat-card>
+    <mat-card style="margin-top: 2%;">
       <button style="margin-bottom: 1em;" mat-raised-button color="primary" (click)="download()">Download CSV</button>
     </mat-card>
 
-    <mat-card style="width: 80%;">
+    <mat-card style="width: 80%; margin-top: 2%;">
       <mat-tab-group mat-align-tabs="center" dynamicHeight>
         <mat-tab label="Surface Plot">
           <plotly-plot [data]="plots.data1" [layout]="plots.layout1" [config]="plots.config"></plotly-plot>

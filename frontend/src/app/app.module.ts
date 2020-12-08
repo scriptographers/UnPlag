@@ -38,6 +38,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
 
 import { PlotlyViaWindowModule } from 'angular-plotly.js';
 
@@ -79,6 +80,7 @@ import { PlotlyViaWindowModule } from 'angular-plotly.js';
     MatTabsModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatListModule,
     PlotlyViaWindowModule,
   ],
   providers: [

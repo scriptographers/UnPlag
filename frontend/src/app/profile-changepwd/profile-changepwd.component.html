@@ -1,19 +1,46 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Change Password</h2>
-  <label class="full-width-input">
-    Current Password
-    <input type="password" placeholder="Current Password" formControlName="old_password" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    New Password
-    <input type="password" placeholder="New Password" formControlName="new_password" required>
-  </label>
-  <br>
-  <label class="full-width-input">
-    Confirm New Password
-    <input type="password" placeholder="Re-enter Password" formControlName="new_password2" required>
-  </label>
-  <br>
-  <button class="button">Change</button>
-</form>
+<mat-card style="margin-top: 2%;">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="mat-display-1">
+        <span>Change Password</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-form-field>
+        <mat-label>Current Password</mat-label>
+        <input matInput type="password" formControlName="old_password" placeholder="Enter Current Password" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>New Password</mat-label>
+        <input matInput type="password" formControlName="new_password" placeholder="Enter New Password" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Confirm New Password</mat-label>
+        <input matInput type="password" formControlName="new_password2" placeholder="Re-enter New Password" required />
+      </mat-form-field>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+
+      <button style="margin-bottom: 1em;" type="submit" mat-raised-button color="primary">Change</button>
+    </div>
+  </form>
+</mat-card>
+
+<mat-card style="margin-top: 2%;">
+  <button style="margin-bottom: 1em;" routerLink="/profile/view" mat-raised-button color="primary">
+    Go back to Profile
+  </button>
+</mat-card>
