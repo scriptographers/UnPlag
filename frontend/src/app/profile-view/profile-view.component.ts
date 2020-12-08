@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile-view',
@@ -11,7 +13,9 @@ export class ProfileViewComponent implements OnInit {
   profile: any;
 
   constructor(
-    private server: ServerService
+    private router: Router,
+    private server: ServerService,
+    private snackBar: MatSnackBar,
   ) {
     this.profile = {
       userid: 0,
@@ -25,7 +29,6 @@ export class ProfileViewComponent implements OnInit {
   ngOnInit(): void {
     this.server.get('/api/account/profile/').subscribe(
       response => {
-        console.log(response);
         this.profile = {
           userid: response.user,
           username: response.username,
@@ -33,10 +36,23 @@ export class ProfileViewComponent implements OnInit {
           nickname: response.nick,
           orgs: response.orgs
         }
-        console.log(this.profile);
+        this.profile.orgs.forEach(org => {
+          if (org.org_name == this.profile.username) {
+            org.is_personal = true;
+          }
+        });
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
+        this.router.navigateByUrl('/dashboard');
       }
     );
   }

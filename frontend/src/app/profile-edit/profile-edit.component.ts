@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile-edit',
@@ -15,8 +16,9 @@ export class ProfileEditComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private server: ServerService,
     private router: Router,
+    private server: ServerService,
+    private snackBar: MatSnackBar,
   ) {
     this.profile = {
       userid: 0,
@@ -33,7 +35,6 @@ export class ProfileEditComponent implements OnInit {
 
     this.server.get('/api/account/profile/').subscribe(
       response => {
-        console.log(response);
         this.profile = {
           userid: response.user,
           username: response.username,
@@ -41,10 +42,18 @@ export class ProfileEditComponent implements OnInit {
           nickname: response.nick
         }
         this.form.setValue({ nickname: this.profile.nickname });
-        console.log(this.profile);
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
+        this.router.navigateByUrl('/dashboard');
       }
     );
   }

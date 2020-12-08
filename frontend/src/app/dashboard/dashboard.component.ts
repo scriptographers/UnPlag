@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../server.service';
+import { AuthService } from '../auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +15,9 @@ export class DashboardComponent implements OnInit {
   profile: any;
 
   constructor(
-    private server: ServerService
+    private server: ServerService,
+    private auth: AuthService,
+    private snackBar: MatSnackBar,
   ) {
     this.profile = {
       userid: 0,
@@ -29,7 +33,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.server.get('/api/account/profile/').subscribe(
       response => {
-        console.log(response);
         this.profile = {
           userid: response.user,
           username: response.username,
@@ -41,11 +44,13 @@ export class DashboardComponent implements OnInit {
           this.orgs_history.set(org.org_name, []);
         });
         this.orgs_history.delete(this.profile.username);
-        console.log(this.profile);
         this.update_history();
       },
       error => {
-        console.log(error);
+        this.snackBar.open('Something went wrong! Logging out.', "Try Again", {
+          duration: 5000, // 5 sec timeout
+        });
+        this.auth.logout();
       }
     );
   }
@@ -53,9 +58,7 @@ export class DashboardComponent implements OnInit {
   update_history(): void {
     this.server.get('/api/account/pastchecks/').subscribe(
       response => {
-        console.log(response);
         let pastchecks = response.pastchecks;
-        console.log(pastchecks)
         pastchecks.forEach(sample => {
           if (sample.org_name == this.profile.username) {
             this.personal_history.push(sample);
@@ -63,10 +66,12 @@ export class DashboardComponent implements OnInit {
             this.orgs_history.get(sample.org_name).push(sample);
           }
         });
-        console.log(this.orgs_history);
       },
       error => {
-        console.log(error);
+        this.snackBar.open('Something went wrong! Logging out.', "Try Again", {
+          duration: 5000, // 5 sec timeout
+        });
+        this.auth.logout();
       }
     );
   }

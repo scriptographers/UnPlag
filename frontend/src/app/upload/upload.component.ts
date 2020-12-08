@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
 import { DataService } from '../data.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-upload',
@@ -19,8 +21,10 @@ export class UploadComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private server: ServerService,
-    private data: DataService
+    private data: DataService,
+    private snackBar: MatSnackBar,
   ) {
     this.languages = ['txt', 'cpp', 'py'];
     this.orgs = [];
@@ -49,7 +53,16 @@ export class UploadComponent implements OnInit {
         console.log(this.orgs);
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
+        this.router.navigateByUrl('/dashboard');
       }
     );
 

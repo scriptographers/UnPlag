@@ -1,6 +1,7 @@
-import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../data.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-report',
@@ -25,7 +26,8 @@ export class ReportComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private data: DataService
+    private data: DataService,
+    private snackBar: MatSnackBar,
   ) {
     this.is_processing = true;
     this.content = [];
@@ -71,7 +73,15 @@ export class ReportComponent implements OnInit {
         }
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
         this.router.navigateByUrl('/dashboard');
       }
     );
@@ -166,7 +176,16 @@ export class ReportComponent implements OnInit {
         )
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
+        this.router.navigateByUrl('/dashboard');
       }
     );
   }
@@ -174,14 +193,4 @@ export class ReportComponent implements OnInit {
   download() {
     this.data.downloadCSV(this.buffer, "demo.csv");
   }
-
-  // onhover(data) {
-  //   console.log(data.points[0].x);
-  //   console.log(data.points[0].y);
-  // };
-
-  // onunhover(data) {
-  //   console.log(data.points[0].x);
-  //   console.log(data.points[0].y);
-  // };
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile-changepwd',
@@ -14,8 +15,9 @@ export class ProfileChangepwdComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private server: ServerService,
     private router: Router,
+    private server: ServerService,
+    private snackBar: MatSnackBar,
   ) {
     this.profile = {
       userid: 0,
@@ -33,17 +35,24 @@ export class ProfileChangepwdComponent implements OnInit {
     });
     this.server.get('/api/account/profile/').subscribe(
       response => {
-        console.log(response);
         this.profile = {
           userid: response.user,
           username: response.username,
           profileid: response.id,
           nickname: response.nick
         }
-        console.log(this.profile);
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
+        this.router.navigateByUrl('/dashboard');
       }
     );
   }

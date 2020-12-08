@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ServerService } from '../server.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-org-view',
@@ -15,7 +16,8 @@ export class OrgViewComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private server: ServerService
+    private server: ServerService,
+    private snackBar: MatSnackBar,
   ) {
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id');
@@ -35,7 +37,6 @@ export class OrgViewComponent implements OnInit {
   ngOnInit(): void {
     this.server.get(`/api/organization/get/${this.id}/`).subscribe(
       response => {
-        console.log(response);
         this.org = {
           id: response.id,
           name: response.name,
@@ -45,10 +46,18 @@ export class OrgViewComponent implements OnInit {
           date_created: response.date_created,
           history: response.pastchecks
         }
-        console.log(this.org);
       },
       error => {
-        console.log(error);
+        if (error.status === 403) {
+          this.snackBar.open("Forbidden", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        } else {
+          this.snackBar.open("Something went wrong!", "Try Again", {
+            duration: 5000, // 5 sec timeout
+          });
+        }
+        this.router.navigateByUrl('/dashboard');
       }
     );
   }
