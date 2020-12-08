@@ -48,8 +48,9 @@ vectorizer = TfidfVectorizer(
     analyzer='word',
     tokenizer = identityFunction,
     preprocessor = identityFunction,
-    # Consider unigrams, bigrams and trigrams
-    ngram_range = (1, 3),
+    # Consider unigrams and bigrams only
+    ngram_range = (1, 2),
+    sublinear_tf = True, # (1+log(tf)) instead of just tf
     max_features = VOCAB_LIMIT,
     encoding = "utf-8", 
     decode_error="ignore",

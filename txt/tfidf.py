@@ -56,6 +56,7 @@ vectorizer = TfidfVectorizer(
     preprocessor = identityFunction,
     # Consider unigrams and bigrams
     ngram_range = (1, 2),
+    sublinear_tf = True, # (1+log(tf)) instead of just tf
     max_features = VOCAB_LIMIT,
     encoding = "utf-8", 
     decode_error="ignore",
