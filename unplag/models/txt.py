@@ -87,6 +87,7 @@ class TxtPlagChecker(threading.Thread):
             decode_error="ignore",
             stop_words = None,
             lowercase = False,
+            sublinear_tf = True,
             norm = "l2" # Each row will be unit normalized
         )
 

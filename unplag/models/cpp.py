@@ -74,12 +74,13 @@ class CppPlagChecker(threading.Thread):
             tokenizer = identityFunction,
             preprocessor = identityFunction,
             # Consider unigrams, bigrams and trigrams
-            ngram_range = (1, 3),
+            ngram_range = (1, 2),
             max_features = VOCAB_LIMIT,
             encoding = "utf-8", 
             decode_error="ignore",
             stop_words = None,
             lowercase=False,
+            sublinear_tf = True,
             norm = "l2" # Each row will be unit normalized
         )
 
