@@ -11,5 +11,31 @@ addDirectly = [
     ast.List,
     ast.Tuple,
     ast.Set,
-    ast.Dict
+    ast.Dict,
+
+    # Comprehensions:
+    ast.ListComp,
+    ast.SetComp,
+    ast.GeneratorExp,
+    ast.DictComp,
+
+    # Control-flow
+    ast.While,
+    ast.Break,
+    ast.Continue,
+    ast.Try,
+    ast.With,
+
+    # Functions and Class definitions:
+    ast.Return,
+    ast.Yield,
+    ast.YieldFrom,
+    ast.Global,
+    ast.Nonlocal,
+
+    # Async and await
+    ast.Await,
+    ast.AsyncFor,
+    ast.AsyncWith
+
 ]

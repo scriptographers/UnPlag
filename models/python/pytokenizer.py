@@ -9,8 +9,8 @@ with open(path, 'r', encoding="utf-8", errors="ignore") as f:
 tree = ast.parse(src, mode="exec")
 
 # Given an operator, convert to it's string representation
-def opToStr(op):
-    return type(op).__name__
+def typeToStr(t):
+    return type(t).__name__.lower()
 
 # Traverses the tree in BFS order:
 tokens = []
@@ -33,7 +33,7 @@ for node in bfs:
                 tokens.append("unpack_assign")
             elif type(i) == ast.Attribute:
                 tokens.append("attr_assign")
-            elif type(node.target) == ast.Subscript:
+            elif type(i) == ast.Subscript:
                 tokens.append("subscr_assign")
             else:
                 tokens.append("assign")
@@ -59,7 +59,7 @@ for node in bfs:
             token = "var_assign"
         else:
             token = "assign"
-        tokens.append(opToStr(node.op))
+        tokens.append(typeToStr(node.op))
     
     ## Print: Python 2 only
     # elif kind == ast.Print:
@@ -107,28 +107,92 @@ for node in bfs:
 
 
     # Expressions: start #
+
+    ## Operators
+    elif kind in [ast.UnaryOp, ast.BinOp, ast.BoolOp]:
+        token = typeToStr(node.op)
+
+    elif kind == ast.Compare:
+        for op in node.ops:
+            tokens.append(typeToStr(op))
+
+    ## Function calls:
+    elif kind == ast.Call:
+        token = "func_call"
+        tokens.append("n_args_" + str(len(node.args)))
+
+    ## If-expressions, a = b if c is treated same as vanilla if-else
+    elif kind == ast.IfExp:
+        token = "if_else" # All inside content is treated as separate nodes
+
+    elif kind == ast.Attribute:
+        if type(node.ctx) == ast.Load:
+            token = "attr_used"
+
+    elif kind == ast.Subscript:
+        token = "subscript_" + typeToStr(node.slice)
+
     # Expressions: end #
 
 
     # Control flow: start #
+
+    elif kind == ast.If:
+        token = "if_else"
+
+    elif kind == ast.For: # Doesn't include the for present inside list comprehensions
+        token = "for"
+
+    elif kind == ast.comprehension: # The for present inside list comprehensions
+        token = "for"
+
     # Control flow: end #
 
 
     # Functions and Class definitions: start #
+
+    elif kind == ast.FunctionDef:
+        arguments = node.args
+        args = arguments.args
+        decs = node.decorator_list
+        token = "func_def_na_" + str(len(args)) + "_nd_" + str(len(decs))
+
+    elif kind == ast.Lambda:
+        arguments = node.args
+        args = arguments.args
+        token = "lambda_na_" +  str(len(args))
+
+    elif kind == ast.ClassDef:
+        bases = node.bases
+        decs = node.decorator_list
+        token = "class_def_na_" + str(len(bases)) + "_nd_" + str(len(decs))
+
+
     # Functions and Class definitions: end #
 
 
     # Async and await: start #
+
+    elif kind == ast.AsyncFunctionDef:
+        arguments = node.args
+        args = arguments.args
+        decs = node.decorator_list
+        token = "async_func_def_na_" + str(len(args)) + "_nd_" + str(len(decs))
+
     # Async and await: end #
 
 
     # Add the type directly:
     elif kind in addDirectly:
-        token = kind.__name__.lower()
+        token = typeToStr(node)
 
-    # Add the single token finally:
+    # Finally, add the single token:
     if token:
         tokens.append(token)
+
+    # TODO:
+    ## Separate var_used from parameters/args
+    ## Pre-order is better than BFS as bigrams hold more information, equivalent in case of unigrams
 
 
 print(tokens)
