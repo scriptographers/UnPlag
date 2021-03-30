@@ -2,7 +2,7 @@ asgiref==3.3.1
 clang==10.0.1
 click==7.1.2
 cycler==0.10.0
-Django==3.1.4
+Django==3.1.6
 django-cors-headers==3.5.0
 django-filter==2.4.0
 djangorestframework==3.12.2
