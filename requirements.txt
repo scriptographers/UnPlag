@@ -15,7 +15,7 @@ nltk==3.5
 numpy==1.19.4
 pandas==1.1.4
 patool==1.12
-Pillow==8.1.1
+Pillow==8.3.2
 PyJWT==1.7.1
 pyparsing==2.4.7
 python-dateutil==2.8.1
